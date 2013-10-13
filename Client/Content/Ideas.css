@@ -1,0 +1,29 @@
+﻿body {
+   background-color: #E5E5E5;
+}
+.ideaCard {
+    width:500px;
+    position:absolute;
+    background-color: #fff;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border: 1px solid #d8d8d8;
+    border-bottom-width: 2px;
+    border-top-width: 0;
+    padding:15px;
+    padding-top:0px;
+}
+
+.borded {
+    border: 1px solid #d8d8d8;
+    border-top-style:none;
+    border-right-style:none;
+    border-bottom-style:dotted;
+    border-left-style:none;
+}
+
+.grippie {
+    background-color:#000;
+    height:7px;
+    margin-bottom:15px;
+}

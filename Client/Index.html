@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>App</title>
+    <link id="bs-css" href="Content/bootstrap.css" rel="stylesheet"/>
+    <link id="login" href="Content/Login.css" rel="stylesheet"/>
+    <link id="ideas" href="Content/Ideas.css" rel="stylesheet"/>
+</head>
+<body>
+    <!-- Application Template -->
+
+    <script type="text/x-handlebars">
+      <nav class="navbar navbar-default" style="position:fixed;width:100%" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Cards</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+            {{#if model.token}}
+            <li>{{#link-to 'ideas'}} Cards{{/link-to}}</li>
+            <li>{{#link-to 'emails'}} Emails{{/link-to}}</li>
+            <li>{{#link-to 'settings.profile'}} Actions{{/link-to}}</li>
+            {{/if}}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {{#if model.token}}
+            <li><a href="#">Welcome {{model.name}}</a></li>
+            <li><button class="btn btn-danger btn-nav "{{action "ClearToken" on="click"}}>Logout</button></li>
+            {{else}}
+                <li><button class="btn btn-info btn-nav"{{action "LoginPopup" on="click"}}>Login</button></li>
+            {{/if}}
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
+    <div class="row" style="margin-bottom:10px">
+        <div class="col-md-1">
+            <h2 id="Timer" style="margin:0px"></h2>
+        </div>  
+     </div>
+    <div style="margin-top:60px">
+        {{outlet}}
+    </div>
+    
+    <div id="LoginOptions" style="display:none;background-color:white" class="col-md-9">
+        <div class="modal-header">
+            <h4>Log in</h4>
+        </div>
+        
+        <div class="col-md-8" style="margin-top:15px">
+            <button class="btn btn-social facebook" {{action "LoginFacebook" on="click"}}>With Facebook</button>
+            <button class="btn btn-social google" {{action "LoginGoogle" on="click"}}>With Google</button>
+            <button class="btn btn-social github" {{action "LoginGithub" on="click"}}>With GitHub</button>
+            <button class="btn btn-social twitter" {{action "Loginwitter" on="click"}}>With Twitter</button>
+        </div>
+    </div>
+    </script>
+    <script type="text/x-handlebars" data-template-name="idea">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="background:white">
+                <div class="row">
+                    <h4>{{title}}</h4>
+                </div>
+                <div class="row">
+                    <h4>{{description}}</h4>
+                </div>                
+
+            </div>
+            
+        </div>
+        
+    </script>
+    <script type="text/x-handlebars" data-template-name="ideas">
+        {{#view App.CanvasView}}
+        <div class="containezr" style="height:1000px;">
+                {{outlet}}
+        </div>
+        {{/view}} 
+    </script>
+    <script type="text/x-handlebars" data-template-name="ideas/index">
+        
+        {{#each itemController="idea"}}
+        <div style="position:relative;" {{action "StartDrag"   controllers.application on="mouseDown"}} >
+         <div {{action "StopDrag"   controllers.application model on="mouseUp"}}>
+            <div {{action "focus" on="doubleClick"}}>
+                <div class="ideaCard" {{bind-attr style=position}}>
+                    <div class="row grippie"></div>
+                    <div class="row borded">
+                        <div class="col-md-7">
+                            <h4>{{#link-to 'idea' id}}{{model.title}}{{/link-to}}</h4>
+                        </div>
+                        <div class="col-md-5">
+                            <h4 style="float:right;">{{model.user.name}}</h4>
+                        </div>           
+                    </div>
+                    
+                    <div class="row borded"  >
+                        <div class="col-md-12">
+                            <p>{{model.description}}</p>
+                        </div>
+					</div>
+                    {{#if isFocoused}}
+                    <div class="toggle">
+                        <div class="row borded">
+                            <div class="col-md-10">
+                                <p>{{linkCount}} links</p>
+                            </div>
+                             <div class="col-md-2">
+                                 <button type="button" class="btn btn-default btn-xs" style="float:right;">
+                                    <span class="glyphicon glyphicon-chevron-down"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row borded">
+                            <div class="col-md-10">
+                                <p>{{documentCount}} documents</p>
+                            </div>
+                             <div class="col-md-2">
+                                 <button type="button" class="btn btn-default btn-xs" style="float:right;">
+                                    <span class="glyphicon glyphicon-chevron-down"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <p>{{commentCount}} comments</p>
+                            </div>
+                            <div class="col-md-2">
+                                 <button type="button" class="btn btn-default btn-xs" style="float:right;">
+                                    <span class="glyphicon glyphicon-chevron-down"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+	</div>
+    {{/each}}
+    </script>
+    
+    <script type="text/x-handlebars" data-template-name="settings/profile">
+        <div class="row">
+            <div class="col-md-10"><h4>SETTINGS</h4></div>
+            <div class="col-md-10"><h4>SETTINGS</h4></div>
+        </div>
+    </script>
+    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/handlebars-1.0.0.js"></script>
+    <script type="text/javascript" src="http://builds.emberjs.com/tags/v1.0.0/ember.js"></script>
+    <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/ember-data-latest.js"></script>
+    <script type="text/javascript"src="http://emberjs.com.s3.amazonaws.com/getting-started/local_storage_adapter.js"></script>-->
+     
+    <script type="text/javascript" src="/scripts/External/jquery.js"></script>
+    <script type="text/javascript" src="/scripts/External/handlebars.js"></script>
+    <script type="text/javascript" src="/scripts/External/ember.js"></script>
+    <script type="text/javascript" src="/scripts/External/EmberData.js"></script>
+    <script type="text/javascript" src="/scripts/External/ls.js"></script>
+    <script type="text/javascript" src="/scripts/External/bpopup.js"></script>
+    <script type="text/javascript" src="/scripts/External/Param.js"></script>
+    <script type="text/javascript" src="/scripts/External/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/scripts/External/jquery.zoomooz.min.js"></script>
+
+    <script type="text/javascript" src="/scripts/Settings.js"></script>
+    <script type="text/javascript" src="/scripts/App.js"></script>
+    <script type="text/javascript" src="/scripts/Router.js"></script>
+
+    <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
+    <script type="text/javascript" src="/scripts/controllers/IdeaController.js"></script>
+
+    <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
+
+    <script type="text/javascript" src="/scripts/models/Email.js"></script>
+    <script type="text/javascript" src="/scripts/models/Application.js"></script>
+    <script type="text/javascript" src="/scripts/models/Idea.js"></script>
+    <script type="text/javascript" src="/scripts/models/Comment.js"></script>
+    <script type="text/javascript" src="/scripts/models/Link.js"></script>
+    <script type="text/javascript" src="/scripts/models/User.js"></script>
+    <script type="text/javascript" src="/scripts/models/Document.js"></script>
+
+</body>
+</html>
