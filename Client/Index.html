@@ -62,22 +62,6 @@
         </div>
     </div>
     </script>
-    <script type="text/x-handlebars" data-template-name="idea">
-        <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6" style="background:white">
-                <div class="row">
-                    <h4>{{title}}</h4>
-                </div>
-                <div class="row">
-                    <h4>{{description}}</h4>
-                </div>
-
-            </div>
-
-        </div>
-
-    </script>
     <script type="text/x-handlebars" data-template-name="ideas">
         {{#view App.CanvasView}}
         <div class="containezr" style="height:1000px;">
@@ -85,18 +69,10 @@
         </div>
         {{/view}}
     </script>
-    <script type="text/x-handlebars" id="components/blog-post">
-      <h1>Blog Post</h1>
-      <p>Lorem ipsum dolor sit amet.</p>
-         <h4>{{#link-to 'idea' id}}{{title}}{{/link-to}}</h4>
-        <p>Lorem ipsum dolor sit amet.</p>
-    </script>
     <script type="text/x-handlebars" data-template-name="ideas/index">
         {{#each itemController="idea"}}
-            {{#idea-main model=model position=position}}
-
-            {{/idea-main}}
-    {{/each}}
+            {{idea-main model=model position=position}}
+        {{/each}}
     </script>
     <script type="text/x-handlebars" id="components/idea-main">
         <div style="position:relative;" {{action "StartDrag"   controllers.application on="mouseDown"}} >
@@ -151,12 +127,27 @@
                                 </div>
                             </div>
                         </div>
-                        {{yeild}}
                         {{/if}}
                     </div>
                 </div>
             </div>
         </div
+    </script>
+      <script type="text/x-handlebars" data-template-name="idea">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" style="background:white">
+                <div class="row">
+                    <h4>{{title}}</h4>
+                </div>
+                <div class="row">
+                    <h4>{{description}}</h4>
+                </div>
+
+            </div>
+
+        </div>
+
     </script>
     <script type="text/x-handlebars" data-template-name="settings/profile">
         <div class="row">
