@@ -8,7 +8,6 @@
 </head>
 <body>
     <!-- Application Template -->
-
     <script type="text/x-handlebars">
       <nav class="navbar navbar-default" style="position:fixed;width:100%" role="navigation">
       <!-- Brand and toggle get grouped for better mobile display -->
@@ -44,17 +43,17 @@
     <div class="row" style="margin-bottom:10px">
         <div class="col-md-1">
             <h2 id="Timer" style="margin:0px"></h2>
-        </div>  
+        </div>
      </div>
     <div style="margin-top:60px">
         {{outlet}}
     </div>
-    
+
     <div id="LoginOptions" style="display:none;background-color:white" class="col-md-9">
         <div class="modal-header">
             <h4>Log in</h4>
         </div>
-        
+
         <div class="col-md-8" style="margin-top:15px">
             <button class="btn btn-social facebook" {{action "LoginFacebook" on="click"}}>With Facebook</button>
             <button class="btn btn-social google" {{action "LoginGoogle" on="click"}}>With Google</button>
@@ -72,83 +71,93 @@
                 </div>
                 <div class="row">
                     <h4>{{description}}</h4>
-                </div>                
+                </div>
 
             </div>
-            
+
         </div>
-        
+
     </script>
     <script type="text/x-handlebars" data-template-name="ideas">
         {{#view App.CanvasView}}
         <div class="containezr" style="height:1000px;">
                 {{outlet}}
         </div>
-        {{/view}} 
+        {{/view}}
+    </script>
+    <script type="text/x-handlebars" id="components/blog-post">
+      <h1>Blog Post</h1>
+      <p>Lorem ipsum dolor sit amet.</p>
+         <h4>{{#link-to 'idea' id}}{{title}}{{/link-to}}</h4>
+        <p>Lorem ipsum dolor sit amet.</p>
     </script>
     <script type="text/x-handlebars" data-template-name="ideas/index">
-        
         {{#each itemController="idea"}}
+            {{#idea-main model=model position=position}}
+
+            {{/idea-main}}
+    {{/each}}
+    </script>
+    <script type="text/x-handlebars" id="components/idea-main">
         <div style="position:relative;" {{action "StartDrag"   controllers.application on="mouseDown"}} >
-         <div {{action "StopDrag"   controllers.application model on="mouseUp"}}>
+         <div {{action "StopDrag" on="mouseUp"}}>
             <div {{action "focus" on="doubleClick"}}>
                 <div class="ideaCard" {{bind-attr style=position}}>
                     <div class="row grippie"></div>
                     <div class="row borded">
                         <div class="col-md-7">
-                            <h4>{{#link-to 'idea' id}}{{model.title}}{{/link-to}}</h4>
+                            <h4>{{#link-to 'idea' id}}{{model.title}}{{word}}{{/link-to}}</h4>
                         </div>
                         <div class="col-md-5">
                             <h4 style="float:right;">{{model.user.name}}</h4>
-                        </div>           
+                        </div>
                     </div>
-                    
+
                     <div class="row borded"  >
                         <div class="col-md-12">
                             <p>{{model.description}}</p>
                         </div>
-					</div>
-                    {{#if isFocoused}}
-                    <div class="toggle">
-                        <div class="row borded">
-                            <div class="col-md-10">
-                                <p>{{linkCount}} links</p>
+					          </div>
+                        {{#if isFocoused}}
+                            <div class="toggle">
+                            <div class="row borded">
+                                <div class="col-md-10">
+                                    <p>{{linkCount}} links</p>
+                                </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-default btn-xs" style="float:right;">
+                                        <span class="glyphicon glyphicon-chevron-down"></span>
+                                    </button>
+                                </div>
                             </div>
-                             <div class="col-md-2">
-                                 <button type="button" class="btn btn-default btn-xs" style="float:right;">
-                                    <span class="glyphicon glyphicon-chevron-down"></span>
-                                </button>
+                            <div class="row borded">
+                                <div class="col-md-10">
+                                    <p>{{documentCount}} documents</p>
+                                </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-default btn-xs" style="float:right;">
+                                        <span class="glyphicon glyphicon-chevron-down"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <p>{{commentCount}} comments</p>
+                                </div>
+                                <div class="col-md-2">
+                                        <button type="button" class="btn btn-default btn-xs" style="float:right;">
+                                        <span class="glyphicon glyphicon-chevron-down"></span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="row borded">
-                            <div class="col-md-10">
-                                <p>{{documentCount}} documents</p>
-                            </div>
-                             <div class="col-md-2">
-                                 <button type="button" class="btn btn-default btn-xs" style="float:right;">
-                                    <span class="glyphicon glyphicon-chevron-down"></span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-10">
-                                <p>{{commentCount}} comments</p>
-                            </div>
-                            <div class="col-md-2">
-                                 <button type="button" class="btn btn-default btn-xs" style="float:right;">
-                                    <span class="glyphicon glyphicon-chevron-down"></span>
-                                </button>
-                            </div>
-                        </div>
+                        {{yeild}}
+                        {{/if}}
                     </div>
-                    {{/if}}
                 </div>
             </div>
-        </div>
-	</div>
-    {{/each}}
+        </div
     </script>
-    
     <script type="text/x-handlebars" data-template-name="settings/profile">
         <div class="row">
             <div class="col-md-10"><h4>SETTINGS</h4></div>
@@ -160,7 +169,7 @@
     <script type="text/javascript" src="http://builds.emberjs.com/tags/v1.0.0/ember.js"></script>
     <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/ember-data-latest.js"></script>
     <script type="text/javascript"src="http://emberjs.com.s3.amazonaws.com/getting-started/local_storage_adapter.js"></script>-->
-     
+
     <script type="text/javascript" src="/client/scripts/External/jquery.js"></script>
     <script type="text/javascript" src="/client/scripts/External/handlebars.js"></script>
     <script type="text/javascript" src="/client/scripts/External/ember.js"></script>
@@ -177,6 +186,8 @@
 
     <script type="text/javascript" src="/client/scripts/controllers/ApplicationController.js"></script>
     <script type="text/javascript" src="/client/scripts/controllers/IdeaController.js"></script>
+
+    <script type="text/javascript" src="/client/scripts/Components/IdeaMainComponent.js"></script>
 
     <script type="text/javascript" src="/client/scripts/views/CanvasView.js"></script>
 
