@@ -2,21 +2,6 @@
     currentDrag: null,
     word2:'null',
     actions: {
-        LoginPopup: function () {
-            $('#LoginOptions').bPopup();
-        },
-        LoginFacebook: function () {
-            AppSettings.OAuthRedirect(AppSettings.FacebookOAuthURL)
-        },
-        LoginGoogle: function () {
-            AppSettings.OAuthRedirect(AppSettings.GoogleOAuthURL)
-        },
-        LoginGithub: function () {
-            AppSettings.OAuthRedirect(AppSettings.GithubOAuthURL)
-        },
-        LoginTwitter: function () {
-            console.log('Twitter');
-        },
         ClearToken: function () {
             $.cookie(AppSettings.CookieName, '', { expires: -1 });
         },

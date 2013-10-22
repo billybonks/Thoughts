@@ -13,17 +13,16 @@
 
 App.ApplicationRoute = Ember.Route.extend({
     model: function () {
-        App.ApplicationAdapter = DS.FixtureAdapter.extend();
-        /*var sessionToken = $.cookie(AppSettings.CookieName);
+        var sessionToken = 'ED1FE4C627DAC6514F953909E1F24DBF';//$.cookie(AppSettings.CookieName);
         if (sessionToken) {
-             /*DS.RESTAdapter.extend({
-                namespace: 'api',
+            App.ApplicationAdapter = DS.RESTAdapter.extend({
+              //  namespace: 'api',
                 host: AppSettings.WebserviceURL,
-                headers: { 'AccessToken': sessionToken }
-            });*/
-        m = this.store.find('application', 'ED1FE4C627DAC6514F953909E1F24DBF')//sessionToken)
+                headers: { 'Authorization': sessionToken }
+            });
+        m = this.store.find('application', sessionToken)
             return m;
-        //}
+        }
     },
     setupController: function (controller, application) {
         if (application) {

@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-
+app.use(express.bodyParser());
 
 var quotes = [
   { author : 'Audrey Hepburn', text : "Nothing is impossible, the word itself says 'I'm possible'!"},
@@ -9,7 +9,6 @@ var quotes = [
   { author : 'Neale Donald Walsch', text : "You are afraid to die, and you're afraid to live. What a way to exist."}
 ];
 
-app.use(express.bodyParser());
 
 app.get('/', function(req, res) {
   res.json(quotes);

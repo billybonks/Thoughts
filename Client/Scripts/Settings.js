@@ -1,6 +1,6 @@
 ﻿window.AppSettings =
     {
-        WebserviceURL: 'http://localhost:23224',
+        WebserviceURL: 'http://localhost:4730',
         BaseOAuthURL: 'http://localhost:23224/api/AuthorizationUrl?',
         FacebookOAuthURL: 'http://localhost:23224/api/AuthorizationUrl?OAuthProvider=facebook',
         GithubOAuthURL: 'http://localhost:23224/api/AuthorizationUrl?OAuthProvider=github',
