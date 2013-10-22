@@ -3,7 +3,7 @@ exports.GetAllCards=function (req, res){
 }
 
 exports.GetCard=function (req, res){
-
+  res.json({ideas:cards[req.params.id-1]})
 }
 
 exports.DeleteCard=function (req, res){
