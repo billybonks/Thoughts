@@ -3,5 +3,5 @@
     description: DS.attr('string'),
     left: DS.attr('number'),
     top: DS.attr('number'),
-    //user: DS.belongsTo('user', { async: true })
+    user: DS.belongsTo('user', { async: true })
 });

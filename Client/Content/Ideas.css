@@ -27,3 +27,14 @@
     height:7px;
     margin-bottom:15px;
 }
+
+.sidebar-forms{
+  z-index:100;
+  left: 8.333333333333332%;
+  position:fixed;
+  background:white;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  margin-lft:0px;
+  padding:10px;
+}
