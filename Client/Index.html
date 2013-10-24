@@ -75,7 +75,7 @@
         {{/each}}
     </script>
     <script type="text/x-handlebars" id="components/idea-main">
-        <div style="position:relative;" {{action "StartDrag"   controllers.application on="mouseDown"}} >
+        <div style="position:relative;" {{action "StartDrag" on="mouseDown"}} >
          <div {{action "StopDrag" on="mouseUp"}}>
             <div {{action "focus" on="doubleClick"}}>
                 <div class="ideaCard" {{bind-attr style=position}}>
@@ -131,7 +131,7 @@
                     </div>
                 </div>
             </div>
-        </div
+        </div>
     </script>
       <script type="text/x-handlebars" data-template-name="idea">
         <div class="row">

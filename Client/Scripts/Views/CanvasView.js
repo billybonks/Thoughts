@@ -1,4 +1,4 @@
-﻿App.CanvasView = Ember.View.create(Ember.Evented, {
+﻿App.CanvasView = Ember.View.createWithMixins(Ember.Evented, {
     mouseMove: function (event) {
         this.trigger('movement', event);
     },
@@ -13,6 +13,6 @@
 
 /*
 
-      {{outlet}}  
+      {{outlet}}
 </div>
 */
