@@ -4,8 +4,12 @@
         var token = $.urlParam('token');
         if (token) {
             $.cookie(AppSettings.CookieName, token);
-            window.location = window.location.origin
+            window.location = 'http://localhost/'
         }
+        token = $.cookie(AppSettings.CookieName);
+      if(!token){
+        window.location = 'http://localhost/login.html'
+      }
     }
 });
 

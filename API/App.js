@@ -7,8 +7,10 @@ var LoginRoute = require('./Routes/LoginRoute')
 var CardsRoute = require('./Routes/CardsRoute')
 var ApplicationRoute = require('./Routes/ApplicationRoute')
 var UserRoute = require('./Routes/UserRoute')
+var settings = require('./settings.js')
 var passport = require('passport')
   , OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -46,7 +48,7 @@ app.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook',
    function(err, user, info) {
     if (err) { return next(err); }
-    if (user) { return res.redirect("http://localhost/Thoughts/Client/?token="+user.session_token);}
+    if (user) { return res.redirect("http://localhost/?token="+user.session_token);}
   })(req, res, next)
 });
 

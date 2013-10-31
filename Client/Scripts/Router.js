@@ -13,14 +13,14 @@
 
 App.ApplicationRoute = Ember.Route.extend({
     model: function () {
-        var sessionToken = 'ED1FE4C627DAC6514F953909E1F24DBF';//$.cookie(AppSettings.CookieName);
+        var sessionToken = $.cookie(AppSettings.CookieName);
         if (sessionToken) {
             App.ApplicationAdapter = DS.RESTAdapter.extend({
               //  namespace: 'api',
                 host: AppSettings.WebserviceURL,
                 headers: { 'Authorization': sessionToken }
             });
-        m = this.store.find('application', sessionToken)
+            m = this.store.find('application', sessionToken)
             return m;
         }
     },

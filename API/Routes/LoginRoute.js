@@ -8,6 +8,8 @@ var Stream = require('stream');
 var userExists = new Stream();
 var sessionStream = new Stream();
 var md5sum = crypto.createHash('md5');
+var settings = require('./../settings.js')
+
 exports.OnAccessToken =
   function (accessToken, refreshToken, profile, done) {
       fbgraph.setAccessToken(accessToken);
@@ -38,29 +40,22 @@ function FBUserToDBUser(body, accessToken) {
 }
 
 function GetUser(user) {
-  //get user
-    console.log('getting user')
-    neo4j.connect('http://localhost:7474/db/data/', function (err, graph, done) {
-        var query = [
-          'START n=node(*)',
-          'WHERE has (n.id)',
-          'and n.id={id}',
-          'RETURN n'
-        ];
-        graph.query(query.join('\n'), { id: user.id }, function (err, results) {
-            console.log(results.length)
-            if (results.length == 0) {
-              neo4j.connect('http://localhost:7474/db/data/', function (err, graph, done) {
-                  graph.createNode(user, function (err, node) {
-                      console.log(node);
-                      CreateSession(node);
-                  })
-            });
-            }else{
-                console.log('User Found Creating Session');
-                CreateSession(results[0].n);
-              }
+    var query = 'START n=node(*) WHERE has (n.id) and n.id={id} RETURN n';
+    var variableHash = { id: user.id };
+    var queryStream = settings.executeQuery(query,variableHash);
+    queryStream.on('data', function (results) {
+      if (results.length == 0) {
+        settings.DBConnect(function (err, graph, done) {
+          var newCard = 'CREATE (n:Person {data}) RETURN n';
+          graph.createNode(user, function (err, node) {
+            console.log(node);
+            CreateSession(node);
+          });
         });
+      }else{
+        console.log('User Found Creating Session');
+        CreateSession(results[0].n);
+      }
     })
 }
 
@@ -70,13 +65,10 @@ function CreateSession(userRec) {
     md5sum.update(user.access_token);
     var session = md5sum.digest('hex');
     var query = 'START n=node('+userRec.id+') SET n.session_token = {session} RETURN n';
-    neo4j.connect('http://localhost:7474/db/data/', function (err, graph, done) {
-      graph.query(query,{session:session}, function (err, results) {
-        if(err)
-          console.log(err)
-        console.log('session Created'+results)
-        sessionStream.emit('data', results[0].n.data);
-      });
+    var variableHash = {session:session};
+    var queryStream = settings.executeQuery(query,variableHash);
+    queryStream.on('data', function (results) {
+      sessionStream.emit('data', results[0].n.data);
     });
   }else{
     sessionStream.emit('data', user);
