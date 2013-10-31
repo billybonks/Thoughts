@@ -77,11 +77,11 @@ app.all('/applications', function(req, res, next) {
   next();
  });
 
-app.get('/ideas/:id',CardsRoute.GetCard)
-app.put('/ideas/:id',CardsRoute.UpdateCard)
-app.delete('/ideas/:id',CardsRoute.DeleteCard)
-app.get('/ideas',CardsRoute.GetAllCards)
-app.post('/ideas',CardsRoute.CreateCard)
+app.get('/cards/:id',CardsRoute.GetCard)
+app.put('/cards/:id',CardsRoute.UpdateCard)
+app.delete('/cards/:id',CardsRoute.DeleteCard)
+app.get('/cards',CardsRoute.GetAllCards)
+app.post('/cards',CardsRoute.CreateCard)
 app.options('/applications',options)
 
 

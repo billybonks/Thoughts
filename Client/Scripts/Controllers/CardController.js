@@ -1,4 +1,4 @@
-﻿App.IdeaController = Ember.ObjectController.extend({
+﻿App.CardController = Ember.ObjectController.extend({
     actions:{
     },
     position:function(){

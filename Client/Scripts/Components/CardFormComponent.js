@@ -1,15 +1,16 @@
 App.CardFormComponent = Ember.Component.extend({
   title:null,
   description:null,
+  store: null,
   actions:{
     Submit: function(){
-      var card = this.store.createRecord('idea', {
+      var card = this.store.createRecord('card', {
         title: this.get('title'),
         description: this.get('description'),
-        left:0px,
-        top:0px
-        user:null//current user
+        left:0,
+        top:0
       });
+      card.save();
       this.set('title','');
       this.set('description','');
     }

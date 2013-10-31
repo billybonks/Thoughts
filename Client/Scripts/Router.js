@@ -2,8 +2,8 @@
     this.resource('settings', { path: '/settings' }, function () {
         this.route('profile');
     });
-    this.resource('idea', { path: '/idea/:idea_id' });
-    this.resource('ideas', { path: '/ideas' }, function () {
+    this.resource('card', { path: '/card/:card_id' });
+    this.resource('cards', { path: '/cards' }, function () {
         this.route('index');
     });
     this.resource('emails', { path: '/emils' }, function () {
@@ -36,26 +36,26 @@ App.ApplicationRoute = Ember.Route.extend({
     }
 });
 
-App.IdeasRoute = Ember.Route.extend({
+App.CardsRoute = Ember.Route.extend({
     model: function () {
-        return this.store.find('idea');;
+        return this.store.find('card');
     }
 });
 
-App.IdeasIndexRoute = Ember.Route.extend({
+App.CardsIndexRoute = Ember.Route.extend({
     model: function () {
-        return this.modelFor('ideas');;
+        return this.modelFor('cards');
     }
 });
 
 App.EmailsRoute = Ember.Route.extend({
     model: function () {
-        return this.store.find('email');;
+        return this.store.find('email');
     }
 });
 
 App.EmailsIndexRoute = Ember.Route.extend({
     model: function () {
-        return this.modelFor('email');;
+        return this.modelFor('email');
     }
 });

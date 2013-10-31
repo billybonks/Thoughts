@@ -2,7 +2,7 @@ var settings = require('./../settings.js')
 
 exports.GetAllCards=function (req, res){
   console.log(settings.SOME_FILE)
-  res.json({ideas:cards})
+  res.json({cards:cards})
 }
 
 exports.GetCard=function (req, res){
@@ -18,14 +18,10 @@ exports.UpdateCard=function (req, res){
 }
 
 exports.CreateCard=function (req, res){
-    var newCard = 'CREATE (n:Card {data}) RETURN a';
-    var CardPersonRelationShip = "MATCH (person:Person),(node({id}) WHERE person.name = 'Node A' AND card.id = 'Node B'  CREATE a-[r:CREATED]->card RETURN r";
-    neo4j.connect('http://localhost:7474/db/data/', function (err, graph, done) {
-
-        graph.query(query, { data: user.id }, function (err, results) {
-
-        });
-    });
+  var newCard = 'CREATE (n:Card {data}) RETURN a';
+  var newCardHash = req.body;
+  var CardPersonRelationShip = "MATCH (person:Person),(node({id}) WHERE person.name = 'Node A' AND card.id = 'Node B'  CREATE a-[r:CREATED]->card RETURN r";
+  console.log(newCardHash);
 }
 
 

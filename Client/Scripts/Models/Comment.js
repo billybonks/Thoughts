@@ -1,6 +1,6 @@
 ﻿App.Comment = DS.Model.extend({
     body: DS.attr('string'),
-    idea: DS.belongsTo('idea'),
+    idea: DS.belongsTo('Card'),
     user: DS.belongsTo('user')
 });
 

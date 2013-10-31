@@ -1,4 +1,4 @@
-﻿App.Idea = DS.Model.extend({
+﻿App.Card = DS.Model.extend({
     title: DS.attr('string'),
     description: DS.attr('string'),
     left: DS.attr('number'),

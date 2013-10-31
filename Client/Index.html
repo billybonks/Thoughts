@@ -4,7 +4,7 @@
     <title>App</title>
     <link id="bs-css" href="Content/bootstrap.css" rel="stylesheet"/>
     <link id="login" href="Content/Login.css" rel="stylesheet"/>
-    <link id="ideas" href="Content/Ideas.css" rel="stylesheet"/>
+    <link id="cards" href="Content/Cards.css" rel="stylesheet"/>
 </head>
 <body>
     <!-- Application Template -->
@@ -25,7 +25,7 @@
       <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav">
             {{#if model.token}}
-            <li>{{#link-to 'ideas'}} Cards{{/link-to}}</li>
+            <li>{{#link-to 'cards'}} Cards{{/link-to}}</li>
             <li>{{#link-to 'emails'}} Emails{{/link-to}}</li>
             <li>{{#link-to 'settings.profile'}} Actions{{/link-to}}</li>
             {{/if}}
@@ -62,28 +62,28 @@
         </div>
     </div>
     </script>
-    <script type="text/x-handlebars" data-template-name="ideas">
-     {{side-bar}}
+    <script type="text/x-handlebars" data-template-name="cards">
+     {{side-bar store=store}}
         {{#view App.CanvasView}}
         <div class="containezr" style="height:1000px;">
                 {{outlet}}
         </div>
         {{/view}}
     </script>
-    <script type="text/x-handlebars" data-template-name="ideas/index">
-        {{#each itemController="idea"}}
-            {{idea-main model=model position=position}}
+    <script type="text/x-handlebars" data-template-name="cards/index">
+        {{#each itemController="card"}}
+            {{card-main model=model position=position}}
         {{/each}}
     </script>
-    <script type="text/x-handlebars" id="components/idea-main">
+    <script type="text/x-handlebars" id="components/card-main">
         <div style="position:relative;" {{action "StartDrag" on="mouseDown"}} >
          <div {{action "StopDrag" on="mouseUp"}}>
             <div {{action "focus" on="doubleClick"}}>
-                <div class="ideaCard" {{bind-attr style=position}}>
+                <div class="card" {{bind-attr style=position}}>
                     <div class="row grippie"></div>
                     <div class="row borded">
                         <div class="col-md-7">
-                            <h4>{{#link-to 'idea' model.id}}{{model.title}}{{word}}{{/link-to}}</h4>
+                            <h4>{{#link-to 'card' model.id}}{{model.title}}{{word}}{{/link-to}}</h4>
                         </div>
                         <div class="col-md-5">
                             <h4 style="float:right;">{{model.user.name}}</h4>
@@ -136,6 +136,7 @@
     </script>
     <script type="text/x-handlebars"  id="components/side-bar">
       <div >
+        {{#if store}}
         <div class="col-sm-1" style="margin-right:0px;z-index:100;position:fixed;">
           <button type="button" class="btn btn-default btn-sm"  style="width:100%" {{action NewCard}}>
             <span class="glyphicon glyphicon-plus"></span> Card
@@ -148,20 +149,23 @@
         <div class="col-md-4 sidebar-forms" {{bind-attr style=DisplayForm}}>
             <div class="col-md-12" >
               {{#if Card}}
-                {{card-form}}
+                {{card-form store=store}}
               {{/if}}
               {{#if Link}}
-                {{link-form}}
+                {{link-form store=store}}
               {{/if}}
             </div>
         </div>
+        {{/if}}
       </div>
     </script>
     <script type="text/x-handlebars"  id="components/card-form">
      <form role="form">
       <div class="form-group">
+        {{#if store}}
         <label for="title">Title</label>
         {{input type="text" value=title class="form-control"  id="title" placeholder="Enter title"}}
+        {{/if}}
       </div>
       <div class="form-group">
         <label for="description">Description</label>
@@ -173,6 +177,7 @@
     <script type="text/x-handlebars"  id="components/link-form">
      <form role="form">
       <div class="form-group">
+
         <label for="link">Link</label>
         {{input type="text" value=link class="form-control"  id="link" placeholder="Enter link"}}
       </div>
@@ -180,7 +185,7 @@
     </form>
   </script>
 
-      <script type="text/x-handlebars" data-template-name="idea">
+      <script type="text/x-handlebars" data-template-name="card">
         <div class="row">
             <div class="col-md-3"></div>
             <div class="col-md-6" style="background:white">
@@ -225,9 +230,9 @@
     <script type="text/javascript" src="/scripts/Router.js"></script>
 
     <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/IdeaController.js"></script>
+    <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
 
-    <script type="text/javascript" src="/scripts/Components/IdeaMainComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/LinkFormComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardFormComponent.js"></script>
@@ -236,7 +241,7 @@
 
     <script type="text/javascript" src="/scripts/models/Email.js"></script>
     <script type="text/javascript" src="/scripts/models/Application.js"></script>
-    <script type="text/javascript" src="/scripts/models/Idea.js"></script>
+    <script type="text/javascript" src="/scripts/models/Card.js"></script>
     <script type="text/javascript" src="/scripts/models/Comment.js"></script>
     <script type="text/javascript" src="/scripts/models/Link.js"></script>
     <script type="text/javascript" src="/scripts/models/User.js"></script>

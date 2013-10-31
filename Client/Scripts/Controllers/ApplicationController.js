@@ -1,6 +1,7 @@
 ﻿App.ApplicationController = Ember.Controller.extend({
     currentDrag: null,
     word2:'null',
+
     actions: {
         ClearToken: function () {
             $.cookie(AppSettings.CookieName, '', { expires: -1 });

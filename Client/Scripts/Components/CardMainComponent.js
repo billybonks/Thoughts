@@ -1,4 +1,4 @@
-App.IdeaMainComponent = Ember.Component.extend({
+App.CardMainComponent = Ember.Component.extend({
     isFocoused: false,
     eventID: -1,
     dragFunction:null,
