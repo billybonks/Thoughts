@@ -37,7 +37,18 @@ exports.DeleteCard=function (req, res){
 }
 
 exports.UpdateCard=function (req, res){
-
+  var query = ['START card=node('+req.params.id+')',
+               'SET card.title = {title},',
+               'card.description = {description},',
+               'card.top = {top},',
+               'card.left = {left}',
+               ' RETURN card'];
+  var variableHash = req.body.card;
+  delete variableHash['user'];
+  var queryStream = settings.executeQuery(query.join('\n'),variableHash);
+  queryStream.on('data',function(results){
+     res.json({})
+  })
 }
 
 exports.CreateCard=function (req, res){

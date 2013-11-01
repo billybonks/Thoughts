@@ -40,7 +40,6 @@ function FBUserToDBUser(body, accessToken) {
 }
 
 function GetUser(user) {
-
     var query = 'START n=node(*) WHERE has (n.id) and n.id={id} RETURN n';
     var variableHash = { id: user.id };
     var queryStream = settings.executeQuery(query,variableHash);

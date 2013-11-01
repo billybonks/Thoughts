@@ -2,16 +2,27 @@
    background-color: #E5E5E5;
 }
 .card {
-    width:500px;
     position:absolute;
+    padding:15px;
+}
+
+.cardInner {
+    width:500px;
+    position:relative;
     background-color: #fff;
     -webkit-border-radius: 3px;
     border-radius: 3px;
     border: 1px solid #d8d8d8;
     border-bottom-width: 2px;
-    border-top-width: 0;
+    border-top-width: 2px;
     padding:15px;
-    padding-top:0px;
+
+}
+
+.cardBody{
+  z-index:50;
+  background-color: #fff;
+  padding:15px;
 }
 
 .borded {
@@ -22,10 +33,18 @@
     border-left-style:none;
 }
 
-.grippie {
-    background-color:#000;
-    height:7px;
-    margin-bottom:15px;
+.controlls {
+    width:40px;
+    position:absolute;
+    left:-20px;
+    background-color: #E5E5E5
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border: 1px solid #d8d8d8;
+    border-bottom-width: 2px;
+    border-top-width: 2px;
+    border-left-width: 2px;
+    padding-left:10px;
 }
 
 .sidebar-forms{
