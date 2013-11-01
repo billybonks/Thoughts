@@ -4,11 +4,11 @@
         var token = $.urlParam('token');
         if (token) {
             $.cookie(AppSettings.CookieName, token);
-            window.location = 'http://localhost/'
+            window.location = 'http://'+AppSettings.domain+'/'
         }
         token = $.cookie(AppSettings.CookieName);
       if(!token){
-        window.location = 'http://localhost/login.html'
+        window.location = 'http://'+AppSettings.domain+'/login.html'
       }
       App.ApplicationAdapter = DS.RESTAdapter.extend({
         //  namespace: 'api',

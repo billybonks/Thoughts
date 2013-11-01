@@ -2,8 +2,17 @@ var neo4j = require('neo4j-js');
 var Stream = require('stream');
 
 exports.variables = {
-  a: 10,
-  SOME_FILE: '/tmp/foo'
+  facebook_authorization_url: 'https://www.facebook.com/dialog/oauth',
+  facebook_token_url: 'https://graph.facebook.com/oauth/access_token',
+  facebook_client_id: '171284626406184',
+  facebook_client_secret: 'd6265fa2fd27376c2d939ecc9fe64c04',
+  facebook_callback_url: 'http://localhost:4730/auth/facebook/callback',
+  google_authorization_url: 'asd',
+  google_token_url: 'asd',
+  google_client_id: 'asd',
+  google_client_secret: 'asd',
+  google_callback_url: 'asd',
+  domain:'localhost'
 }
 
 exports.DBConnect = function(callback){

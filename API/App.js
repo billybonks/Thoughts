@@ -31,11 +31,11 @@ app.use(express.methodOverride());
 app.use(allowCrossDomain);
 
 passport.use('facebook', new OAuth2Strategy({
-    authorizationURL: 'https://www.facebook.com/dialog/oauth',
-    tokenURL: 'https://graph.facebook.com/oauth/access_token',
-    clientID: '171284626406184',
-    clientSecret: 'd6265fa2fd27376c2d939ecc9fe64c04',
-    callbackURL: 'http://localhost:4730/auth/facebook/callback'
+    authorizationURL: settings.variables.facebook_authorization_url,
+    tokenURL: settings.variables.facebook_token_url,
+    clientID: settings.variables.facebook_client_id,
+    clientSecret: settings.variables.facebook_client_secret,
+    callbackURL: settings.variables.facebook_callback_url
   },LoginRoute.OnAccessToken
 ));
 
@@ -48,7 +48,7 @@ app.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook',
    function(err, user, info) {
     if (err) { console.log(err); return next(err); }
-    if (user){ return res.redirect("http://localhost/?token="+user.session_token);}
+    if (user){ return res.redirect("http://"+settings.domain+"/?token="+user.session_token);}
   })(req, res, next)
 });
 
