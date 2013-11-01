@@ -27,30 +27,30 @@ exports.OnAccessToken =
 
 function FBUserToDBUser(body, accessToken) {
     return user = {
-        id: body.id,
+        id: body.email,
         name: body.name,
         first_name: body.first_name,
         last_name: body.last_name,
-        username: body.username,
         gender: body.gender,
         locale: body.locale,
-        email: body.email,
-        access_token: accessToken
+        fb_username: body.username,
+        fb_uid : body.id,
+        fb_access_token: accessToken
     }
 }
 
 function GetUser(user) {
+
     var query = 'START n=node(*) WHERE has (n.id) and n.id={id} RETURN n';
     var variableHash = { id: user.id };
     var queryStream = settings.executeQuery(query,variableHash);
     queryStream.on('data', function (results) {
       if (results.length == 0) {
-        settings.DBConnect(function (err, graph, done) {
-          var newCard = 'CREATE (n:Person {data}) RETURN n';
-          graph.createNode(user, function (err, node) {
-            console.log(node);
-            CreateSession(node);
-          });
+        var newUser = 'CREATE (n:Person {data}) RETURN n';
+        var newUserHash = {data:user};
+        var queryStream = settings.executeQuery(newUser,newUserHash);
+        queryStream.on('data', function (results) {
+          CreateSession(results[0].n)
         });
       }else{
         console.log('User Found Creating Session');
@@ -62,7 +62,7 @@ function GetUser(user) {
 function CreateSession(userRec) {
   var user = userRec.data;
   if(!user.session_token){
-    md5sum.update(user.access_token);
+    md5sum.update(user.id);
     var session = md5sum.digest('hex');
     var query = 'START n=node('+userRec.id+') SET n.session_token = {session} RETURN n';
     var variableHash = {session:session};

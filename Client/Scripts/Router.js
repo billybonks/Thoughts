@@ -14,25 +14,8 @@
 App.ApplicationRoute = Ember.Route.extend({
     model: function () {
         var sessionToken = $.cookie(AppSettings.CookieName);
-        if (sessionToken) {
-            App.ApplicationAdapter = DS.RESTAdapter.extend({
-              //  namespace: 'api',
-                host: AppSettings.WebserviceURL,
-                headers: { 'Authorization': sessionToken }
-            });
-            m = this.store.find('application', sessionToken)
-            return m;
-        }
-    },
-    setupController: function (controller, application) {
-        if (application) {
-            if (application.id) {
-                controller.set('model', application);
-            } else {
-                $.cookie(AppSettings.CookieName, '', { expires: -1 });
-                window.location = window.location;
-            }
-        }
+        m = this.store.find('application', sessionToken)
+        return m;
     }
 });
 

@@ -47,8 +47,8 @@ app.get('/auth/facebook', passport.authenticate('facebook',{ scope: ['manage_pag
 app.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook',
    function(err, user, info) {
-    if (err) { return next(err); }
-    if (user) { return res.redirect("http://localhost/?token="+user.session_token);}
+    if (err) { console.log(err); return next(err); }
+    if (user){ return res.redirect("http://localhost/?token="+user.session_token);}
   })(req, res, next)
 });
 

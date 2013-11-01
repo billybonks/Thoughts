@@ -1,8 +1,31 @@
 var settings = require('./../settings.js')
 
+
 exports.GetAllCards=function (req, res){
-  console.log(settings.SOME_FILE)
-  res.json({cards:cards})
+  var query = [
+    'MATCH (user:Person)-[Created]->(card:Card)',
+    'WHERE user.session_token = {token}',
+    'RETURN user,card'
+  ]
+  var variablehash = {token:req.headers['authorization']}
+  var queryStream = settings.executeQuery(query.join('\n'),variablehash);
+  queryStream.on('data', function (results) {
+      var ret = [];
+      for(c=0;c<results.length;c++){
+        var entry = {
+          id: results[c].card.id,
+          title: results[c].card.data.title,
+          description: results[c].card.data.description,
+          user: results[c].user.id,
+          left: results[c].card.data.left,
+          top: results[c].card.data.top,
+        }
+        ret.push(entry)
+      }
+      console.log(results);
+      console.log(ret);
+      res.json({cards:ret})
+    });
 }
 
 exports.GetCard=function (req, res){
@@ -18,14 +41,33 @@ exports.UpdateCard=function (req, res){
 }
 
 exports.CreateCard=function (req, res){
-  var newCard = 'CREATE (n:Card {data}) RETURN a';
-  var newCardHash = req.body;
-  var CardPersonRelationShip = "MATCH (person:Person),(node({id}) WHERE person.name = 'Node A' AND card.id = 'Node B'  CREATE a-[r:CREATED]->card RETURN r";
-  console.log(newCardHash);
+  var newCard = 'CREATE (n:Card {data}) RETURN n';
+  var newCardHash = {data:req.body.card};
+  delete newCardHash.data['user'];
+  var queryStream = settings.executeQuery(newCard,newCardHash);
+  queryStream.on('data', function (results) {
+    console.log(results);
+    var cardPersonRelationShip =  [
+      'START b=node('+results[0].n.id+')',
+      'MATCH (a:Person)',
+      'WHERE a.session_token = {token}',
+      'CREATE a-[r:Created]->b',
+      'RETURN b'
+    ];
+    var cardRelHash = {token:req.headers['authorization']}
+    console.log(cardPersonRelationShip.join('\n'))
+    var relStream = settings.executeQuery(cardPersonRelationShip.join('\n'),cardRelHash);
+    relStream.on('data', function (results) {
+      console.log(results);
+      res.json({card:results[0].b.data});
+    });
+  });
 }
-
-
-
+/*START b=node(5)
+MATCH (a:Person)
+WHERE a.session_token = 'a3cc727c7e3e04af4740240bf47c70c2'
+CREATE a-[r:Created]->b
+RETURN a,b*/
 var cards = [
  {
      id: 1,

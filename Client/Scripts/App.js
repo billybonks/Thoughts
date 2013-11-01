@@ -10,6 +10,11 @@
       if(!token){
         window.location = 'http://localhost/login.html'
       }
+      App.ApplicationAdapter = DS.RESTAdapter.extend({
+        //  namespace: 'api',
+        host: AppSettings.WebserviceURL,
+        headers: { 'Authorization': token }
+      });
     }
 });
 
