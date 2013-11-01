@@ -6,7 +6,7 @@ window.AppSettings =
     GithubOAuthURL: 'http://localhost:23224/api/AuthorizationUrl?OAuthProvider=github',
     TwitterOAuthURL: 'http://localhost:23224/api/AuthorizationUrl?OAuthProvider=twitter',
     GoogleOAuthURL: 'http://localhost:23224/api/AuthorizationUrl?OAuthProvider=google',
-    domain:'localhost'
+    domain:'localhost',
     CookieName: 'App',
     OAuthRedirect: function (url) {
     $.ajax({
