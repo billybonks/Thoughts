@@ -1,0 +1,13 @@
+<form role="form">
+  <div class="form-group">
+    {{#if store}}
+    <label for="title">Title</label>
+    {{input type="text" value=title class="form-control"  id="title" placeholder="Enter title"}}
+    {{/if}}
+  </div>
+  <div class="form-group">
+    <label for="description">Description</label>
+    {{textarea value=description cols="80" rows="3" class="form-control"}}
+  </div>
+  <button type="submit" class="btn btn-default" {{action Submit}}>Submit</button>
+</form>

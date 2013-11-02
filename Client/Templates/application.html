@@ -1,0 +1,52 @@
+<nav class="navbar navbar-default" style="position:fixed;width:100%" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">Cards</a>
+  </div>
+
+  <!-- Collect the nav links, forms, and other content for toggling -->
+  <div class="collapse navbar-collapse navbar-ex1-collapse">
+    <ul class="nav navbar-nav">
+      {{#if model.token}}
+      <li>{{#link-to 'cards'}} Cards{{/link-to}}</li>
+      <li>{{#link-to 'emails'}} Emails{{/link-to}}</li>
+      <li>{{#link-to 'settings.profile'}} Actions{{/link-to}}</li>
+      {{/if}}
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      {{#if model.token}}
+      <li><a href="#">Welcome {{model.name}}</a></li>
+      <li><button class="btn btn-danger btn-nav "{{action "ClearToken" on="click"}}>Logout</button></li>
+      {{else}}
+      <li><button class="btn btn-info btn-nav"{{action "LoginPopup" on="click"}}>Login</button></li>
+      {{/if}}
+    </ul>
+  </div><!-- /.navbar-collapse -->
+</nav>
+
+<div class="row" style="margin-bottom:10px">
+  <div class="col-md-1">
+    <h2 id="Timer" style="margin:0px"></h2>
+  </div>
+</div>
+<div style="margin-top:60px">
+  {{outlet}}
+</div>
+
+<div id="LoginOptions" style="display:none;background-color:white" class="col-md-9">
+  <div class="modal-header">
+    <h4>Log in</h4>
+  </div>
+
+  <div class="col-md-8" style="margin-top:15px">
+    <button class="btn btn-social facebook" {{action "LoginFacebook" on="click"}}>With Facebook</button>
+    <button class="btn btn-social google" {{action "LoginGoogle" on="click"}}>With Google</button>
+    <button class="btn btn-social github" {{action "LoginGithub" on="click"}}>With GitHub</button>
+    <button class="btn btn-social twitter" {{action "Loginwitter" on="click"}}>With Twitter</button>
+  </div>

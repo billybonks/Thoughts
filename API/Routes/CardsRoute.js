@@ -9,6 +9,13 @@ exports.GetAllCards=function (req, res){
   ]
   var variablehash = {token:req.headers['authorization']}
   var queryStream = settings.executeQuery(query.join('\n'),variablehash);
+  var attachmentQuery = ['START card=node(19)',
+                         'MATCH (attachment)-[:Attached]->(card)',
+                         'RETURN attachment']
+  var attQueryStream = settings.executeQuery(attachmentQuery.join('\n'),{});
+  attQueryStream.on('data',function(results){
+    console.log(results)
+  })
   queryStream.on('data', function (results) {
       var ret = [];
       for(c=0;c<results.length;c++){

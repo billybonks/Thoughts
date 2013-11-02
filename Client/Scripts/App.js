@@ -1,22 +1,22 @@
-﻿App = Ember.Application.create({
+App = Ember.Application.create({
 
-    ready: function () {
+      ready: function () {
         var token = $.urlParam('token');
         if (token) {
-            $.cookie(AppSettings.CookieName, token);
-            window.location = 'http://'+AppSettings.domain+'/'
+          $.cookie(AppSettings.CookieName, token);
+          window.location = 'http://'+AppSettings.domain+'/'
         }
         token = $.cookie(AppSettings.CookieName);
-      if(!token){
-        window.location = 'http://'+AppSettings.domain+'/login.html'
+        if(!token){
+          window.location = 'http://'+AppSettings.domain+'/login.html'
+        }
+        App.ApplicationAdapter = DS.RESTAdapter.extend({
+          //  namespace: 'api',
+          host: AppSettings.WebserviceURL,
+          headers: { 'Authorization': token }
+        });
       }
-      App.ApplicationAdapter = DS.RESTAdapter.extend({
-        //  namespace: 'api',
-        host: AppSettings.WebserviceURL,
-        headers: { 'Authorization': token }
-      });
-    }
-});
+    });
 
 
 //App.BoardController = new BoardController();

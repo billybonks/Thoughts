@@ -64,13 +64,13 @@ app.update('/tags/:id')
 app.delete('/tags/:id')
 app.get('/tags')
 app.post('/tags')
-*/
+
 app.get('/links/:id',LinksRoute.GetLink)
 app.update('/links/:id',LinksRoute.UpdateLink)
 app.delete('/links/:id',LinksRoute.DeleteLink)
 app.get('/links',LinksRoute.GetAllLinks)
 app.post('/links',LinksRoute.CreateLink)
-
+*/
 app.all('/applications', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");

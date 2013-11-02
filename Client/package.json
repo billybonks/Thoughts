@@ -1,0 +1,9 @@
+{
+  "name": "my-project-name",
+  "version": "0.1.0",
+  "dependencies": {
+    "grunt" : "~0.4.1",
+    "grunt-ember-templates" : "~0.4.1",
+    "grunt-contrib-handlebars" : "~0.5.11"
+  }
+}

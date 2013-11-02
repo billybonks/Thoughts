@@ -1,288 +1,55 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+  <head>
     <title>App</title>
     <link id="bs-css" href="Content/bootstrap.css" rel="stylesheet"/>
     <link id="login" href="Content/Login.css" rel="stylesheet"/>
     <link id="cards" href="Content/Cards.css" rel="stylesheet"/>
-</head>
-<body>
-    <!-- Application Template -->
-    <script type="text/x-handlebars">
-      <nav class="navbar navbar-default" style="position:fixed;width:100%" role="navigation">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">Cards</a>
-      </div>
+  </head>
+  <body>
+  <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+  <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/handlebars-1.0.0.js"></script>
+  <script type="text/javascript" src="http://builds.emberjs.com/tags/v1.0.0/ember.js"></script>
+  <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/ember-data-latest.js"></script>
+  <script type="text/javascript"src="http://emberjs.com.s3.amazonaws.com/getting-started/local_storage_adapter.js"></script>-->
+  <script type="text/javascript" src="/scripts/External/jquery.js"></script>
+  <script type="text/javascript" src="/scripts/External/require.js"></script>
+  <script type="text/javascript" src="/scripts/External/handlebars.js"></script>
+  <script type="text/javascript" src="/scripts/External/ember.js"></script>
+  <script type="text/javascript" src="/scripts/External/EmberData.js"></script>
+  <script type="text/javascript" src="/scripts/External/ls.js"></script>
+  <script type="text/javascript" src="/scripts/External/bpopup.js"></script>
+  <script type="text/javascript" src="/scripts/External/Param.js"></script>
+  <script type="text/javascript" src="/scripts/External/EqualityHelpers.js"></script>
+  <script type="text/javascript" src="/scripts/External/jquery.cookie.js"></script>
+  <script type="text/javascript" src="/scripts/External/jquery.zoomooz.min.js"></script>
 
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse navbar-ex1-collapse">
-        <ul class="nav navbar-nav">
-            {{#if model.token}}
-            <li>{{#link-to 'cards'}} Cards{{/link-to}}</li>
-            <li>{{#link-to 'emails'}} Emails{{/link-to}}</li>
-            <li>{{#link-to 'settings.profile'}} Actions{{/link-to}}</li>
-            {{/if}}
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            {{#if model.token}}
-            <li><a href="#">Welcome {{model.name}}</a></li>
-            <li><button class="btn btn-danger btn-nav "{{action "ClearToken" on="click"}}>Logout</button></li>
-            {{else}}
-                <li><button class="btn btn-info btn-nav"{{action "LoginPopup" on="click"}}>Login</button></li>
-            {{/if}}
-        </ul>
-      </div><!-- /.navbar-collapse -->
-    </nav>
-    <div class="row" style="margin-bottom:10px">
-        <div class="col-md-1">
-            <h2 id="Timer" style="margin:0px"></h2>
-        </div>
-     </div>
-    <div style="margin-top:60px">
-        {{outlet}}
-    </div>
-
-    <div id="LoginOptions" style="display:none;background-color:white" class="col-md-9">
-        <div class="modal-header">
-            <h4>Log in</h4>
-        </div>
-
-        <div class="col-md-8" style="margin-top:15px">
-            <button class="btn btn-social facebook" {{action "LoginFacebook" on="click"}}>With Facebook</button>
-            <button class="btn btn-social google" {{action "LoginGoogle" on="click"}}>With Google</button>
-            <button class="btn btn-social github" {{action "LoginGithub" on="click"}}>With GitHub</button>
-            <button class="btn btn-social twitter" {{action "Loginwitter" on="click"}}>With Twitter</button>
-        </div>
-    </div>
-    </script>
-    <script type="text/x-handlebars" data-template-name="cards">
-     {{side-bar store=store}}
-        {{#view App.CanvasView}}
-        <div class="containezr" style="height:1000px;">
-                {{outlet}}
-        </div>
-        {{/view}}
-    </script>
-    <script type="text/x-handlebars" data-template-name="cards/index">
-        {{#each itemController="card"}}
-            {{card-main model=model position=position}}
-        {{/each}}
-    </script>
-    <script type="text/x-handlebars" id="components/card-main">
-        <div style="position:relative;" {{action "StartDrag" on="mouseDown"}} >
-         <div {{action "StopDrag" model on="mouseUp"}}>
-            <div {{action "focus" on="doubleClick"}}>
-                <div class="card" {{bind-attr style=position}}>
-                    <div class="controlls">
-                      <div class="row">
-                        <div class="col-md-1">
-                          <button type="button" class="btn btn-default btn-xs">
-                            <span class="glyphicon glyphicon-remove"></span>
-                          </button>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-1">
-                          <button type="button" class="btn btn-default btn-xs">
-                            <span class="glyphicon glyphicon-share-alt"></span>
-                          </button>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-1">
-                          <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
-                            {{#if editing}}
-                              <span class="glyphicon glyphicon-check"></span>
-                            {{else}}
-                              <span class="glyphicon glyphicon-edit"></span>
-                            {{/if}}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="cardInner">
-                    <div class="row borded">
-                        <div class="col-md-7">
-                            {{#if editing}}
-                              {{input type="text" value=model.title class="form-control"  id="title" placeholder="Enter title"}}
-                            {{else}}
-                              <h4>{{#link-to 'card' model.id}}{{model.title}}{{/link-to}}</h4>
-                            {{/if}}
-                        </div>
-                        <div class="col-md-5">
-                            <h4 style="float:right;">{{model.user.name}}</h4>
-                        </div>
-                    </div>
-                    <div class="row borded cardBody"  >
-                        <div class="col-md-12">
-                            {{#if editing}}
-                               {{textarea value=model.description cols="80" rows="3" class="form-control"}}
-                            {{else}}
-                              <p>{{model.description}}</p>
-                            {{/if}}
-                        </div>
-					          </div>
-                        {{#if isFocoused}}
-                            <div class="toggle">
-                            <div class="row borded">
-                                <div class="col-md-10">
-                                    <p>{{linkCount}} links</p>
-                                </div>
-                                    <div class="col-md-2">
-                                        <button type="button" class="btn btn-default btn-xs" style="float:right;">
-                                        <span class="glyphicon glyphicon-chevron-down"></span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="row borded">
-                                <div class="col-md-10">
-                                    <p>{{documentCount}} documents</p>
-                                </div>
-                                    <div class="col-md-2">
-                                        <button type="button" class="btn btn-default btn-xs" style="float:right;">
-                                        <span class="glyphicon glyphicon-chevron-down"></span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-10">
-                                    <p>{{commentCount}} comments</p>
-                                </div>
-                                <div class="col-md-2">
-                                        <button type="button" class="btn btn-default btn-xs" style="float:right;">
-                                        <span class="glyphicon glyphicon-chevron-down"></span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        {{/if}}
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-    </script>
-    <script type="text/x-handlebars"  id="components/side-bar">
-      <div >
-        {{#if store}}
-        <div class="col-sm-1" style="margin-right:0px;z-index:100;position:fixed;">
-          <button type="button" class="btn btn-default btn-sm"  style="width:100%" {{action NewCard}}>
-            <span class="glyphicon glyphicon-plus"></span> Card
-          </button>
-          <br />
-          <button type="button" class="btn btn-default btn-sm" style="width:100%" {{action NewLink}}>
-            <span class="glyphicon glyphicon-plus"></span> Link
-          </button>
-        </div>
-        <div class="col-md-4 sidebar-forms" {{bind-attr style=DisplayForm}}>
-            <div class="col-md-12" >
-              {{#if Card}}
-                {{card-form store=store}}
-              {{/if}}
-              {{#if Link}}
-                {{link-form store=store}}
-              {{/if}}
-            </div>
-        </div>
-        {{/if}}
-      </div>
-    </script>
-    <script type="text/x-handlebars"  id="components/card-form">
-     <form role="form">
-      <div class="form-group">
-        {{#if store}}
-        <label for="title">Title</label>
-        {{input type="text" value=title class="form-control"  id="title" placeholder="Enter title"}}
-        {{/if}}
-      </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        {{textarea value=description cols="80" rows="3" class="form-control"}}
-      </div>
-      <button type="submit" class="btn btn-default" {{action Submit}}>Submit</button>
-    </form>
-  </script>
-    <script type="text/x-handlebars"  id="components/link-form">
-     <form role="form">
-      <div class="form-group">
-
-        <label for="link">Link</label>
-        {{input type="text" value=link class="form-control"  id="link" placeholder="Enter link"}}
-      </div>
-      <button type="submit" class="btn btn-default" {{action Submit}}>Submit</button>
-    </form>
-  </script>
-
-      <script type="text/x-handlebars" data-template-name="card">
-        <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6" style="background:white">
-                <div class="row">
-                    <h4>{{title}}</h4>
-                </div>
-                <div class="row">
-                    <h4>{{description}}</h4>
-                </div>
-
-            </div>
-
-        </div>
-
-    </script>
-    <script type="text/x-handlebars" data-template-name="settings/profile">
-        <div class="row">
-            <div class="col-md-10"><h4>SETTINGS</h4></div>
-            <div class="col-md-10"><h4>SETTINGS</h4></div>
-        </div>
-    </script>
-    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-    <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/handlebars-1.0.0.js"></script>
-    <script type="text/javascript" src="http://builds.emberjs.com/tags/v1.0.0/ember.js"></script>
-    <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/ember-data-latest.js"></script>
-    <script type="text/javascript"src="http://emberjs.com.s3.amazonaws.com/getting-started/local_storage_adapter.js"></script>-->
+  <script type="text/javascript" src="/Templates/result.js"></script>
 
 
-    <script type="text/javascript" src="/scripts/External/jquery.js"></script>
-    <script type="text/javascript" src="/scripts/External/handlebars.js"></script>
-    <script type="text/javascript" src="/scripts/External/ember.js"></script>
-    <script type="text/javascript" src="/scripts/External/EmberData.js"></script>
-    <script type="text/javascript" src="/scripts/External/ls.js"></script>
-    <script type="text/javascript" src="/scripts/External/bpopup.js"></script>
-    <script type="text/javascript" src="/scripts/External/Param.js"></script>
-    <script type="text/javascript" src="/scripts/External/EqualityHelpers.js"></script>
-    <script type="text/javascript" src="/scripts/External/jquery.cookie.js"></script>
-    <script type="text/javascript" src="/scripts/External/jquery.zoomooz.min.js"></script>
+  <script type="text/javascript" src="/scripts/Settings.js"></script>
+  <script type="text/javascript" src="/scripts/App.js"></script>
+  <script type="text/javascript" src="/scripts/Router.js"></script>
 
-    <script type="text/javascript" src="/scripts/Settings.js"></script>
-    <script type="text/javascript" src="/scripts/App.js"></script>
-    <script type="text/javascript" src="/scripts/Router.js"></script>
+  <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
+  <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
 
-    <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
+  <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
+  <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
+  <script type="text/javascript" src="/scripts/Components/LinkFormComponent.js"></script>
+  <script type="text/javascript" src="/scripts/Components/CardFormComponent.js"></script>
 
-    <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/LinkFormComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/CardFormComponent.js"></script>
+  <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
 
-    <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
-
-    <script type="text/javascript" src="/scripts/models/Email.js"></script>
-    <script type="text/javascript" src="/scripts/models/Application.js"></script>
-    <script type="text/javascript" src="/scripts/models/Card.js"></script>
-    <script type="text/javascript" src="/scripts/models/Comment.js"></script>
-    <script type="text/javascript" src="/scripts/models/Link.js"></script>
-    <script type="text/javascript" src="/scripts/models/User.js"></script>
-    <script type="text/javascript" src="/scripts/models/Document.js"></script>
+  <script type="text/javascript" src="/scripts/models/Email.js"></script>
+  <script type="text/javascript" src="/scripts/models/Application.js"></script>
+  <script type="text/javascript" src="/scripts/models/Card.js"></script>
+  <script type="text/javascript" src="/scripts/models/Comment.js"></script>
+  <script type="text/javascript" src="/scripts/models/Link.js"></script>
+  <script type="text/javascript" src="/scripts/models/User.js"></script>
+  <script type="text/javascript" src="/scripts/models/Document.js"></script>
 
 
 
-</body>
+  </body>
 </html>

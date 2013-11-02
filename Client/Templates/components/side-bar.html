@@ -1,0 +1,23 @@
+<div >
+  {{#if store}}
+  <div class="col-sm-1" style="margin-right:0px;z-index:100;position:fixed;">
+    <button type="button" class="btn btn-default btn-sm"  style="width:100%" {{action NewCard}}>
+      <span class="glyphicon glyphicon-plus"></span> Card
+    </button>
+    <br />
+    <button type="button" class="btn btn-default btn-sm" style="width:100%" {{action NewLink}}>
+      <span class="glyphicon glyphicon-plus"></span> Link
+    </button>
+  </div>
+  <div class="col-md-4 sidebar-forms" {{bind-attr style=DisplayForm}}>
+    <div class="col-md-12" >
+      {{#if Card}}
+      {{card-form store=store}}
+      {{/if}}
+      {{#if Link}}
+      {{link-form store=store}}
+      {{/if}}
+    </div>
+  </div>
+  {{/if}}
+</div>
