@@ -1,27 +1,18 @@
 //require
 var express = require('express');
-var app = express();
 var request = require('request');
 var neo4j = require('neo4j-js')
 var fbgraph = require('fbgraph')
-var LoginRoute = require('./Routes/LoginRoute')
-var CardsRoute = require('./Routes/CardsRoute')
-var ApplicationRoute = require('./Routes/ApplicationRoute')
-var UserRoute = require('./Routes/UserRoute')
 var settings = require('./settings.js')
 var passport = require('passport')
 var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+
+var LoginRoute = require('./Routes/LoginRoute')
+//Route Requires
 var LinksRoute = require('./Routes/LinkRoute')(settings);
-
-passport.use('facebook', new OAuth2Strategy({
-  authorizationURL: settings.variables.facebook_authorization_url,
-  tokenURL: settings.variables.facebook_token_url,
-  clientID: settings.variables.facebook_client_id,
-  clientSecret: settings.variables.facebook_client_secret,
-  callbackURL: settings.variables.facebook_callback_url
-},LoginRoute.OnAccessToken
-                                           ));
-
+var CardsRoute = require('./Routes/CardsRoute')(settings);
+var ApplicationRoute = require('./Routes/ApplicationRoute')(settings);
+var UserRoute = require('./Routes/UserRoute')(settings);
 
 /* ========================================================================================================
  *
@@ -41,10 +32,24 @@ var allowCrossDomain = function(req, res, next) {
     next();
   }
 };
+var app = express();
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(allowCrossDomain);
 
+/* ========================================================================================================
+ *
+ * OAuth Setup - Keep in alphabetical order
+ *
+ * ===================================================================================================== */
+passport.use('facebook', new OAuth2Strategy({
+  authorizationURL: settings.variables.facebook_authorization_url,
+  tokenURL: settings.variables.facebook_token_url,
+  clientID: settings.variables.facebook_client_id,
+  clientSecret: settings.variables.facebook_client_secret,
+  callbackURL: settings.variables.facebook_callback_url
+},LoginRoute.OnAccessToken
+                                           ));
 
 /* ========================================================================================================
  *
@@ -76,7 +81,7 @@ app.get('/auth/facebook/callback', function(req, res, next) {
  *
  * ===================================================================================================== */
 
-  app.get('/applications/:id',ApplicationRoute.GetApplication)
+app.get('/applications/:id',function (req,res){ApplicationRoute.GetApplication(req,res)})
 
 
 /* ========================================================================================================
@@ -84,11 +89,11 @@ app.get('/auth/facebook/callback', function(req, res, next) {
  * Cards Methods - Keep in alphabetical order
  *
  * ===================================================================================================== */
-  app.delete('/cards/:id',CardsRoute.DeleteCard)
-  app.get('/cards',CardsRoute.GetAllCards)
-  app.get('/cards/:id',CardsRoute.GetCard)
-  app.post('/cards',CardsRoute.CreateCard)
-  app.put('/cards/:id',CardsRoute.UpdateCard)
+  app.delete('/cards/:id',function (req,res){CardsRoute.DeleteCard(req,res)})
+  app.get('/cards',function (req,res){CardsRoute.GetAllCards(req,res)})
+  app.get('/cards/:id',function (req,res){CardsRoute.GetCard(req,res)})
+  app.post('/cards',function (req,res){CardsRoute.CreateCard(req,res)})
+  app.put('/cards/:id',function (req,res){CardsRoute.UpdateCard(req,res)})
 
 
 /* ========================================================================================================
@@ -99,9 +104,7 @@ app.get('/auth/facebook/callback', function(req, res, next) {
   app.delete('/links/:id',LinksRoute.DeleteLink)
   app.get('/links',LinksRoute.GetAllLinks)
   app.get('/links/:id',LinksRoute.GetLink)
-  app.post('/links',function (req,res){
-             LinksRoute.CreateLink(req,res)
-           });
+  app.post('/links',function (req,res){LinksRoute.CreateLink(req,res) });
  // app.update('/links/:id',LinksRoute.UpdateLink)
 
 /* ========================================================================================================
@@ -109,7 +112,7 @@ app.get('/auth/facebook/callback', function(req, res, next) {
  * Users Methods - Keep in alphabetical order
  *
  * ===================================================================================================== */
-  app.get('/users/:id',UserRoute.GetUser)
+app.get('/users/:id',function (req,res){UserRoute.GetUser(req,res)})
 
 /* ========================================================================================================
  *
