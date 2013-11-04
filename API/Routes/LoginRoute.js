@@ -1,14 +1,18 @@
+
 var fbgraph = require('fbgraph');
 var passport = require('passport');
 var neo4j = require('neo4j-js');
-var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+var OAuth2Strategy = require('passport-oauth')
 var crypto = require('crypto');
-
 var Stream = require('stream');
+var settings = require('./../settings.js')
+
+
+
 var userExists = new Stream();
 var sessionStream = new Stream();
 var md5sum = crypto.createHash('md5');
-var settings = require('./../settings.js')
+
 
 exports.OnAccessToken =
   function (accessToken, refreshToken, profile, done) {

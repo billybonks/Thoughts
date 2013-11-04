@@ -17,6 +17,7 @@ App.CardMainComponent = Ember.Component.extend({
       console.log(this.get('isFocoused'));
     },
     ToggleEdit : function(){
+      var ed =this.get('editing');
       this.set('editing', this.get('editing') ? false : true);
     }
   },

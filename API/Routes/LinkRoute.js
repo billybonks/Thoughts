@@ -1,15 +1,40 @@
-var settings = require('./../settings.js')
+//require staements
+var attachment = require('./AttatchmentBase.js')
+var cheerio = require('cheerio')
+var request = require('request')
+var url = require('url');
+
+module.exports = function(settings){
+
+  /* ========================================================================================================
+   *
+   * Class Setup - Keep in alphabetical order
+   *
+   * ===================================================================================================== */
+
+  function Link(){
+    // this.lol();
+  }
+
+  Link.prototype = new attachment(settings);
 
 
-exports.GetAllLinks=function (req, res){
-  var query = [
-    'MATCH (user:Person)-[Created]->(link:Link)',
-    'WHERE user.session_token = {token}',
-    'RETURN user,link'
-  ]
-  var variablehash = {token:req.headers['authorization']}
-  var queryStream = settings.executeQuery(query.join('\n'),variablehash);
-  queryStream.on('data', function (results) {
+  /* ========================================================================================================
+   *
+   * Read Methods - Keep in alphabetical order
+   *
+   * ===================================================================================================== */
+
+  Link.prototype.GetAllLinks=function (req, res){
+    this.proccessRequestVariables(req,res);
+    var query = [
+      'MATCH (user:Person)-[Created]->(link:Link)',
+      'WHERE user.session_token = {token}',
+      'RETURN user,link'
+    ]
+    var variablehash = {token:req.headers['authorization']}
+    var queryStream = settings.executeQuery(query.join('\n'),variablehash);
+    queryStream.on('data', function (results) {
       var ret = [];
       for(c=0;c<results.length;c++){
         var entry = {
@@ -24,50 +49,49 @@ exports.GetAllLinks=function (req, res){
       console.log(ret);
       res.json({links:ret})
     });
-}
+  }
 
-exports.GetLink=function (req, res){
-  res.json({ideas:links[req.params.id-1]})
-}
+  Link.prototype.GetLink=function (req, res){
+    this.proccessRequestVariables();
+  }
 
-exports.DeleteLink=function (req, res){
+  /* ========================================================================================================
+   *
+   * Write Methods - Keep in alphabetical order
+   *
+   * ===================================================================================================== */
 
-}
+  Link.prototype.DeleteLink=function (req, res){
+    this.proccessRequestVariables();
+  }
 
-exports.UpdateLink=function (req, res){
-  var query = ['START link=node('+req.params.id+')',
-               'SET link.title = {title},',
-               'link.description = {description},',
-               'link.href = {href},',
-               ' RETURN link'];
-  var variableHash = req.body.link;
-  delete variableHash['user'];
-  var queryStream = settings.executeQuery(query.join('\n'),variableHash);
-  queryStream.on('data',function(results){
-     res.json({})
-  })
-}
+  Link.prototype.UpdateLink=function (req, res){
+    //this.proccessRequestVariables();
+    console.log('update')
+  }
 
-exports.CreateLink=function (req, res){
-  var newLink = 'CREATE (n:Link {data}) RETURN n';
-  var newLinkHash = {data:req.body.link};
-  delete newLinkHash.data['user'];
-  var queryStream = settings.executeQuery(newLink,newLinkHash);
-  queryStream.on('data', function (results) {
-    console.log(results);
-    var linkPersonRelationShip =  [
-      'START link=node('+results[0].n.id+')',
-      'MATCH (user:Person)',
-      'WHERE user.session_token = {token}',
-      'CREATE user-[r:Created]->link',
-      'RETURN link'
-    ];
-    var linkRelHash = {token:req.headers['authorization']}
-    console.log(linkPersonRelationShip.join('\n'))
-    var relStream = settings.executeQuery(linkPersonRelationShip.join('\n'),linkRelHash);
-    relStream.on('data', function (results) {
-      console.log(results);
-      res.json({link:results[0].b.data});
+  Link.prototype.CreateLink=function (req,res){
+    var responseStream = this.GetLinkTitle(req.body.link.href);
+    responseStream.on('error',function(error){})
+    responseStream.on('data',function(results){this.createAttatchment('Link',results)})
+  }
+
+  Link.prototype.GetLinkTitle= function(herf){
+    var responseStream = new Stream()
+    request(herf, function(err, resp, html) {
+      if (err){
+        responseStream.emit('error',err.code);
+      }
+      var $ = cheerio.load(html);
+      var link = {
+        title:$('TITLE').text()?$('TITLE').text():'no title found',
+        href : herf
+      }
+      console.log(link);
+      res.json(link)
+      responseStream.emit('data',link);
     });
-  });
+    return responseStream;
+  }
+  return new Link()
 }

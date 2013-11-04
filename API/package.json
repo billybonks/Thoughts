@@ -9,6 +9,7 @@
       "passport":"0.1.17",
       "passport-oauth":"1.0.0",
       "request":"2.27.0",
-      "fbgraph":"0.2.7"
+      "fbgraph":"0.2.7",
+      "cheerio":"0.12.3"
   }
 }
