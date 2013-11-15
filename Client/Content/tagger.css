@@ -1,0 +1,34 @@
+
+.taggerWrapper{
+	width:800px;
+	overflow:hidden;
+	border: 1px solid #ccc;
+	display: inline-block;
+    background:white;
+
+}
+
+.taggerClip{
+	width:5000px;
+}
+
+.taggerClip INPUT{
+	margin: 0 auto;
+	width:3000px;
+	border:none
+}
+
+.taggerClip INPUT:focus{
+	border:none
+}
+
+.taggerInput{
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555555;
+  vertical-align: middle;
+  background-color: #ffffff;
+}

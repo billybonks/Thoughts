@@ -1,18 +1,18 @@
 App.SideBarComponent = Ember.Component.extend({
   Active:false,
   CurrentForm:'',
-  Card:false,
-  Link:false,
+  card:false,
+  link:false,
   actions:{
     NewCard: function(){
       this.get('Active') ? this.set('Active',false) : this.set('Active',true)
-      this.set('Card',true);
-      this.set('Link',false);
+      this.set('card',true);
+      this.set('link',false);
     },
     NewLink: function(){
       this.get('Active') ? this.set('Active',false) : this.set('Active',true)
-      this.set('Card',false);
-      this.set('Link',true);
+      this.set('card',false);
+      this.set('link',true);
     }
   },
   DisplayForm:function(){

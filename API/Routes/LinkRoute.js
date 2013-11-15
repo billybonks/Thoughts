@@ -3,6 +3,7 @@ var attachment = require('./AttatchmentBase.js')
 var cheerio = require('cheerio')
 var request = require('request')
 var url = require('url');
+var Stream = require('stream');
 
 module.exports = function(settings){
 
@@ -30,6 +31,7 @@ module.exports = function(settings){
     var query = [
       'MATCH (user:Person)-[Created]->(link:Link)',
       'WHERE user.session_token = {token}',
+      'AND (not(has(link.isDeleted)))',
       'RETURN user,link'
     ]
     var variablehash = {token:req.headers['authorization']}
@@ -61,8 +63,8 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
 
-  Link.prototype.DeleteLink=function (req, res){
-    this.proccessRequestVariables();
+  Link.prototype.DeleteLink=function (id){
+    this.deleteAttac
   }
 
   Link.prototype.UpdateLink=function (req, res){
@@ -72,8 +74,9 @@ module.exports = function(settings){
 
   Link.prototype.CreateLink=function (req,res){
     var responseStream = this.GetLinkTitle(req.body.link.href);
+    createAttachment = this.createAttachment
     responseStream.on('error',function(error){})
-    responseStream.on('data',function(results){this.createAttatchment('Link',results)})
+    responseStream.on('data',function(results){createAttachment('Link',results)})
   }
 
   Link.prototype.GetLinkTitle= function(herf){
@@ -88,7 +91,6 @@ module.exports = function(settings){
         href : herf
       }
       console.log(link);
-      res.json(link)
       responseStream.emit('data',link);
     });
     return responseStream;

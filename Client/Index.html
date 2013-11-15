@@ -5,53 +5,75 @@
     <link id="bs-css" href="Content/bootstrap.css" rel="stylesheet"/>
     <link id="login" href="Content/Login.css" rel="stylesheet"/>
     <link id="cards" href="Content/Cards.css" rel="stylesheet"/>
+    <link id="cards" href="Content/tagger.css" rel="stylesheet"/>
+    <link id="cards" href="Content/popup.css" rel="stylesheet"/>
   </head>
   <body>
-  <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-  <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/handlebars-1.0.0.js"></script>
-  <script type="text/javascript" src="http://builds.emberjs.com/tags/v1.0.0/ember.js"></script>
-  <script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/ember-data-latest.js"></script>
-  <script type="text/javascript"src="http://emberjs.com.s3.amazonaws.com/getting-started/local_storage_adapter.js"></script>-->
+    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/handlebars-1.0.0.js"></script>
+<script type="text/javascript" src="http://builds.emberjs.com/tags/v1.0.0/ember.js"></script>
+<script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/ember-data-latest.js"></script>
+<script type="text/javascript"src="http://emberjs.com.s3.amazonaws.com/getting-started/local_storage_adapter.js"></script>-->
 
-  <script type="text/javascript" src="/inheritence.js"></script>
+    <script type="text/javascript" src="/scripts/External/jquery.js"></script>
+    <script type="text/javascript" src="/scripts/External/require.js"></script>
+    <script type="text/javascript" src="/scripts/External/handlebars.js"></script>
+    <script type="text/javascript" src="/scripts/External/ember.js"></script>
+    <script type="text/javascript" src="/scripts/External/EmberData.js"></script>
+    <script type="text/javascript" src="/scripts/External/ls.js"></script>
+    <script type="text/javascript" src="/scripts/External/bpopup.js"></script>
+    <script type="text/javascript" src="/scripts/External/Param.js"></script>
+    <script type="text/javascript" src="/scripts/External/EqualityHelpers.js"></script>
+    <script type="text/javascript" src="/scripts/External/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/scripts/External/jquery.zoomooz.min.js"></script>
+    <script type="text/javascript" src="/scripts/External/tagger.js"></script>
+    <script type="text/javascript" src="/scripts/External/typehead.js"></script>
+    <script type="text/javascript" src="/Templates/result.js"></script>
 
-  <script type="text/javascript" src="/scripts/External/jquery.js"></script>
-  <script type="text/javascript" src="/scripts/External/require.js"></script>
-  <script type="text/javascript" src="/scripts/External/handlebars.js"></script>
-  <script type="text/javascript" src="/scripts/External/ember.js"></script>
-  <script type="text/javascript" src="/scripts/External/EmberData.js"></script>
-  <script type="text/javascript" src="/scripts/External/ls.js"></script>
-  <script type="text/javascript" src="/scripts/External/bpopup.js"></script>
-  <script type="text/javascript" src="/scripts/External/Param.js"></script>
-  <script type="text/javascript" src="/scripts/External/EqualityHelpers.js"></script>
-  <script type="text/javascript" src="/scripts/External/jquery.cookie.js"></script>
-  <script type="text/javascript" src="/scripts/External/jquery.zoomooz.min.js"></script>
 
-  <script type="text/javascript" src="/Templates/result.js"></script>
+    <script type="text/javascript" src="/scripts/Settings.js"></script>
+    <script type="text/javascript" src="/scripts/App.js"></script>
+    <script type="text/javascript" src="/scripts/Router.js"></script>
+
+    <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
+    <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
+    <script type="text/javascript" src="/scripts/controllers/LinkController.js"></script>
 
 
-  <script type="text/javascript" src="/scripts/Settings.js"></script>
-  <script type="text/javascript" src="/scripts/App.js"></script>
-  <script type="text/javascript" src="/scripts/Router.js"></script>
+    <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/LinkFormComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/CardFormComponent.js"></script>
 
-  <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
-  <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
+    <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
+    <script type="text/javascript" src="/scripts/views/TaggerView.js"></script>
+    <script type="text/javascript" src="/scripts/views/PopupView.js"></script>
+    <script type="text/javascript" src="/scripts/models/Email.js"></script>
+    <script type="text/javascript" src="/scripts/models/Application.js"></script>
+    <script type="text/javascript" src="/scripts/models/Card.js"></script>
+    <script type="text/javascript" src="/scripts/models/Comment.js"></script>
+    <script type="text/javascript" src="/scripts/models/Link.js"></script>
+    <script type="text/javascript" src="/scripts/models/User.js"></script>
+    <script type="text/javascript" src="/scripts/models/Document.js"></script>
+    <script type="text/javascript" src="/scripts/models/Tag.js"></script>
+    <script type="text/x-handlebars" data-template-name="user">
+  <input id="tags" type="text" class="taggerInput" placeholder="Enter tags"/>
+    </script>
 
-  <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
-  <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
-  <script type="text/javascript" src="/scripts/Components/LinkFormComponent.js"></script>
-  <script type="text/javascript" src="/scripts/Components/CardFormComponent.js"></script>
-
-  <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
-
-  <script type="text/javascript" src="/scripts/models/Email.js"></script>
-  <script type="text/javascript" src="/scripts/models/Application.js"></script>
-  <script type="text/javascript" src="/scripts/models/Card.js"></script>
-  <script type="text/javascript" src="/scripts/models/Comment.js"></script>
-  <script type="text/javascript" src="/scripts/models/Link.js"></script>
-  <script type="text/javascript" src="/scripts/models/User.js"></script>
-  <script type="text/javascript" src="/scripts/models/Document.js"></script>
-
+    <script type="text/x-handlebars" data-template-name="popup">
+      <div id="popup" style="left: 470px; position: absolute; top: 387.5px; z-index: 9999; opacity: 1; display: block;" >
+            <span class="button b-close" {{action NewLink}}><span>X</span></span>
+            {{yield}}
+    </div>
+    </script>
+    <script type="text/x-handlebars" data-template-name="hello_popup">
+      hello world
+    </script>
+    <script type="text/x-handlebars" data-template-name="canvas">
+      <div class="containezr" style="height:1000px;">
+  {{outlet}}
+    </div>
+    </script>
 
 
   </body>

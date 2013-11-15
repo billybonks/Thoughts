@@ -13,37 +13,35 @@ module.exports = function(settings){
 
   Attachment.prototype = new seviceModule(settings);
 
-  Attachment.prototype.lol = function(){
-    console.log('lol MOAR???')
-  }
   /* ========================================================================================================
    *
    * Read Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
 
-    Attachment.prototype.getCardAttachments = function(attachmentType,data){
+  Attachment.prototype.getCardAttachments = function(attachmentType,data){
 
-    }
+  }
 
-    Attachment.prototype.getAttachment = function(){
+  Attachment.prototype.getAttachment = function(){
 
-    }
+  }
 
-    /* ========================================================================================================
+  /* ========================================================================================================
    *
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
 
 
-  Attachment.prototype.createAttachment= function(attachmentType,data){
+  Attachment.prototype.createAttachment= function(attachmentType,data,user){
     var resultStream = new Stream();
     var attachmentStream = this.storeAttachment(attachmentType,data);
     var token = this.token;
     var linkOwner = this.linkOwner
     attachmentStream.on('data',function(results){
-      var relationShipStream = linkOwner(results[0].n.id,token);
+      console.log('linking'+results[0].n.id+' + '+user)
+      var relationShipStream = linkOwner(results[0].n.id,user);
       relationShipStream.on('data',function(results){
         resultStream.emit('data',results);
       });
@@ -51,8 +49,17 @@ module.exports = function(settings){
     return resultStream;
   }
 
-  Attachment.prototype.deleteAttachment = function(){
-
+  Attachment.prototype.deleteAttachment = function(id){
+    var responseStream = new Stream();
+    var query = ['START link=node('+id+')',
+                 'SET link.isDeleted = true',
+                 'RETURN link'];
+    console.log(query.join('\n'));
+    var queryStream = settings.executeQuery(query.join('\n'),{});
+    queryStream.on('data',function(results){
+      responseStream.emit('data',results)
+    })
+    return responseStream;
   }
 
   Attachment.prototype.linkCard = function(cardId,attachmentId){
@@ -91,8 +98,8 @@ module.exports = function(settings){
     var query = ['START link=node('+req.params.id+')',
                  'SET link.title = {title},',
                  'link.description = {description},',
-                 'link.href = {href},',
-                 ' RETURN link'];
+                 'link.href = {href}',
+                 'RETURN link'];
     var variableHash = req.body.link;
     delete variableHash['user'];
     var queryStream = settings.executeQuery(query.join('\n'),variableHash);

@@ -71,7 +71,7 @@ app.get('/auth/facebook/callback', function(req, res, next) {
   passport.authenticate('facebook',
                         function(err, user, info) {
                           if (err) { console.log(err); return next(err); }
-                          if (user){ return res.redirect("http://"+settings.domain+"/?token="+user.session_token);}
+                          if (user){ return res.redirect("http://"+settings.variables.domain+"/?token="+user.session_token);}
                         })(req, res, next)
 });
 
@@ -89,11 +89,11 @@ app.get('/applications/:id',function (req,res){ApplicationRoute.GetApplication(r
  * Cards Methods - Keep in alphabetical order
  *
  * ===================================================================================================== */
-  app.delete('/cards/:id',function (req,res){CardsRoute.DeleteCard(req,res)})
-  app.get('/cards',function (req,res){CardsRoute.GetAllCards(req,res)})
-  app.get('/cards/:id',function (req,res){CardsRoute.GetCard(req,res)})
-  app.post('/cards',function (req,res){CardsRoute.CreateCard(req,res)})
-  app.put('/cards/:id',function (req,res){CardsRoute.UpdateCard(req,res)})
+app.delete('/cards/:id',function (req,res){CardsRoute.DeleteCard(req,res)})
+app.get('/cards',function (req,res){CardsRoute.GetAllCards(req,res)})
+app.get('/cards/:id',function (req,res){CardsRoute.GetCard(req,res)})
+app.post('/cards',function (req,res){CardsRoute.CreateCard(req,res)})
+app.put('/cards/:id',function (req,res){CardsRoute.UpdateCard(req,res)})
 
 
 /* ========================================================================================================
@@ -101,11 +101,20 @@ app.get('/applications/:id',function (req,res){ApplicationRoute.GetApplication(r
  * Links Methods - Keep in alphabetical order
  *
  * =====================================================================================================*/
-  app.delete('/links/:id',LinksRoute.DeleteLink)
-  app.get('/links',LinksRoute.GetAllLinks)
-  app.get('/links/:id',LinksRoute.GetLink)
-  app.post('/links',function (req,res){LinksRoute.CreateLink(req,res) });
- // app.update('/links/:id',LinksRoute.UpdateLink)
+app.delete('/links/:id',function (req,res){
+  var response = LinksRoute.deleteAttachment(req.params.id)
+  response.on('data',function(results){
+    res.json(results);
+  })
+})
+app.get('/links',function (req,res){LinksRoute.GetAllLinks(req,res)})
+app.get('/links/:id',LinksRoute.GetLink)
+app.post('/links',function (req,res){
+  var responseStream = LinksRoute.GetLinkTitle(req.body.link.href);
+  responseStream.on('error',function(error){})
+  responseStream.on('data',function(results){LinksRoute.createAttachment('Link',results,req.headers['authorization'])})
+});
+// app.update('/links/:id',LinksRoute.UpdateLink)
 
 /* ========================================================================================================
  *
@@ -120,7 +129,7 @@ app.get('/users/:id',function (req,res){UserRoute.GetUser(req,res)})
  *
  * ===================================================================================================== */
 
-  /*app.get('/tags/:id')
+/*app.get('/tags/:id')
   app.update('/tags/:id')
   app.delete('/tags/:id')
   app.get('/tags')

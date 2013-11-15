@@ -18,9 +18,6 @@ App = Ember.Application.create({
       }
     });
 
-
-//App.BoardController = new BoardController();
-
 Ember.Handlebars.registerHelper("debug", function (optionalValue) {
     console.log("Current Context");
     console.log("====================");

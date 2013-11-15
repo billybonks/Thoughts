@@ -4,7 +4,7 @@
     position:function(){
         return 'left:' + this.get('model').get('left') + 'px;top:' + this.get('model').get('top') + 'px';
     }.property('model.left'),
-    linkCount: function () {
+   /* linkCount: function () {
         this.get('model').get('test');
         var links = this.get('model').get('links');
         links.forEach(function (element) {
@@ -17,7 +17,5 @@
     }.property("model.documents"),
     commentCount: function () {
         return this.get('model').get('comments').length;
-    }.property("model.comments")
-
-
+    }.property("model.comments")*/
 });

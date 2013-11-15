@@ -1,4 +1,5 @@
-﻿App.CanvasView = Ember.View.createWithMixins(Ember.Evented, {
+﻿App.WallView = Ember.View.extend(Ember.Evented, {
+    layoutName : 'canvas',
     mouseMove: function (event) {
         this.trigger('movement', event);
     },

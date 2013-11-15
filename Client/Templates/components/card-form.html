@@ -9,5 +9,9 @@
     <label for="description">Description</label>
     {{textarea value=description cols="80" rows="3" class="form-control"}}
   </div>
+  <div class="form-group">
+    <label for="tags">Tags</label>
+    {{view App.TaggerView}}
+  </div>
   <button type="submit" class="btn btn-default" {{action Submit}}>Submit</button>
 </form>

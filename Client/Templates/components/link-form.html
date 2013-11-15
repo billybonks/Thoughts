@@ -1,7 +1,21 @@
 <form role="form">
+  {{#if title}}
   <div class="form-group">
-    <label for="link">Link</label>
+    <label for="link">Link </label>
+    {{input type="text" value=title class="form-control"  id="title" placeholder="Enter title"}}
+  </div>
+  {{/if}}
+  <div class="form-group">
+    <label for="link">Link </label>
     {{input type="text" value=link class="form-control"  id="link" placeholder="Enter link"}}
   </div>
-  <button type="submit" class="btn btn-default" {{action Submit}}>Submit</button>
+  <div class="form-group">
+    <label for="tags">Tags</label>
+    {{view App.TaggerView}}
+  </div>
+  {{#if id}}
+    <button type="submit" class="btn btn-success" {{action Submit}}>Save</button>
+  {{else}}
+    <button type="submit" class="btn btn-default" {{action Save}}>Submit</button>
+  {{/if}}
 </form>

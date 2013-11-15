@@ -6,7 +6,10 @@
     this.resource('cards', { path: '/cards' }, function () {
         this.route('index');
     });
-    this.resource('emails', { path: '/emils' }, function () {
+    this.resource('emails', { path: '/emails' }, function () {
+        this.route('index');
+    });
+    this.resource('links', { path: '/links' }, function () {
         this.route('index');
     });
 });
@@ -40,5 +43,17 @@ App.EmailsRoute = Ember.Route.extend({
 App.EmailsIndexRoute = Ember.Route.extend({
     model: function () {
         return this.modelFor('email');
+    }
+});
+
+App.LinksRoute = Ember.Route.extend({
+    model: function () {
+        return this.store.find('link');
+    }
+});
+
+App.LinksIndexRoute = Ember.Route.extend({
+    model: function () {
+        return this.modelFor('links');
     }
 });

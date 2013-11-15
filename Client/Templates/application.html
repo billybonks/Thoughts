@@ -16,6 +16,7 @@
       {{#if model.token}}
       <li>{{#link-to 'cards'}} Cards{{/link-to}}</li>
       <li>{{#link-to 'emails'}} Emails{{/link-to}}</li>
+      <li>{{#link-to 'links'}} Links{{/link-to}}</li>
       <li>{{#link-to 'settings.profile'}} Actions{{/link-to}}</li>
       {{/if}}
     </ul>
@@ -44,9 +45,12 @@
     <h4>Log in</h4>
   </div>
 
+
   <div class="col-md-8" style="margin-top:15px">
     <button class="btn btn-social facebook" {{action "LoginFacebook" on="click"}}>With Facebook</button>
     <button class="btn btn-social google" {{action "LoginGoogle" on="click"}}>With Google</button>
     <button class="btn btn-social github" {{action "LoginGithub" on="click"}}>With GitHub</button>
     <button class="btn btn-social twitter" {{action "Loginwitter" on="click"}}>With Twitter</button>
   </div>
+</div>
+
