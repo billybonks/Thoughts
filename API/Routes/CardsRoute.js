@@ -52,7 +52,64 @@ module.exports = function(settings){
     });
   }
 
+  //Currently sideloading data aswell
   Card.prototype.GetCard=function (req, res){
+    this.proccessRequestVariables(req);
+    console.log('id='+this.id);
+    var query=[
+      'Start card=node('+this.id+')',
+      'MATCH (user:Person)-[Created]->(card:Card) ,',
+      '(attachment)-[Attached?]->(card) ',
+      'WHERE user.session_token = {token}',
+      'RETURN card,user,attachment,labels(attachment)'//user,card,attachment'
+    ];
+    console.log(query.join('\n'))
+
+    var variableHash = {token:this.token}
+    var queryStream = settings.executeQuery(query.join('\n'),variableHash);
+    console.log(variableHash)
+    queryStream.on('data',function(results){
+      var card;
+      var user
+      var attachmentids = [];
+      var attachments = [];
+      for(var i = 0;i<results.length;i++){
+        console.log(results)
+        var result = results[i]
+        card = result.card;
+        user = result.user;
+        var attachment = result.attachment;
+        if(attachment){
+          var type = result['labels(attachment)'][0];
+          attachment.type = type;
+          attachmentids.push(attachment.id);
+          attachments.push(attachment);
+        }
+      }
+      var ret = {
+        card:
+        {
+          id:card.id,
+          title:card.data.title,
+          description:card.data.description,
+          left:card.data.left,
+          top:card.data.top,
+          user:user.id,
+          attachments:attachmentids
+        },
+        attachments:attachments
+      }
+      res.json(ret);
+    });
+    /*
+    title: DS.attr('string'),
+    description: DS.attr('string'),
+    left: DS.attr('number'),
+    top: DS.attr('number'),
+    user: DS.belongsTo('user', { async: true }),
+    attachments: DS.belongsTo('attachment',{async:true})
+    */
+    //{ data : n, labels: labels(n), id: id(n) }
   }
 
   /* ========================================================================================================
@@ -60,6 +117,29 @@ module.exports = function(settings){
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
+  Card.prototype.CreateCard=function (req, res){
+    var newCard = 'CREATE (n:Card {data}) RETURN n';
+    var newCardHash = {data:req.body.card};
+    delete newCardHash.data['user'];
+    var queryStream = settings.executeQuery(newCard,newCardHash);
+    queryStream.on('data', function (results) {
+      console.log(results);
+      var cardPersonRelationShip =  [
+        'START b=node('+results[0].n.id+')',
+        'MATCH (a:Person)',
+        'WHERE a.session_token = {token}',
+        'CREATE a-[r:Created]->b',
+        'RETURN b'
+      ];
+      var cardRelHash = {token:req.headers['authorization']}
+      console.log(cardPersonRelationShip.join('\n'))
+      var relStream = settings.executeQuery(cardPersonRelationShip.join('\n'),cardRelHash);
+      relStream.on('data', function (results) {
+        console.log(results);
+        res.json({card:results[0].b.data});
+      });
+    });
+  }
 
   Card.prototype.DeleteCard=function (req, res){
   }

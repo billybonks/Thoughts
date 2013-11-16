@@ -1,0 +1,26 @@
+<div class="card">
+  <div class="cardInner">
+    <div class="row borded" >
+      <div class="col-md-10">
+        <h4>Links</h4>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-default btn-sm" {{action edit}}>
+          <span class="glyphicon glyphicon-plus" ></span> New
+        </button>
+      </div>
+    </div>
+    <div class="row borded cardBody"  >
+      <div class="col-md-12">
+        <button type="button" class="btn btn-default btn-sm">
+          <span class="glyphicon glyphicon-globe"></span>{{word}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{{#if isEditing}}
+      {{#view App.PopupView viewName="popup"}}
+      {{link-form store=store}}
+      {{/view}}
+{{/if}}

@@ -6,11 +6,11 @@ App.CardMainComponent = Ember.Component.extend({
   actions: {
     StartDrag: function (application) {
       this.set('dragFunction', this.get('MouseMove')(this.get('model')));
-      App.CanvasView.on('movement', this.get('dragFunction'));
+      App.WallView.on('movement', this.get('dragFunction'));
     },
     StopDrag: function (model) {
       model.save();
-      App.CanvasView.off('movement', this.get('dragFunction'));
+      App.WallView.off('movement', this.get('dragFunction'));
     },
     focus: function () {
       this.set('isFocoused', this.get('isFocoused') ? false : true);

@@ -55,6 +55,7 @@ module.exports = function(settings){
 
   Link.prototype.GetLink=function (req, res){
     this.proccessRequestVariables();
+    this.getAttachment();
   }
 
   /* ========================================================================================================

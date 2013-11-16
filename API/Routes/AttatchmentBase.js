@@ -19,12 +19,21 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
 
-  Attachment.prototype.getCardAttachments = function(attachmentType,data){
+  Attachment.prototype.getAttachments = function(ids){
 
   }
 
-  Attachment.prototype.getAttachment = function(){
-
+  Attachment.prototype.getAttachment = function(id){
+    var resultStream = new Stream();
+    var query =  [
+      'START attachment=node('+id+')',
+      'RETURN attachment'
+    ];
+    var queryStream = settings.executeQuery(query.join('\n'),{});
+    queryStream.on('data',function(results){
+      console.log(results)
+    });
+    return resultStream;
   }
 
   /* ========================================================================================================

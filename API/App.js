@@ -95,6 +95,7 @@ app.get('/cards/:id',function (req,res){CardsRoute.GetCard(req,res)})
 app.post('/cards',function (req,res){CardsRoute.CreateCard(req,res)})
 app.put('/cards/:id',function (req,res){CardsRoute.UpdateCard(req,res)})
 
+app.get('/attachments',function(req,res){console.log('a');console.log(req.query)})
 
 /* ========================================================================================================
  *
