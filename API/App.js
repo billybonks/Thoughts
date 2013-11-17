@@ -89,11 +89,37 @@ app.get('/applications/:id',function (req,res){ApplicationRoute.GetApplication(r
  * Cards Methods - Keep in alphabetical order
  *
  * ===================================================================================================== */
-app.delete('/cards/:id',function (req,res){CardsRoute.DeleteCard(req,res)})
-app.get('/cards',function (req,res){CardsRoute.GetAllCards(req,res)})
-app.get('/cards/:id',function (req,res){CardsRoute.GetCard(req,res)})
-app.post('/cards',function (req,res){CardsRoute.CreateCard(req,res)})
-app.put('/cards/:id',function (req,res){CardsRoute.UpdateCard(req,res)})
+app.delete('/cards/:id',function (req,res){
+                          var response = CardsRoute.DeleteCard(req.headers['authorization'],req.params.id)
+                          response.on('data',function(results){
+                            res.json({})
+                          })
+                      });
+
+app.get('/cards',function (req,res){
+                      var response = CardsRoute.GetAllCards(req.headers['authorization']);
+                      response.on('data',function(results){
+                      res.json({cards:results})
+                    })//res.json(ret);
+});
+app.get('/cards/:id',function (req,res){
+                      var response = CardsRoute.GetCard(req.headers['authorization'],req.params.id);
+                      response.on('data',function(results){
+                        res.json(results)
+                      })// UpdateCard
+                     });
+app.post('/cards',function (req,res){
+                      var response = CardsRoute.CreateCard(req.headers['authorization'],req.body.card)
+                      response.on('data',function(results){
+                        res.json({card:results})
+                      })
+                  });
+app.put('/cards/:id',function (req,res){
+                      var response = CardsRoute.UpdateCard(req.body.card,req.params.id)
+                      response.on('data',function(results){
+                        res.json({})
+                      })
+                  });
 
 app.get('/attachments',function(req,res){console.log('a');console.log(req.query)})
 app.post('/attachments',function(req,res){console.log(req.body)})

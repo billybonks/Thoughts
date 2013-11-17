@@ -1,5 +1,6 @@
 //require staements
 var seviceModule = require('./ServiceModule.js')
+var Stream = require('stream');
 
 module.exports = function(settings){
 
@@ -18,13 +19,14 @@ module.exports = function(settings){
    * Read Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  Card.prototype.GetAllCards=function (req, res){
+  Card.prototype.GetAllCards=function (token){
     var query = [
       'MATCH (user:Person)-[Created]->(card:Card)',
       'WHERE user.session_token = {token}',
       'RETURN user,card'
     ]
-    var variablehash = {token:req.headers['authorization']}
+    var responseStream = new Stream()
+    var variablehash = {token:token}
     var queryStream = settings.executeQuery(query.join('\n'),variablehash);
     var attachmentQuery = ['START card=node(19)',
                            'MATCH (attachment)-[:Attached]->(card)',
@@ -46,18 +48,15 @@ module.exports = function(settings){
         }
         ret.push(entry)
       }
-      console.log(results);
-      console.log(ret);
-      res.json({cards:ret})
+      responseStream.emit('data',ret)
     });
+    return responseStream;
   }
 
   //Currently sideloading data aswell
-  Card.prototype.GetCard=function (req, res){
-    this.proccessRequestVariables(req);
-    console.log('id='+this.id);
+  Card.prototype.GetCard=function (token,id){
     var query=[
-      'Start card=node('+this.id+')',
+      'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card) ,',
       '(attachment)-[Attached?]->(card) ',
       'WHERE user.session_token = {token}',
@@ -65,8 +64,9 @@ module.exports = function(settings){
     ];
     console.log(query.join('\n'))
 
-    var variableHash = {token:this.token}
+    var variableHash = {token:token}
     var queryStream = settings.executeQuery(query.join('\n'),variableHash);
+    var responseStream = new Stream()
     console.log(variableHash)
     queryStream.on('data',function(results){
       var card;
@@ -99,17 +99,9 @@ module.exports = function(settings){
         },
         attachments:attachments
       }
-      res.json(ret);
+      responseStream.emit('data',ret)
     });
-    /*
-    title: DS.attr('string'),
-    description: DS.attr('string'),
-    left: DS.attr('number'),
-    top: DS.attr('number'),
-    user: DS.belongsTo('user', { async: true }),
-    attachments: DS.belongsTo('attachment',{async:true})
-    */
-    //{ data : n, labels: labels(n), id: id(n) }
+    return responseStream;
   }
 
   /* ========================================================================================================
@@ -117,9 +109,10 @@ module.exports = function(settings){
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  Card.prototype.CreateCard=function (req, res){
+  Card.prototype.CreateCard=function (token,data){
     var newCard = 'CREATE (n:Card {data}) RETURN n';
-    var newCardHash = {data:req.body.card};
+    var newCardHash = {data:data};
+    var responseStream = new Stream();
     delete newCardHash.data['user'];
     var queryStream = settings.executeQuery(newCard,newCardHash);
     queryStream.on('data', function (results) {
@@ -131,56 +124,33 @@ module.exports = function(settings){
         'CREATE a-[r:Created]->b',
         'RETURN b'
       ];
-      var cardRelHash = {token:req.headers['authorization']}
-      console.log(cardPersonRelationShip.join('\n'))
+      var cardRelHash = {token:token}
       var relStream = settings.executeQuery(cardPersonRelationShip.join('\n'),cardRelHash);
       relStream.on('data', function (results) {
-        console.log(results);
-        res.json({card:results[0].b.data});
+        responseStream.emit(results[0].b.data)
       });
     });
+    return responseStream;
   }
 
-  Card.prototype.DeleteCard=function (req, res){
+  Card.prototype.DeleteCard=function (token, id){
   }
 
-  Card.prototype.UpdateCard=function (req, res){
-    var query = ['START card=node('+req.params.id+')',
+  Card.prototype.UpdateCard=function (data,id){
+    var query = ['START card=node('+id+')',
                  'SET card.title = {title},',
                  'card.description = {description},',
                  'card.top = {top},',
                  'card.left = {left}',
                  ' RETURN card'];
-    var variableHash = req.body.card;
+    var responseStream = new Stream();
+    var variableHash = data;
     delete variableHash['user'];
     var queryStream = settings.executeQuery(query.join('\n'),variableHash);
     queryStream.on('data',function(results){
-      res.json({})
+      responseStream.emit('data',results);
     })
-  }
-
-  Card.prototype.DeleteCard=function (req, res){
-    var newCard = 'CREATE (n:Card {data}) RETURN n';
-    var newCardHash = {data:req.body.card};
-    delete newCardHash.data['user'];
-    var queryStream = settings.executeQuery(newCard,newCardHash);
-    queryStream.on('data', function (results) {
-      console.log(results);
-      var cardPersonRelationShip =  [
-        'START b=node('+results[0].n.id+')',
-        'MATCH (a:Person)',
-        'WHERE a.session_token = {token}',
-        'CREATE a-[r:Created]->b',
-        'RETURN b'
-      ];
-      var cardRelHash = {token:req.headers['authorization']}
-      console.log(cardPersonRelationShip.join('\n'))
-      var relStream = settings.executeQuery(cardPersonRelationShip.join('\n'),cardRelHash);
-      relStream.on('data', function (results) {
-        console.log(results);
-        res.json({card:results[0].b.data});
-      });
-    });
+    return responseStream;
   }
 
   return new Card()
