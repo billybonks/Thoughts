@@ -392,7 +392,13 @@ function program16(depth0,data) {
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "lol", {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\r\n          <div class=\"controlls\">\r\n            <div class=\"row\">\r\n              <div class=\"col-md-1\">\r\n                <button type=\"button\" class=\"btn btn-default btn-xs\">\r\n                  <span class=\"glyphicon glyphicon-remove\"></span>\r\n                </button>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-md-1\">\r\n                <button type=\"button\" class=\"btn btn-default btn-xs\">\r\n                  <span class=\"glyphicon glyphicon-share-alt\"></span>\r\n                </button>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-md-1\">\r\n                <button type=\"button\" class=\"btn btn-default btn-xs\"  ");
+  data.buffer.push("\r\n          <div class=\"controlls\">\r\n            <div class=\"row\">\r\n              <div class=\"col-md-1\">\r\n                <button type=\"button\" class=\"btn btn-default btn-xs\" ");
+  hashContexts = {'on': depth0};
+  hashTypes = {'on': "STRING"};
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "Delete", {hash:{
+    'on': ("click")
+  },contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(">\r\n                  <span class=\"glyphicon glyphicon-remove\"></span>\r\n                </button>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-md-1\">\r\n                <button type=\"button\" class=\"btn btn-default btn-xs\">\r\n                  <span class=\"glyphicon glyphicon-share-alt\"></span>\r\n                </button>\r\n              </div>\r\n            </div>\r\n            <div class=\"row\">\r\n              <div class=\"col-md-1\">\r\n                <button type=\"button\" class=\"btn btn-default btn-xs\"  ");
   hashContexts = {'on': depth0};
   hashTypes = {'on': "STRING"};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "ToggleEdit", {hash:{

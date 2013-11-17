@@ -19,6 +19,11 @@ App.CardMainComponent = Ember.Component.extend({
     ToggleEdit : function(){
       var ed =this.get('editing');
       this.set('editing', this.get('editing') ? false : true);
+    },
+    Delete: function(){
+      var card = this.get('model');
+      card.deleteRecord();
+      card.save();
     }
   },
   MouseMove: function (model) {
