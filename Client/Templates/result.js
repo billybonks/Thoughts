@@ -148,10 +148,11 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['card-main'] || depth0['card-main']),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "card-main", options))));
   data.buffer.push("\r\n    </div>\r\n    <div class=\"col-md-6\">\r\n      ");
-  hashContexts = {'question': depth0};
-  hashTypes = {'question': "ID"};
+  hashContexts = {'card': depth0,'store': depth0};
+  hashTypes = {'card': "ID",'store': "ID"};
   options = {hash:{
-    'question': ("model")
+    'card': ("model"),
+    'store': ("store")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['link-main'] || depth0['link-main']),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "link-main", options))));
   data.buffer.push("\r\n    </div>\r\n  </div>\r\n</div>");
@@ -461,7 +462,7 @@ function program5(depth0,data) {
   data.buffer.push("\r\n    <button type=\"submit\" class=\"btn btn-default\" ");
   hashTypes = {};
   hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.action.call(depth0, "Save", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "Submit", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push(">Submit</button>\r\n  ");
   return buffer;
   }
@@ -483,9 +484,11 @@ function program5(depth0,data) {
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
   data.buffer.push("\r\n  </div>\r\n  <div class=\"form-group\">\r\n    <label for=\"tags\">Tags</label>\r\n    ");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.TaggerView", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  hashContexts = {'viewName': depth0};
+  hashTypes = {'viewName': "STRING"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.TaggerView", {hash:{
+    'viewName': ("tagger")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\r\n  </div>\r\n  ");
   hashTypes = {};
   hashContexts = {};
@@ -503,11 +506,13 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = '', stack1, hashTypes, hashContexts;
+  var buffer = '', stack1, hashContexts, hashTypes;
   data.buffer.push("\r\n      ");
-  hashTypes = {};
-  hashContexts = {};
-  stack1 = helpers.view.call(depth0, "App.PopupView", {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  hashContexts = {'viewName': depth0};
+  hashTypes = {'viewName': "STRING"};
+  stack1 = helpers.view.call(depth0, "App.PopupView", {hash:{
+    'viewName': ("popup")
+  },inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\r\n");
   return buffer;
@@ -515,11 +520,12 @@ function program1(depth0,data) {
 function program2(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
-  data.buffer.push("\r\n      ");
-  hashContexts = {'store': depth0};
-  hashTypes = {'store': "ID"};
+  data.buffer.push("\r\n        ");
+  hashContexts = {'store': depth0,'card': depth0};
+  hashTypes = {'store': "ID",'card': "ID"};
   options = {hash:{
-    'store': ("store")
+    'store': ("store"),
+    'card': ("card")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['link-form'] || depth0['link-form']),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "link-form", options))));
   data.buffer.push("\r\n      ");

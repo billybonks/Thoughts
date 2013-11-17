@@ -1,25 +1,38 @@
 App.LinkFormComponent = Ember.Component.extend({
   link:null,
   actions:{
-      Submit: function(){
-        //title to be set server side
+    Submit: function(){
+      //title to be set server side
 
-        var href = this.get('link');
-
-        if(this.urlIsWellFormed(href)){
-          var link = this.store.createRecord('link', {
-            link: href
-          });
-          link.set('title','');
-          link.set('href',this.get('link'));
-          link.save();
-          this.set('link','');
-        }else{
-          //TODO : Implement form validation erros
-          console.log('error')
+      var card =this.get('card').get('id');
+      var tags = this.get('tagger').getTags()
+      var href = this.get('link');
+      console.log(tags);
+      if(this.urlIsWellFormed(href)){
+        var data = {
+          data: {
+            link:href
+          },
+          tags:tags,
+          type:'Link',
+          cardsIn:[card],
+          tagsIn:tags,
         }
-        //protocol index 2 //domain index 3
+
+        var link = this.store.createRecord('attachment', data);
+        if(card){
+          var cards =link.get('cards');
+          //.find()
+         // cards.pushObject(card)
+        }
+        link.save();
+        this.set('link','');
+      }else{
+        //TODO : Implement form validation erros
+        console.log('error')
       }
+      //protocol index 2 //domain index 3
+    }
   },
   urlIsWellFormed:function(url){
     var regex = /^((http[s]?|ftp[s]):\/)?\/?([^:\/\s]*)/

@@ -43,7 +43,22 @@ module.exports = function(settings){
    * ===================================================================================================== */
 
 
-  Attachment.prototype.createAttachment= function(attachmentType,data,user){
+  Attachment.prototype.createAttachment= function(attachmentType,data,user,tags){
+    var resultStream = new Stream();
+    var attachmentStream = this.storeAttachment(attachmentType,data);
+    var token = this.token;
+    var linkOwner = this.linkOwner
+    attachmentStream.on('data',function(results){
+      console.log('linking'+results[0].n.id+' + '+user)
+      var relationShipStream = linkOwner(results[0].n.id,user);
+      relationShipStream.on('data',function(results){
+        resultStream.emit('data',results);
+      });
+    });
+    return resultStream;
+  }
+
+    Attachment.prototype.createAttachment= function(attachmentType,data,user,card,tags){
     var resultStream = new Stream();
     var attachmentStream = this.storeAttachment(attachmentType,data);
     var token = this.token;

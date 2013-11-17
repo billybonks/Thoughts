@@ -3,14 +3,14 @@ App.CardMainComponent = Ember.Component.extend({
   eventID: -1,
   dragFunction:null,
   editing:false,
+  subscription:null,
   actions: {
     StartDrag: function (application) {
-      this.set('dragFunction', this.get('MouseMove')(this.get('model')));
-      App.WallView.on('movement', this.get('dragFunction'));
+      subscription = Em.subscribe('mouse',this.get('MouseMove')(this.get('model')));
     },
     StopDrag: function (model) {
       model.save();
-      App.WallView.off('movement', this.get('dragFunction'));
+      Ember.Instrumentation.unsubscribe(this.get('subscription'))
     },
     focus: function () {
       this.set('isFocoused', this.get('isFocoused') ? false : true);
@@ -22,24 +22,30 @@ App.CardMainComponent = Ember.Component.extend({
     }
   },
   MouseMove: function (model) {
-    var model = model;
-    var x = -1;
-    var y = -1;
-    function dragIdea(event) {
-      if (x == -1) {
-        x = event.clientX;
-        y = event.clientY;
-        return;
+    return {
+      model: model,
+      x : -1,
+      y : -1,
+      before: function(name, timestamp, event) {
+        console.log(this.x)
+        console.log(event.clientX)
+        if (this.x == -1) {
+          this.x = event.clientX;
+          this.y = event.clientY;
+          return;
+        }
+        var diffX = this.x - event.clientX;
+        var diffY = this.y - event.clientY;
+        var left = parseInt(this.model.get('left'),10);
+        var top = parseInt(this.model.get('top'),10);
+        console.log(left-diffX)
+        this.model.set('left', left-diffX);
+        this.model.set('top', top - diffY);
+        this.x = event.clientX;
+        this.y = event.clientY;
+      },
+      after: function(name, timestamp, event, beforeRet) {
       }
-      var diffX = x - event.clientX;
-      var diffY = y - event.clientY;
-      var left = parseInt(model.get('left'),10);
-      var top = parseInt(model.get('top'),10);
-      model.set('left', left-diffX);
-      model.set('top', top - diffY);
-      x = event.clientX;
-      y = event.clientY;
     }
-    return dragIdea;
   }
 });

@@ -19,12 +19,20 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
 
+  Tag.prototype.TagExists= function (title){
+
+  }
   /* ========================================================================================================
    *
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  Tag.prototype.CreateTag=function (title,description,target){
+  Tag.prototype.CreateAndTagEntity=function (title,description,target){
+    var createTagQuery = 'CREATE (n:Tag {data}) RETURN n';
+    var newCardHash = {data:{title:title,description:description}};
+  }
+
+  Tag.prototype.TagEntity=function (nodeId,tags){
 
   }
   return new Tag();

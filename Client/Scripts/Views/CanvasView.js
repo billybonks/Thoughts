@@ -1,7 +1,8 @@
 ﻿App.WallView = Ember.View.extend(Ember.Evented, {
     layoutName : 'canvas',
     mouseMove: function (event) {
-        this.trigger('movement', event);
+        Em.instrument("mouse.move",event,function(){},this)
+       // this.trigger('movement', event);
     },
     mouseLeave: function (event) {
       //  console.log('mouseOut');
@@ -17,6 +18,10 @@
 });
 
 /*
+        Em.instrument("student.here", this.get('content'), function() {
+            //mark student as in attendance
+            this.set('inAttendance', !this.get('inAttendance'));
+        }, this)
 
       {{outlet}}
 </div>
