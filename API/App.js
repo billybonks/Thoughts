@@ -81,7 +81,12 @@ app.get('/auth/facebook/callback', function(req, res, next) {
  *
  * ===================================================================================================== */
 
-app.get('/applications/:id',function (req,res){ApplicationRoute.GetApplication(req,res)})
+app.get('/applications/:id',function (req,res){
+                              var response = ApplicationRoute.GetApplication(req.headers['authorization'])
+                              response.on('data',function(results){
+                                  res.json({applications:results})
+                              })
+                            })
 
 
 /* ========================================================================================================
