@@ -6,9 +6,6 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
   function ServiceModule(){
-    this.id = '';
-    this.token = ''
-    console.log('service module creating')
   }
   /* ========================================================================================================
    *
@@ -19,6 +16,20 @@ module.exports = function(settings){
     console.log('processing Vars')
     this.id = req.params.id;
     this.token = req.headers['authorization'];
+  }
+
+  ServiceModule.prototype.DeleteEntity=function(id){
+    var responseStream = new Stream();
+    var query = ['START n=node('+id+')',
+                 'SET n.isDeleted = true',
+                 'RETURN n'];
+    console.log(query.join('\n'));
+    var queryStream = settings.executeQuery(query.join('\n'),{});
+    queryStream.on('data',function(results){
+      responseStream.emit('data',results)
+      console.log(results);
+    })
+    return responseStream;
   }
 
   return new ServiceModule();
