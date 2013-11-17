@@ -6,6 +6,7 @@ App.CardMainComponent = Ember.Component.extend({
   subscription:null,
   actions: {
     StartDrag: function (application) {
+      console.log('drag');
       subscription = Em.subscribe('mouse',this.get('MouseMove')(this.get('model')));
     },
     StopDrag: function (model) {
@@ -19,8 +20,10 @@ App.CardMainComponent = Ember.Component.extend({
     ToggleEdit : function(){
       var ed =this.get('editing');
       this.set('editing', this.get('editing') ? false : true);
+      return false;
     },
     Delete: function(){
+      console.log('delete');
       var card = this.get('model');
       card.deleteRecord();
       card.save();

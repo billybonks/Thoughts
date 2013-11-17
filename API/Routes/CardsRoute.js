@@ -26,6 +26,7 @@ module.exports = function(settings){
     var query = [
       'MATCH (user:Person)-[Created]->(card:Card)',
       'WHERE user.session_token = {token}',
+      'AND not(has(card.isDeleted))',
       'RETURN user,card'
     ]
     var responseStream = new Stream()

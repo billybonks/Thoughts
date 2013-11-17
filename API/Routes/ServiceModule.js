@@ -1,4 +1,5 @@
 //require staements
+var Stream = require('stream');
 module.exports = function(settings){
   /* ========================================================================================================
    *
