@@ -125,13 +125,13 @@ module.exports = function(settings){
   }
 
   Tag.prototype.TagEntity=function (nodeId,tags){
-    var resultStream = this.responseStream
     var cacheStream = this.PrepareCache(tags)
     var cache = this.cache;
     var TagBase = this.TagBase;
     var Create = this.CreateAndTagEntity;
     var context = this;
-
+    var emitter = this;
+    console.log('tagging')
     cacheStream.on('data',function(results){
       var count = tags.length;
       var counter = 0
@@ -146,7 +146,7 @@ module.exports = function(settings){
             console.log('counter = '+counter)
             if(counter == count){
               console.log('done')
-              resultStream.emit('TagEntity.done',{});
+              emitter.emit('TagEntity.done',{});
             }
           })
         }else{
@@ -157,14 +157,13 @@ module.exports = function(settings){
             console.log('counter = '+counter)
             if(counter == count){
               console.log('done')
-              resultStream.emit('TagEntity.done',{});
+              emitter.emit('TagEntity.done',{});
             }
           })
 
         }
       }
     });
-    return resultStream;
   }
 
 

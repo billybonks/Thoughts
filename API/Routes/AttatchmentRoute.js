@@ -47,18 +47,23 @@ module.exports = function(settings){
     var attachment = null;
     var linkOwner = this.linkOwner
     var tagger = this.tags;
-    var emit = this.emit
+    var emitter = this
     this.tags.once('TagEntity.done',function(results){
-      emit('createAttachmentBase.done',attachment);
+      emitter.emit('createAttachmentBase.done',attachment);
     });
 
     this.once('StoreAttachment.done',function(results){
       console.log('token ** ' +token);
       var attachmentId = results[0].n.id;
       attachment = results[0].n;
+
       var relationShipStream = linkOwner(attachmentId,token);
       relationShipStream.on('data',function(results){
-        tagger.TagEntity(attachmentId,tags)
+        if(tags.length == 0){
+          emitter.emit('createAttachmentBase.done',attachment);
+        }else{
+          tagger.TagEntity(attachmentId,tags)
+        }
       });
     });
     var attachmentStream = this.storeAttachment(attachmentType,data);
@@ -67,7 +72,7 @@ module.exports = function(settings){
   Attachment.prototype.createAttachment= function(attachmentType,data,token,tags,cardId){
     var resultStream = new Stream();
     var linkCard = this.linkCard;
-    var emit = this.emit;
+    var emitter = this;
     this.once('createAttachmentBase.done',function(results){
       console.log('attachments')
       console.log(results)
@@ -76,11 +81,11 @@ module.exports = function(settings){
         //link card
         console.log('link card')
         console.log(results)
-        emit('createAttachment.done',results);
+        emitter.emit('createAttachment.done',results);
       })
     })
     var attachmentStream = this.createAttachmentBase(attachmentType,data,token,tags)
-  }
+    }
 
   Attachment.prototype.deleteAttachment = function(id){
     var responseStream = new Stream();
@@ -115,6 +120,7 @@ module.exports = function(settings){
       'CREATE user-[r:Created]->attachment',
       'RETURN attachment'
     ];
+    console.log('linking owner')
     var variableHash = {token:sessionToken}
     var relStream = settings.executeQuery(query.join('\n'),variableHash);
     return relStream;
@@ -124,8 +130,10 @@ module.exports = function(settings){
     var query = 'CREATE (n:'+attachmentType+' {data}) RETURN n';
     var variableHash = {data:data};
     var queryStream = settings.executeQuery(query,variableHash);
+    var emitter = this;
     queryStream.once('data',function(results){
-      this.emit('StoreAttachment.done',results)
+      console.log('attachmentSTored')
+      emitter.emit('StoreAttachment.done',results)
     })
   }
 
