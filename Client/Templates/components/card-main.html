@@ -49,12 +49,15 @@
             <div class="row borded cardBody"  >
               <div class="col-md-12">
                 {{#if editing}}
-                {{textarea value=model.description cols="80" rows="3" class="form-control"}}
-                {{else}}
-                <p>{{model.description}}</p>
+                  {{textarea value=model.description cols="80" rows="3" class="form-control"}}
+                  {{else}}
+                  <p>{{model.description}}</p>
                 {{/if}}
               </div>
             </div>
+            {{#each model.tags}}
+              <span class="label label-success">{{title}}</span>
+            {{/each}}
           </div>
         </div>
       </div>

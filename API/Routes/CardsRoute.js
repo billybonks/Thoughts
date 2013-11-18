@@ -29,32 +29,29 @@ module.exports = function(settings){
       'MATCH (user:Person)-[Created]->(card:Card)',
       'WHERE user.session_token = {token}',
       'AND not(has(card.isDeleted))',
-      'RETURN user,card'
+      'RETURN card'
     ]
     var responseStream = new Stream()
     var variablehash = {token:token}
     var queryStream = settings.executeQuery(query.join('\n'),variablehash);
-    var attachmentQuery = ['START card=node(19)',
-                           'MATCH (attachment)-[:Attached]->(card)',
-                           'RETURN attachment']
-    var attQueryStream = settings.executeQuery(attachmentQuery.join('\n'),{});
-    attQueryStream.on('data',function(results){
-      console.log(results)
-    })
+    var GetCard = this.GetCard;
     queryStream.on('data', function (results) {
+      var cardsCount = results.length
+      var counter= 0;
       var ret = [];
-      for(c=0;c<results.length;c++){
-        var entry = {
-          id: results[c].card.id,
-          title: results[c].card.data.title,
-          description: results[c].card.data.description,
-          user: results[c].user.id,
-          left: results[c].card.data.left,
-          top: results[c].card.data.top,
-        }
-        ret.push(entry)
+      for(c=0;c<cardsCount;c++){
+        var id = results[c].card.id;
+        var resultStream = GetCard(token,id)
+        resultStream.on('data',function(result){
+          ret.push(result.card)
+          counter++
+          if(cardsCount ==counter){
+            responseStream.emit('data',ret)
+            console.log(ret)
+          }
+        })
+
       }
-      responseStream.emit('data',ret)
     });
     return responseStream;
   }
@@ -64,32 +61,48 @@ module.exports = function(settings){
     var query=[
       'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card) ,',
-      '(attachment)-[Attached?]->(card) ',
+      '(attachment:Attachment)-[Attached?]->(card),',
+      '(tag:Tag)-[Tagged?]->(card)',
       'WHERE user.session_token = {token}',
-      'RETURN card,user,attachment,labels(attachment)'//user,card,attachment'
+      'RETURN card,user,attachment,labels(attachment),tag'//user,card,attachment'
     ];
-    console.log(query.join('\n'))
+   // console.log(query.join('\n'))
 
     var variableHash = {token:token}
     var queryStream = settings.executeQuery(query.join('\n'),variableHash);
     var responseStream = new Stream()
-    console.log(variableHash)
+   // console.log(variableHash)
     queryStream.on('data',function(results){
+     // console.log(results);
       var card;
       var user
-      var attachmentids = [];
-      var attachments = [];
+      var tags = {};
+      var attachments = {};
       for(var i = 0;i<results.length;i++){
-        console.log(results)
+      //  console.log(results)
         var result = results[i]
         card = result.card;
         user = result.user;
         var attachment = result.attachment;
+        var tag = result.tag;
         if(attachment){
           var type = result['labels(attachment)'][0];
+          var id = attachment.id
+          var data = Object.clone(attachment.data);
           attachment.type = type;
-          attachmentids.push(attachment.id);
-          attachments.push(attachment);
+          attachment.id = id;
+          attachment = {
+            id:id,
+            data:data,
+            type:type,
+          }
+          attachments[attachment.id] = attachment
+        }
+        if(tag){
+          var id = tag.id;
+          var tag = Object.clone(tag.data);
+          tag['id'] = id;
+          tags[tag.id] = tag;
         }
       }
       var ret = {
@@ -101,10 +114,22 @@ module.exports = function(settings){
           left:card.data.left,
           top:card.data.top,
           user:user.id,
-          attachments:attachmentids
+          attachments:[],
+          tags:[]
         },
-        attachments:attachments
+        attachments:[],
+        tags:[],
       }
+      for(var id in attachments){
+        ret.card.attachments.push(id);
+        ret.attachments.push(attachments[id])
+      }
+      for(var id in tags){
+        ret.card.tags.push(id);
+        ret.tags.push(tags[id])
+      }
+
+    //  console.log(ret);
       responseStream.emit('data',ret)
     });
     return responseStream;
@@ -116,6 +141,7 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
   Card.prototype.CreateCard=function (token,data,tags){
+    console.log('Creating card Tag')
     var newCard = 'CREATE (n:Card {data}) RETURN n';
     var newCardHash = {data:data};
     var user = this.user;
@@ -127,10 +153,11 @@ module.exports = function(settings){
       var cardId = results[0].n.id;
       var response = user.CreatedEntity(token,cardId)
       response.on('data', function (results) {
-        var ret = results[0].b.data;
-        //
+        var user = results.user;
+        var card = results.entity;
         var tagStream = tagger.TagEntity(cardId,tags)
         tagStream.on('data',function(results){
+          console.log('tagger');
           console.log(results);
           console.log(ret);
           responseStream.emit('data',ret);

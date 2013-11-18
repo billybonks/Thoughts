@@ -27,11 +27,37 @@ module.exports = function(settings){
     }else{
       return false;
     }
-
+  }
+  Tag.prototype.GetTags=function(ids){
+    var responseStream = new Stream();
+    var query = 'START n=node('
+    for(var c =0; c <ids.length;c++){
+      if(c+1 == ids.length){
+        query += ids[c];
+      }else{
+        query += ids[c]+',';
+      }
+    }
+    query +=  ') return n';
+    var queryStream = settings.executeQuery(query,{});
+    queryStream.on('data',function(results){
+      var ret = [];
+      for(var i =0;i<results.length;i++){
+        var tag = {
+          id : results[0].n.id,
+          title:results[0].n.data.title,
+          description :results[0].n.data.description
+        }
+        ret.push(tag);
+      }
+      responseStream.emit('data',ret);
+    })
+    return responseStream
   }
 
   Tag.prototype.PrepareCache= function (tags){
     //match (n:Card) where n.title='QWerty' OR n.title='asdasd' return n
+    var resultStream = new Stream()
     var query =  [];
     var cache = this.cache;
     query.push('match (n:Tag)')
@@ -46,13 +72,15 @@ module.exports = function(settings){
     console.log(query.join('\n'))
     var queryStream = settings.executeQuery(query.join('\n'),{});
     queryStream.on('data',function(results){
-        console.log('resulted')
-        for(var i = 0;i < results.length;i++){
-          console.log(results[i])
-          console.log(cache);
-          cache[results[i].n.data.title] = results[i].n;
-        }
-    })
+      console.log('resulted')
+      for(var i = 0;i < results.length;i++){
+        console.log(results[i])
+        console.log(cache);
+        cache[results[i].n.data.title] = results[i].n;
+      }
+      resultStream.emit('data',null);
+    });
+    return resultStream;
   }
   /* ========================================================================================================
    *
@@ -96,26 +124,44 @@ module.exports = function(settings){
   }
 
   Tag.prototype.TagEntity=function (nodeId,tags){
-    this.PrepareCache(tags)
     var resultStream = new Stream();
-    var count = tags.length;
-    var counter = 0
-    for(var i = 0; i < tags.length;i++){
-      if(!this.TagExists(tags[i])){
-        var result = this.CreateAndTagEntity(tags[i],'',nodeId)
-        result.on('data',function(results){
-          counter++;
-          console.log(counter);
-          if(counter == count){
-            resultStream.emit('data',null);
-          }
-        })
-      }else{
-        this.TagBase(nodeId,this.cache[tags[i]].id)
+    var cacheStream = this.PrepareCache(tags)
+    var cache = this.cache;
+    var TagBase = this.TagBase;
+    var Create = this.CreateAndTagEntity;
+    var context = this;
+
+    cacheStream.on('data',function(results){
+      var count = tags.length;
+      var counter = 0
+      for(var i = 0; i < tags.length;i++){
+        counter++;
+        console.log(tags[i] in cache);
+        if(tags[i] in cache){
+          console.log('retag');
+          var result = TagBase.call(context,nodeId,cache[tags[i]].id)
+          result.on('data',function(results){
+            if(counter == count){
+              console.log('done')
+              resultStream.emit('data',null);
+            }
+          })
+        }else{
+          console.log('newTag');
+          var result = Create.call(context,tags[i],'',nodeId)
+          result.on('data',function(results){
+            if(counter == count){
+              console.log('done')
+              resultStream.emit('data',null);
+            }
+          })
+
+        }
       }
-    }
+    });
     return resultStream;
   }
+
 
   return new Tag(settings);
 }

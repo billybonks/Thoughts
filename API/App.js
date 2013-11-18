@@ -14,7 +14,8 @@ var CardsRoute = require('./Routes/CardsRoute')(settings);
 var ApplicationRoute = require('./Routes/ApplicationRoute')(settings);
 var UserRoute = require('./Routes/UserRoute')(settings);
 var AttachmentRoute = require('./Routes/AttatchmentRoute')(settings);
-
+var TagsRoute = require('./Routes/TagsRoute')(settings);
+//
 /* ========================================================================================================
  *
  * Http Setup - Keep in alphabetical order
@@ -115,7 +116,13 @@ app.get('/cards/:id',function (req,res){
                       })// UpdateCard
                      });
 app.post('/cards',function (req,res){
-                      var response = CardsRoute.CreateCard(req.headers['authorization'],req.body.card)
+                      console.log(req.body.card.tagsIn)
+                      var card = req.body.card
+                      var tagsIn = card.tagsIn;
+                      delete card['attachments'];
+                      delete card['tags'];
+                      delete card['tagsIn'];
+                      var response = CardsRoute.CreateCard(req.headers['authorization'],card,tagsIn)
                       response.on('data',function(results){
                         res.json({card:results})
                       })
@@ -127,7 +134,19 @@ app.put('/cards/:id',function (req,res){
                       })
                   });
 
-app.get('/attachments',function(req,res){console.log('a');console.log(req.query)})
+app.get('/cards',function (req,res){
+                      var response = CardsRoute.GetAllCards(req.headers['authorization']);
+                      response.on('data',function(results){
+                      res.json({cards:results})
+                    })//res.json(ret);
+});
+
+app.get('/tags',function(req,res){
+  var responseStream = TagsRoute.GetTags(req.query.ids);
+  responseStream.on('data',function(results){
+    res.json({tags:results})
+  })
+})
 
 app.post('/attachments',function(req,res){
                     var body = req.body.attachment;
@@ -135,6 +154,7 @@ app.post('/attachments',function(req,res){
                     var cardId = body.cardsIn[0];
                     var resultStream;
                     if(body.type=='Link'){
+
                       resultStream=LinksRoute.CreateLink(body.data.link,req.headers['authorization'],body.tagsIn,cardId);
                     }
                     resultStream.on('data',function(results){
@@ -181,6 +201,17 @@ app.get('/users/:id',function (req,res){UserRoute.GetUser(req,res)})
   app.delete('/tags/:id')
   app.get('/tags')
   app.post('/tags')*/
+
+Object.defineProperty(Object.prototype, "clone", {
+    enumerable: false,
+    value: function(from) {
+        var ret = {}
+        for(var prop in from){
+          ret[prop] = from[prop];
+        }
+        return ret;
+    }
+});
 
 app.listen(process.env.PORT || 4730);
 

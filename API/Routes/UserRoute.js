@@ -38,17 +38,18 @@ module.exports = function(settings){
    * ===================================================================================================== */
   User.prototype.CreatedEntity = function(token,id){
         var cardPersonRelationShip =  [
-        'START b=node('+id+')',
-        'MATCH (a:Person)',
-        'WHERE a.session_token = {token}',
-        'CREATE a-[r:Created]->b',
-        'RETURN b'
+        'START entity=node('+id+')',
+        'MATCH (user:Person)',
+        'WHERE user.session_token = {token}',
+        'CREATE user-[r:Created]->entity',
+        'RETURN user,entity'
       ];
       var cardRelHash = {token:token}
       var responseStream = new Stream();
       var relStream = settings.executeQuery(cardPersonRelationShip.join('\n'),cardRelHash);
       relStream.on('data', function (results) {
-        responseStream.emit(results[0].b.data)
+        console.log(results[0])
+        responseStream.emit('data',results[0]);
       });
     return responseStream;
   }
