@@ -1,5 +1,5 @@
 //require staements
-var attachment = require('./AttatchmentBase.js')
+var attachment = require('./AttatchmentRoute.js')
 var cheerio = require('cheerio')
 var request = require('request')
 var url = require('url');
@@ -63,21 +63,21 @@ module.exports = function(settings){
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
+  Link.prototype.CreateLink=function (href,token,tags,cardid){
 
-  Link.prototype.DeleteLink=function (id){
-    this.deleteAttac
-  }
-
-  Link.prototype.UpdateLink=function (req, res){
-    //this.proccessRequestVariables();
-    console.log('update')
-  }
-
-  Link.prototype.CreateLink=function (req,res){
-    var responseStream = this.GetLinkTitle(req.body.link.href);
-    createAttachment = this.createAttachment
+    var returnStream = new Stream();
+    var responseStream = this.GetLinkTitle(href);
+    var createAttachment = this.createAttachment
+    var context = this;
     responseStream.on('error',function(error){})
-    responseStream.on('data',function(results){createAttachment('Link',results)})
+    responseStream.on('data',function(results){
+        console.log('token =='+token)
+        var resultStream = createAttachment.call(context,'Link',results,token,tags,cardid);
+        resultStream.on('data',function(results){
+          returnStream.emit('data',results);
+        })
+    })
+    return returnStream;
   }
 
   Link.prototype.GetLinkTitle= function(herf){

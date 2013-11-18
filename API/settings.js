@@ -34,3 +34,19 @@ exports.executeQuery = function(query,variableHash){
   });
   return queryStream;
 }
+//var batch = graph.createBatch();
+exports.executeBatchQuery = function(batch,variableHash){
+  var queryStream = new Stream();
+  neo4j.connect('http://localhost:7474/db/data/',function (err, graph, done) {
+    //console.log(variableHash);
+      //console.log(query);
+      var data = variableHash;
+    graph.query(query,variableHash, function (err, results) {
+        if(err)
+          throw err;
+        else
+          queryStream.emit('data',results)
+      });
+  });
+  return queryStream;
+}

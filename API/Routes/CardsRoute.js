@@ -2,6 +2,7 @@
 var ServiceModule = require('./ServiceModule.js')
 var UserRoute = require('./UserRoute.js')
 var Stream = require('stream');
+var TagsRoute = require('./TagsRoute.js')
 
 module.exports = function(settings){
 
@@ -12,6 +13,7 @@ module.exports = function(settings){
    * ===================================================================================================== */
   function Card(settings){
     this.user = new UserRoute(settings);
+    this.tags = new TagsRoute(settings);
   }
 
   Card.prototype = new ServiceModule(settings);
@@ -113,17 +115,26 @@ module.exports = function(settings){
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  Card.prototype.CreateCard=function (token,data){
+  Card.prototype.CreateCard=function (token,data,tags){
     var newCard = 'CREATE (n:Card {data}) RETURN n';
     var newCardHash = {data:data};
     var user = this.user;
     var responseStream = new Stream();
+    var tagger = this.tags;
     delete newCardHash.data['user'];
     var queryStream = settings.executeQuery(newCard,newCardHash);
     queryStream.on('data', function (results) {
-      var response = user.CreatedEntity(token,results[0].n.id)
+      var cardId = results[0].n.id;
+      var response = user.CreatedEntity(token,cardId)
       response.on('data', function (results) {
-        responseStream.emit(results[0].b.data)
+        var ret = results[0].b.data;
+        //
+        var tagStream = tagger.TagEntity(cardId,tags)
+        tagStream.on('data',function(results){
+          console.log(results);
+          console.log(ret);
+          responseStream.emit('data',ret);
+        })
       });
     });
     return responseStream;

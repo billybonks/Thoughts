@@ -1,5 +1,5 @@
 //require staements
-var seviceModule = require('./ServiceModule.js')
+var ServiceModule = require('./ServiceModule.js')
 var Stream = require('stream');
 
 module.exports = function(settings){
@@ -9,10 +9,10 @@ module.exports = function(settings){
    * Class Setup - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  function Application(){
+  function Application(settings){
   }
 
-  Application.prototype = new seviceModule(settings);
+  Application.prototype = new ServiceModule(settings);
 
   /* ========================================================================================================
    *
@@ -42,5 +42,5 @@ module.exports = function(settings){
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  return new Application();
+  return new Application(settings);
 }

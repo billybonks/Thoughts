@@ -13,6 +13,7 @@ var LinksRoute = require('./Routes/LinkRoute')(settings);
 var CardsRoute = require('./Routes/CardsRoute')(settings);
 var ApplicationRoute = require('./Routes/ApplicationRoute')(settings);
 var UserRoute = require('./Routes/UserRoute')(settings);
+var AttachmentRoute = require('./Routes/AttatchmentRoute')(settings);
 
 /* ========================================================================================================
  *
@@ -127,7 +128,20 @@ app.put('/cards/:id',function (req,res){
                   });
 
 app.get('/attachments',function(req,res){console.log('a');console.log(req.query)})
-app.post('/attachments',function(req,res){console.log(req.body)})
+
+app.post('/attachments',function(req,res){
+                    var body = req.body.attachment;
+                    console.log(body);
+                    var cardId = body.cardsIn[0];
+                    var resultStream;
+                    if(body.type=='Link'){
+                      resultStream=LinksRoute.CreateLink(body.data.link,req.headers['authorization'],body.tagsIn,cardId);
+                    }
+                    resultStream.on('data',function(results){
+                      res.json(results);
+                    })
+                    //AttachmentRoute.createAttachment(body.type,{title='',href=},,)
+                  })
 
 /* ========================================================================================================
  *

@@ -1,17 +1,17 @@
 //Require Statements
 var Stream = require('stream');
-var seviceModule = require('./ServiceModule.js')
-
+var ServiceModule = require('./ServiceModule.js')
+var TagsRoute = require('./TagsRoute.js')
 module.exports = function(settings){
 
   var _responseStream = new Stream();
 
-  function Attachment(){
-    console.log('creatingAttachment')
+  function Attachment(settings){
+    this.tags = new TagsRoute(settings);
   }
 
 
-  Attachment.prototype = new seviceModule(settings);
+  Attachment.prototype = new ServiceModule(settings);
 
   /* ========================================================================================================
    *
@@ -43,33 +43,40 @@ module.exports = function(settings){
    * ===================================================================================================== */
 
 
-  Attachment.prototype.createAttachment= function(attachmentType,data,user,tags){
+  Attachment.prototype.createAttachmentBase= function(attachmentType,data,token,tags){
     var resultStream = new Stream();
+     console.log('token ==== ' +token);
     var attachmentStream = this.storeAttachment(attachmentType,data);
-    var token = this.token;
+    //var token = this.token;
     var linkOwner = this.linkOwner
+    var tagger = this.tags;
     attachmentStream.on('data',function(results){
-      console.log('linking'+results[0].n.id+' + '+user)
-      var relationShipStream = linkOwner(results[0].n.id,user);
+      console.log('token ** ' +token);
+      var attachmentId = results[0].n.id;
+      var attachment = results[0].n;
+      var relationShipStream = linkOwner(attachmentId,token);
       relationShipStream.on('data',function(results){
-        resultStream.emit('data',results);
+        var tagStream = tagger.TagEntity(attachmentId,tags)
+        tagStream.on('data',function(results){
+          resultStream.emit('data',attachment);
+        })
       });
     });
     return resultStream;
   }
 
-    Attachment.prototype.createAttachment= function(attachmentType,data,user,card,tags){
+    Attachment.prototype.createAttachment= function(attachmentType,data,token,tags,cardId){
     var resultStream = new Stream();
-    var attachmentStream = this.storeAttachment(attachmentType,data);
-    var token = this.token;
-    var linkOwner = this.linkOwner
+
+    var attachmentStream = this.createAttachmentBase(attachmentType,data,token,tags)
     attachmentStream.on('data',function(results){
-      console.log('linking'+results[0].n.id+' + '+user)
-      var relationShipStream = linkOwner(results[0].n.id,user);
-      relationShipStream.on('data',function(results){
+      console.log(results)
+      var linkStream = this.linkCard(cardId,results.id)
+      linkStream.on('data',function(results){
+        console.log(results)
         resultStream.emit('data',results);
-      });
-    });
+      })
+    })
     return resultStream;
   }
 
@@ -132,5 +139,5 @@ module.exports = function(settings){
     })
   }
 
-  return new Attachment();
+  return new Attachment(settings);
 }

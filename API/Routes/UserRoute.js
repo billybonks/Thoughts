@@ -1,5 +1,5 @@
 //require staements
-var seviceModule = require('./ServiceModule.js');
+var ServiceModule = require('./ServiceModule.js');
 var Stream = require('stream');
 module.exports = function(settings){
 
@@ -8,10 +8,10 @@ module.exports = function(settings){
    * Class Setup - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  function User(){
+  function User(settings){
   }
 
-  User.prototype = new seviceModule(settings);
+  User.prototype = new ServiceModule(settings);
 
   /* ========================================================================================================
    *
@@ -53,6 +53,17 @@ module.exports = function(settings){
     return responseStream;
   }
 
-  return new User();
+  User.prototype.SawEntity = function(token,id){
+
+  }
+
+  User.prototype.ClickedEntity = function(token,id){
+
+  }
+
+  User.prototype.UsedEntity = function(token,id){
+
+  }
+  return new User(settings);
 }
 
