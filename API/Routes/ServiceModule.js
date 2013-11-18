@@ -7,16 +7,19 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
   function ServiceModule(){
+    this.responseStream = new Stream();
   }
   /* ========================================================================================================
    *
    * Helper Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  ServiceModule.prototype.proccessRequestVariables=function(req){
-    console.log('processing Vars')
-    this.id = req.params.id;
-    this.token = req.headers['authorization'];
+  ServiceModule.prototype.once=function(event,callback){
+    this.responseStream.once(event,callback);
+  }
+
+  ServiceModule.prototype.emit=function(event,payload){
+    this.responseStream.emit(event,payload)
   }
 
   ServiceModule.prototype.DeleteEntity=function(id){

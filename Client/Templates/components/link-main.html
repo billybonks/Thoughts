@@ -11,16 +11,20 @@
       </div>
     </div>
     <div class="row borded cardBody"  >
+
       <div class="col-md-12">
+        {{#each links}}
         <button type="button" class="btn btn-default btn-sm">
-          <span class="glyphicon glyphicon-globe"></span>{{word}}
+          <span class="glyphicon glyphicon-globe"></span>{{title}}
         </button>
+        {{/each}}
+
       </div>
     </div>
   </div>
 </div>
 {{#if isEditing}}
-      {{#view App.PopupView viewName="popup"}}
-        {{link-form store=store card=card}}
-      {{/view}}
+{{#view App.PopupView viewName="popup"}}
+{{link-form store=store card=card}}
+{{/view}}
 {{/if}}

@@ -27,7 +27,6 @@ module.exports = function(settings){
    * ===================================================================================================== */
 
   Link.prototype.GetAllLinks=function (req, res){
-    this.proccessRequestVariables(req,res);
     var query = [
       'MATCH (user:Person)-[Created]->(link:Link)',
       'WHERE user.session_token = {token}',
@@ -54,7 +53,6 @@ module.exports = function(settings){
   }
 
   Link.prototype.GetLink=function (req, res){
-    this.proccessRequestVariables();
     this.getAttachment();
   }
 
@@ -69,13 +67,13 @@ module.exports = function(settings){
     var responseStream = this.GetLinkTitle(href);
     var createAttachment = this.createAttachment
     var context = this;
+    this.once('createAttachmentBase.done',function(results){
+          returnStream.emit('data',results);
+        })
     responseStream.on('error',function(error){})
     responseStream.on('data',function(results){
         console.log('token =='+token)
-        var resultStream = createAttachment.call(context,'Link',results,token,tags,cardid);
-        resultStream.on('data',function(results){
-          returnStream.emit('data',results);
-        })
+        createAttachment.call(context,'Link',results,token,tags,cardid);
     })
     return returnStream;
   }

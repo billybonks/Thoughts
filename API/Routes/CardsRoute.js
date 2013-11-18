@@ -14,6 +14,7 @@ module.exports = function(settings){
   function Card(settings){
     this.user = new UserRoute(settings);
     this.tags = new TagsRoute(settings);
+    this.counter = 0;
   }
 
   Card.prototype = new ServiceModule(settings);
@@ -25,6 +26,8 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
   Card.prototype.GetAllCards=function (token){
+    this.counter++;
+    console.log(this.counter)
     var query = [
       'MATCH (user:Person)-[Created]->(card:Card)',
       'WHERE user.session_token = {token}',
@@ -155,8 +158,8 @@ module.exports = function(settings){
       response.on('data', function (results) {
         var user = results.user;
         var card = results.entity;
-        var tagStream = tagger.TagEntity(cardId,tags)
-        tagStream.on('data',function(results){
+        tagger.TagEntity(cardId,tags)
+        tagger.responseStream.once('TagEntity.done',function(results){
           console.log('tagger');
           console.log(results);
           console.log(ret);

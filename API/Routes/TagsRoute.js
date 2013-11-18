@@ -10,6 +10,7 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
   function Tag(settings){
+
     this.cache = [];
   }
 
@@ -54,28 +55,28 @@ module.exports = function(settings){
     })
     return responseStream
   }
-
+  //returns all tags if no tags pressent
   Tag.prototype.PrepareCache= function (tags){
     //match (n:Card) where n.title='QWerty' OR n.title='asdasd' return n
     var resultStream = new Stream()
     var query =  [];
     var cache = this.cache;
     query.push('match (n:Tag)')
+
     for(var i =0;i<tags.length;i++){
-      if(i==0){
-        query.push('where n.title="'+tags[i]+'"')
-      }else{
-        query.push('or n.title="'+tags[i]+'"')
+      if(!tags[i] in cache){
+        if(i==0){
+          query.push('where n.title="'+tags[i]+'"')
+        }else{
+          query.push('or n.title="'+tags[i]+'"')
+        }
       }
     }
     query.push('return n');
     console.log(query.join('\n'))
     var queryStream = settings.executeQuery(query.join('\n'),{});
     queryStream.on('data',function(results){
-      console.log('resulted')
       for(var i = 0;i < results.length;i++){
-        console.log(results[i])
-        console.log(cache);
         cache[results[i].n.data.title] = results[i].n;
       }
       resultStream.emit('data',null);
@@ -118,13 +119,13 @@ module.exports = function(settings){
     var resultStream = settings.executeQuery(query.join('\n'),{});
     resultStream.on('data', function (results) {
       console.log(results)
-      responseStream.emit(results[0].t.data)
+      responseStream.emit('data',results[0].t.data)
     });
     return responseStream;
   }
 
   Tag.prototype.TagEntity=function (nodeId,tags){
-    var resultStream = new Stream();
+    var resultStream = this.responseStream
     var cacheStream = this.PrepareCache(tags)
     var cache = this.cache;
     var TagBase = this.TagBase;
@@ -135,24 +136,28 @@ module.exports = function(settings){
       var count = tags.length;
       var counter = 0
       for(var i = 0; i < tags.length;i++){
-        counter++;
         console.log(tags[i] in cache);
         if(tags[i] in cache){
           console.log('retag');
           var result = TagBase.call(context,nodeId,cache[tags[i]].id)
+          console.log(result)
           result.on('data',function(results){
+            counter++;
+            console.log('counter = '+counter)
             if(counter == count){
               console.log('done')
-              resultStream.emit('data',null);
+              resultStream.emit('TagEntity.done',{});
             }
           })
         }else{
           console.log('newTag');
           var result = Create.call(context,tags[i],'',nodeId)
           result.on('data',function(results){
+            counter++;
+            console.log('counter = '+counter)
             if(counter == count){
               console.log('done')
-              resultStream.emit('data',null);
+              resultStream.emit('TagEntity.done',{});
             }
           })
 
