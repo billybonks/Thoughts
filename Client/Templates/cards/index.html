@@ -1,3 +1,5 @@
 {{#each itemController="card"}}
-  {{card-main links=links model=model lol=model position=position}}
+      {{#view  App.DraggableCardView}}
+        {{title-card description=description title=title username=user.name tags=tags}}
+      {{/view}}
 {{/each}}

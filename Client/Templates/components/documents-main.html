@@ -1,14 +1,7 @@
 {{#card-layout title=title}}
-        {{#each links}}
-          {{#view App.ContextMenuView target=link}}
+        {{#each documents}}
             <button type="button" class="btn btn-default btn-sm" {{action menu on="dragstart"}}>
               <span class="glyphicon glyphicon-globe"></span> {{title}}
             </button>
-          {{/view}}
         {{/each}}
 {{/card-layout}}
-{{#if isEditing}}
-{{#view App.PopupView viewName="popup"}}
-{{link-form store=store card=card}}
-{{/view}}
-{{/if}}

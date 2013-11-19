@@ -2,31 +2,8 @@ body {
   background-color: #E5E5E5;
 }
 .card {
+  width:600px;
   position:absolute;
-  padding:15px;
-  padding-top:0px;
-  background-color: #fff;
-  border-radius: 3px;
-  border: 1px solid #d8d8d8;
-  border-bottom-width: 2px;
-  border-top-width: 2px;
-  -webkit-border-radius: 3px;
-}
-
-.cardInner {
-  width:500px;
-  position:relative;
-
-
-
-  padding:15px;
-
-}
-
-.cardBody{
-  z-index:50;
-  background-color: #fff;
-  padding:15px;
 }
 
 .borded {

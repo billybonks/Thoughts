@@ -45,12 +45,15 @@
     <script type="text/javascript" src="/scripts/Components/LinkFormComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardFormComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/LinkMainComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/QuestionMainComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/TasksMainComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/DocumentsMainComponent.js"></script>
 
     <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
     <script type="text/javascript" src="/scripts/views/TaggerView.js"></script>
     <script type="text/javascript" src="/scripts/views/PopupView.js"></script>
     <script type="text/javascript" src="/scripts/views/ContextMenuView.js"></script>
-
+    <script type="text/javascript" src="/scripts/views/DraggableCardView.js"></script>
 
     <script type="text/javascript" src="/scripts/models/Email.js"></script>
     <script type="text/javascript" src="/scripts/models/Application.js"></script>
@@ -62,10 +65,20 @@
     <script type="text/javascript" src="/scripts/models/Tag.js"></script>
     <script type="text/javascript" src="/scripts/models/Attachment.js"></script>
 
+    <script type="text/x-handlebars" data-template-name="draggablecard">
+      <div class="card" {{bind-attr style=position}}>
+        {{yield}}
+    </div>
+    </script>
+    <script type="text/x-handlebars" data-template-name="cardview">
+      <div class="card">
+        {{yield}}
+    </div>
+    </script>
     <script type="text/x-handlebars" data-template-name="contextMenu">
       <div class="col-md-3">
         {{yield}}
-      </div>
+    </div>
     </script>
 
 

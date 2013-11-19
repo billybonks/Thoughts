@@ -1,5 +1,8 @@
 App.CardController = Ember.ObjectController.extend({
   links:[{title:'Google',href:'www.google.co.za'},{title:'Facebook',href:'www.google.co.za'},{title:'Coursera',href:'www.google.co.za'},{title:'YouTube',href:'www.google.co.za'}],
+  questions:[{question:'Why is the sky blue',answer:'Because of science'},{question:'Why do we need such obscure things',answer:'does it have something to do with why animals need to eat'}],
+  documents:[{title:'Plants to grow',href:'',type:'spreadsheet'},{title:'Market Research',href:'',type:'presentation'},{title:'Thesus of love',href:'',type:'document'}],
+  tasks:[{title:'Make a compost heap'},{title:'Task'},{title:'Fart'},{title:'Take a shower'}],
   actions:{
   },
   sortSomeAttachments:function(){

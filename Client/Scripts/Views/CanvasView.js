@@ -1,6 +1,7 @@
 ﻿App.WallView = Ember.View.extend(Ember.Evented, {
     layoutName : 'canvas',
     mouseMove: function (event) {
+      console.log('mouseMoveEvent');
         Em.instrument("mouse.move",event,function(){},this)
        // this.trigger('movement', event);
     },

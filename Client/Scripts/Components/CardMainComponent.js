@@ -37,18 +37,20 @@ App.CardMainComponent = Ember.Component.extend({
       before: function(name, timestamp, event) {
         console.log(this.x)
         console.log(event.clientX)
+        if(this.model.get('left') == null){
+          this.model.set('left',0);
+          this.model.set('top',0);
+        }
         if (this.x == -1) {
           this.x = event.clientX;
           this.y = event.clientY;
           return;
         }
-        var diffX = this.x - event.clientX;
-        var diffY = this.y - event.clientY;
+
         var left = parseInt(this.model.get('left'),10);
         var top = parseInt(this.model.get('top'),10);
         console.log(left-diffX)
-        this.model.set('left', left-diffX);
-        this.model.set('top', top - diffY);
+
         this.x = event.clientX;
         this.y = event.clientY;
       },
