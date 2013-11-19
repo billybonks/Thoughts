@@ -1,10 +1,13 @@
 App.CardController = Ember.ObjectController.extend({
-  links:[],
+  links:[{title:'Google',href:'www.google.co.za'},{title:'Facebook',href:'www.google.co.za'},{title:'Coursera',href:'www.google.co.za'},{title:'YouTube',href:'www.google.co.za'}],
   actions:{
   },
-  sortAttachments:function(){
+  sortSomeAttachments:function(){
     console.log('sorting')
     var attachments = this.get('model').get('attachments');
+    var tags = this.get('model').get('tags');
+    var tit = this.get('model').get('title');
+    console.log('sorting');
     for(var i = 0;i<attachments.length;i++){
       var a = attachments[i];
       if(a.type=="Link"){
@@ -12,7 +15,7 @@ App.CardController = Ember.ObjectController.extend({
       }
     }
     return '';
-  }.property('model.attachments'),
+  }.observes('model.attachments.@each.type'),
   position:function(){
     return 'left:' + this.get('model').get('left') + 'px;top:' + this.get('model').get('top') + 'px';
   }.property('model.left'),

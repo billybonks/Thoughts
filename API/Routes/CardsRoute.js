@@ -27,7 +27,6 @@ module.exports = function(settings){
    * ===================================================================================================== */
   Card.prototype.GetAllCards=function (token){
     this.counter++;
-    console.log(this.counter)
     var query = [
       'MATCH (user:Person)-[Created]->(card:Card)',
       'WHERE user.session_token = {token}',
@@ -40,9 +39,22 @@ module.exports = function(settings){
     var GetCard = this.GetCard;
     queryStream.on('data', function (results) {
       var cardsCount = results.length
-      var counter= 0;
+       var counter= 0;
+      console.log('retCount = '+cardsCount)
+      console.log('retCount = '+counter)
+     if(cardsCount == 0){
+      responseStream.emit('data',
+ {
+     id: 2,
+     title: 'Garden packs',
+     description: 'Need to find an easy way to work with soil, test it and improve it, so that packs can be built in large quantities',
+     user: 1,
+     left: 600,
+     top: 0
+ })
+     }
       var ret = [];
-      for(c=0;c<cardsCount;c++){
+      for(var c=0;c<cardsCount;c++){
         var id = results[c].card.id;
         var resultStream = GetCard(token,id)
         resultStream.on('data',function(result){
@@ -50,6 +62,7 @@ module.exports = function(settings){
           counter++
           if(cardsCount ==counter){
             responseStream.emit('data',ret)
+            console.log('CARDS')
             console.log(ret)
           }
         })
@@ -64,25 +77,25 @@ module.exports = function(settings){
     var query=[
       'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card) ,',
-      '(attachment:Attachment)-[Attached?]->(card),',
+      '(attachment)-[Attached?]->(card),',
       '(tag:Tag)-[Tagged?]->(card)',
       'WHERE user.session_token = {token}',
       'RETURN card,user,attachment,labels(attachment),tag'//user,card,attachment'
     ];
-   // console.log(query.join('\n'))
+    // console.log(query.join('\n'))
 
     var variableHash = {token:token}
     var queryStream = settings.executeQuery(query.join('\n'),variableHash);
     var responseStream = new Stream()
-   // console.log(variableHash)
+    // console.log(variableHash)
     queryStream.on('data',function(results){
-     // console.log(results);
+      // console.log(results);
       var card;
       var user
       var tags = {};
       var attachments = {};
       for(var i = 0;i<results.length;i++){
-      //  console.log(results)
+        //  console.log(results)
         var result = results[i]
         card = result.card;
         user = result.user;
@@ -90,16 +103,18 @@ module.exports = function(settings){
         var tag = result.tag;
         if(attachment){
           var type = result['labels(attachment)'][0];
-          var id = attachment.id
-          var data = Object.clone(attachment.data);
-          attachment.type = type;
-          attachment.id = id;
-          attachment = {
-            id:id,
-            data:data,
-            type:type,
+          if(type != 'Tag'){
+            var id = attachment.id
+            var data = Object.clone(attachment.data);
+            attachment.type = type;
+            attachment.id = id;
+            attachment = {
+              id:id,
+              data:data,
+              type:type,
+            }
+            attachments[attachment.id] = attachment
           }
-          attachments[attachment.id] = attachment
         }
         if(tag){
           var id = tag.id;
@@ -132,7 +147,7 @@ module.exports = function(settings){
         ret.tags.push(tags[id])
       }
 
-    //  console.log(ret);
+      //  console.log(ret);
       responseStream.emit('data',ret)
     });
     return responseStream;
@@ -162,8 +177,7 @@ module.exports = function(settings){
         tagger.responseStream.once('TagEntity.done',function(results){
           console.log('tagger');
           console.log(results);
-          console.log(ret);
-          responseStream.emit('data',ret);
+          responseStream.emit('data',results);
         })
       });
     });

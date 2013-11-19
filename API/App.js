@@ -163,6 +163,11 @@ app.post('/attachments',function(req,res){
                     //AttachmentRoute.createAttachment(body.type,{title='',href=},,)
                   })
 
+app.get('/attachments',function(req,res){
+        AttachmentRoute.once('getAttachment.done',function(results){
+          res.json(results)
+        })
+})
 /* ========================================================================================================
  *
  * Links Methods - Keep in alphabetical order

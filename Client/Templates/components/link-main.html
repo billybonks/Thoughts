@@ -14,9 +14,11 @@
 
       <div class="col-md-12">
         {{#each links}}
-        <button type="button" class="btn btn-default btn-sm">
-          <span class="glyphicon glyphicon-globe"></span>{{title}}
-        </button>
+          {{#view App.ContextMenuView}}
+            <button type="button" class="btn btn-default btn-sm" {{action menu on="dragstart"}}>
+              <span class="glyphicon glyphicon-globe"></span> {{title}}
+            </button>
+          {{/view}}
         {{/each}}
 
       </div>

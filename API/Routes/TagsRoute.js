@@ -31,17 +31,8 @@ module.exports = function(settings){
   }
   Tag.prototype.GetTags=function(ids){
     var responseStream = new Stream();
-    var query = 'START n=node('
-    for(var c =0; c <ids.length;c++){
-      if(c+1 == ids.length){
-        query += ids[c];
-      }else{
-        query += ids[c]+',';
-      }
-    }
-    query +=  ') return n';
-    var queryStream = settings.executeQuery(query,{});
-    queryStream.on('data',function(results){
+    this.GetNodes(ids);
+    this.once('GetNodes.done',function(results){
       var ret = [];
       for(var i =0;i<results.length;i++){
         var tag = {
@@ -53,7 +44,7 @@ module.exports = function(settings){
       }
       responseStream.emit('data',ret);
     })
-    return responseStream
+    return responseStream;
   }
   //returns all tags if no tags pressent
   Tag.prototype.PrepareCache= function (tags){

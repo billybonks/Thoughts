@@ -24,6 +24,23 @@ module.exports = function(settings){
     this.responseStream.emit(event,payload)
   }
 
+  ServiceModule.prototype.GetNodes=function(ids){
+    var emitter =this;
+    var query = 'START n=node('
+    for(var c =0; c <ids.length;c++){
+      if(c+1 == ids.length){
+        query += ids[c];
+      }else{
+        query += ids[c]+',';
+      }
+    }
+    query +=  ') return n';
+    var queryStream = settings.executeQuery(query,{});
+    queryStream.on('data',function(results){
+      emitter.emit('GetNodes.done',results);
+    });
+  }
+
   ServiceModule.prototype.DeleteEntity=function(id){
     var responseStream = new Stream();
     var query = ['START n=node('+id+')',

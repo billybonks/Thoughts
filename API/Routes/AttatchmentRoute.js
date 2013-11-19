@@ -24,16 +24,15 @@ module.exports = function(settings){
   }
 
   Attachment.prototype.getAttachment = function(id){
-    var resultStream = new Stream();
     var query =  [
       'START attachment=node('+id+')',
       'RETURN attachment'
     ];
+    var emitter = this;
     var queryStream = settings.executeQuery(query.join('\n'),{});
     queryStream.on('data',function(results){
-      console.log(results)
+      emitter.emit('getAttachment.done',results)
     });
-    return resultStream;
   }
 
   /* ========================================================================================================
