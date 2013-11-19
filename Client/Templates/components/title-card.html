@@ -2,7 +2,7 @@
 <div class="panel panel-default" style="padding:20px">
   <div class="row borded" >
     <div class="col-md-8">
-      <h4>{{title}}</h4>
+      <h4>{{#link-to 'card' idz}}{{title}}{{/link-to}}</h4>
     </div>
     <div class="col-md-4">
       <h4 style="float:right;">{{username}}</h4>
@@ -14,7 +14,7 @@
   </div>
   <div class="panel-footer" style="background-color: white;">
     {{#each tags}}
-      <span class="label label-success">{{title}}</span>
+    <span class="label label-success">{{title}}</span>
     {{/each}}
   </div>
 </div>
