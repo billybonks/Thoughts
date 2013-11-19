@@ -87,6 +87,12 @@ function program12(depth0,data) {
   return buffer;
   }
 
+function program14(depth0,data) {
+  
+  
+  data.buffer.push("\r\n<div class=\"card contextMenu\" style=\"left:100px;top:200px\">\r\n  <ul class=\"list-group\" style=\"margin: 0px;\">\r\n    <li class=\"list-group-item\">\r\n      Edit\r\n    </li>\r\n    <li class=\"list-group-item\">\r\n      Share\r\n    </li>\r\n    <li class=\"list-group-item\">\r\n      Delete\r\n    </li>\r\n  </ul>\r\n</div>\r\n");
+  }
+
   data.buffer.push("<nav class=\"navbar navbar-default\" style=\"position:fixed;width:100%\" role=\"navigation\">\r\n  <!-- Brand and toggle get grouped for better mobile display -->\r\n  <div class=\"navbar-header\">\r\n    <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\".navbar-ex1-collapse\">\r\n      <span class=\"sr-only\">Toggle navigation</span>\r\n      <span class=\"icon-bar\"></span>\r\n      <span class=\"icon-bar\"></span>\r\n      <span class=\"icon-bar\"></span>\r\n    </button>\r\n    <a class=\"navbar-brand\" href=\"#\">Cards</a>\r\n  </div>\r\n\r\n  <!-- Collect the nav links, forms, and other content for toggling -->\r\n  <div class=\"collapse navbar-collapse navbar-ex1-collapse\">\r\n    <ul class=\"nav navbar-nav\">\r\n      ");
   hashTypes = {};
   hashContexts = {};
@@ -101,7 +107,12 @@ function program12(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "outlet", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\r\n</div>\r\n\r\n<div id=\"LoginOptions\" style=\"display:none;background-color:white\" class=\"col-md-9\">\r\n  <div class=\"modal-header\">\r\n    <h4>Log in</h4>\r\n  </div>\r\n\r\n\r\n  <div class=\"col-md-8\" style=\"margin-top:15px\">\r\n    <button class=\"btn btn-social facebook\" ");
+  data.buffer.push("\r\n</div>\r\n");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "menuOpen", {hash:{},inverse:self.noop,fn:self.program(14, program14, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\r\n<div id=\"LoginOptions\" style=\"display:none;background-color:white\" class=\"col-md-9\">\r\n  <div class=\"modal-header\">\r\n    <h4>Log in</h4>\r\n  </div>\r\n\r\n\r\n  <div class=\"col-md-8\" style=\"margin-top:15px\">\r\n    <button class=\"btn btn-social facebook\" ");
   hashContexts = {'on': depth0};
   hashTypes = {'on': "STRING"};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "LoginFacebook", {hash:{
@@ -530,11 +541,14 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = '', stack1, hashTypes, hashContexts;
+  var buffer = '', stack1, hashContexts, hashTypes;
   data.buffer.push("\r\n          ");
-  hashTypes = {};
-  hashContexts = {};
-  stack1 = helpers.view.call(depth0, "App.ContextMenuView", {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  hashContexts = {'target': depth0,'id': depth0};
+  hashTypes = {'target': "ID",'id': "INTEGER"};
+  stack1 = helpers.view.call(depth0, "App.ContextMenuView", {hash:{
+    'target': ("link"),
+    'id': (12)
+  },inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\r\n        ");
   return buffer;

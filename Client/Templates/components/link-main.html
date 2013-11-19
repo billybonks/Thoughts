@@ -14,7 +14,7 @@
 
       <div class="col-md-12">
         {{#each links}}
-          {{#view App.ContextMenuView}}
+          {{#view App.ContextMenuView target=link id=12}}
             <button type="button" class="btn btn-default btn-sm" {{action menu on="dragstart"}}>
               <span class="glyphicon glyphicon-globe"></span> {{title}}
             </button>

@@ -1,21 +1,25 @@
-﻿body {
-   background-color: #E5E5E5;
+body {
+  background-color: #E5E5E5;
 }
 .card {
-    position:absolute;
-    padding:15px;
+  position:absolute;
+  padding:15px;
+  padding-top:0px;
+  background-color: #fff;
+  border-radius: 3px;
+  border: 1px solid #d8d8d8;
+  border-bottom-width: 2px;
+  border-top-width: 2px;
+  -webkit-border-radius: 3px;
 }
 
 .cardInner {
-    width:500px;
-    position:relative;
-    background-color: #fff;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    border: 1px solid #d8d8d8;
-    border-bottom-width: 2px;
-    border-top-width: 2px;
-    padding:15px;
+  width:500px;
+  position:relative;
+
+
+
+  padding:15px;
 
 }
 
@@ -26,25 +30,25 @@
 }
 
 .borded {
-    border: 1px solid #d8d8d8;
-    border-top-style:none;
-    border-right-style:none;
-    border-bottom-style:dotted;
-    border-left-style:none;
+  border: 1px solid #d8d8d8;
+  border-top-style:none;
+  border-right-style:none;
+  border-bottom-style:dotted;
+  border-left-style:none;
 }
 
 .controlls {
-    width:40px;
-    position:absolute;
-    left:-20px;
-    background-color: #E5E5E5
+  width:40px;
+  position:absolute;
+  left:-30px;
+  background-color: #E5E5E5
     -webkit-border-radius: 3px;
-    border-radius: 3px;
-    border: 1px solid #d8d8d8;
-    border-bottom-width: 2px;
-    border-top-width: 2px;
-    border-left-width: 2px;
-    padding-left:10px;
+  border-radius: 3px;
+  border: 1px solid #d8d8d8;
+  border-bottom-width: 2px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  padding-left:10px;
 }
 
 .sidebar-forms{
@@ -56,4 +60,9 @@
   border-radius: 3px;
   margin-lft:0px;
   padding:10px;
+}
+
+.contextMenu{
+  padding:0px;
+  margin:0px;
 }

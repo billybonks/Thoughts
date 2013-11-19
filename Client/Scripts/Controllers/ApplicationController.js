@@ -1,6 +1,7 @@
 ﻿App.ApplicationController = Ember.Controller.extend({
     currentDrag: null,
     word2:'null',
+    menuOpen:false,
     actions: {
         ClearToken: function () {
             $.cookie(AppSettings.CookieName, '', { expires: -1 });
@@ -19,5 +20,24 @@
              console.log(application.get('currentDrag'));
          }
          return mouseMove;
-    }
+    },
+   SubscribeToContextMenuEvents:function(){
+      Em.subscribe('contextMenu.open',this.get('MouseMove')(this.get('model')));
+   },
+   ToggleContextMenu: function (model) {
+      return {
+        before: function(name, timestamp, event) {
+        },
+        after: function(name, timestamp, event, beforeRet) {
+        }
+      }
+   },
+   SetContextType: function (model) {
+      return {
+        before: function(name, timestamp, event) {
+        },
+        after: function(name, timestamp, event, beforeRet) {
+        }
+      }
+   }
 });

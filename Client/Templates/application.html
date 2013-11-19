@@ -39,7 +39,21 @@
 <div style="margin-top:60px">
   {{outlet}}
 </div>
-
+{{#if menuOpen}}
+<div class="card contextMenu" style="left:100px;top:200px">
+  <ul class="list-group" style="margin: 0px;">
+    <li class="list-group-item">
+      Edit
+    </li>
+    <li class="list-group-item">
+      Share
+    </li>
+    <li class="list-group-item">
+      Delete
+    </li>
+  </ul>
+</div>
+{{/if}}
 <div id="LoginOptions" style="display:none;background-color:white" class="col-md-9">
   <div class="modal-header">
     <h4>Log in</h4>

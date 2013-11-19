@@ -19,7 +19,11 @@ App.ApplicationRoute = Ember.Route.extend({
         var sessionToken = $.cookie(AppSettings.CookieName);
         m = this.store.find('application', sessionToken)
         return m;
-    }
+    },
+  setupController: function(controller, model) {
+    controller.SubscribeToContextMenuEvents();
+    controller.set('model', model);
+  }
 });
 
 App.CardsRoute = Ember.Route.extend({
