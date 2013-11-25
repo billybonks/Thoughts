@@ -1,4 +1,4 @@
-App.LinkMainComponent = Ember.Component.extend({
+App.LinksMainComponent = Ember.Component.extend({
   isEditing:false,
   title:'Links',
   actions:{

@@ -9,17 +9,21 @@
     <link id="cards" href="Content/popup.css" rel="stylesheet"/>
   </head>
   <body>
-    <!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-<script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/handlebars-1.0.0.js"></script>
-<script type="text/javascript" src="http://builds.emberjs.com/tags/v1.0.0/ember.js"></script>
-<script type="text/javascript" src="http://builds.emberjs.com.s3.amazonaws.com/ember-data-latest.js"></script>
-<script type="text/javascript"src="http://emberjs.com.s3.amazonaws.com/getting-started/local_storage_adapter.js"></script>-->
 
-    <script type="text/javascript" src="/scripts/External/jquery.js"></script>
-    <script type="text/javascript" src="/scripts/External/require.js"></script>
+   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://builds.emberjs.com/handlebars-1.0.0.js"></script>
+  <script src="http://builds.emberjs.com/beta/ember.js"></script>
+    <script src="http://builds.emberjs.com/canary/ember-data.js"></script>
+
+    <!-- <script type="text/javascript" src="/scripts/External/jquery.js"></script>
     <script type="text/javascript" src="/scripts/External/handlebars.js"></script>
     <script type="text/javascript" src="/scripts/External/ember.js"></script>
     <script type="text/javascript" src="/scripts/External/EmberData.js"></script>
+    -->
+    <script type="text/javascript" src="/scripts/External/require.js"></script>
+
+
+
     <script type="text/javascript" src="/scripts/External/ls.js"></script>
     <script type="text/javascript" src="/scripts/External/bpopup.js"></script>
     <script type="text/javascript" src="/scripts/External/Param.js"></script>
@@ -38,7 +42,7 @@
     <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
     <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
     <script type="text/javascript" src="/scripts/controllers/LinkController.js"></script>
-
+    <script type="text/javascript" src="/scripts/controllers/SectionController.js"></script>
 
     <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
@@ -48,6 +52,9 @@
     <script type="text/javascript" src="/scripts/Components/QuestionMainComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/TasksMainComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/DocumentsMainComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/SectionFormComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/CardControllsComponent.js"></script>
+    <script type="text/javascript" src="/scripts/Components/CardLayoutComponent.js"></script>
 
     <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
     <script type="text/javascript" src="/scripts/views/TaggerView.js"></script>
@@ -64,12 +71,15 @@
     <script type="text/javascript" src="/scripts/models/Document.js"></script>
     <script type="text/javascript" src="/scripts/models/Tag.js"></script>
     <script type="text/javascript" src="/scripts/models/Attachment.js"></script>
+    <script type="text/javascript" src="/scripts/models/Section.js"></script>
+    <script type="text/javascript" src="/scripts/models/Payload.js"></script>
 
     <script type="text/x-handlebars" data-template-name="draggablecard">
       <div class="card" {{bind-attr style=position}}>
         {{yield}}
     </div>
     </script>
+
     <script type="text/x-handlebars" data-template-name="cardview">
       <div class="card">
         {{yield}}
@@ -88,7 +98,7 @@
 
     <script type="text/x-handlebars" data-template-name="popup">
       <div id="popup" style="left: 470px; position: absolute; top: 387.5px; z-index: 9999; opacity: 1; display: block;" >
-            <span class="button b-close" {{action close}}><span>X</span></span>
+
             {{yield}}
     </div>
     </script>

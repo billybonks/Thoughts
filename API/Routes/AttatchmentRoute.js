@@ -20,8 +20,23 @@ module.exports = function(settings){
    * ===================================================================================================== */
 
   Attachment.prototype.getAttachments = function(ids){
+    this.once('GetNodes.done',function(results){
 
+      var ret = []
+      for(var i = 0;i < results.length;i++){
+        var attachment = {
+          data: results[i].n.data,
+          id:  results[i].n.id
+        }
+        console.log(attachment);
+        ret.push(attachment);
+      }
+      this.emit('GetAttachments.done',ret)
+    });
+    this.GetNodes(ids);
   }
+
+
 
   Attachment.prototype.getAttachment = function(id){
     var query =  [
@@ -65,17 +80,17 @@ module.exports = function(settings){
         }
       });
     });
-    var attachmentStream = this.storeAttachment(attachmentType,data);
+    var attachmentStream = this.storeAttachment('Attachment',data);
   }
 
-  Attachment.prototype.createAttachment= function(attachmentType,data,token,tags,cardId){
+  Attachment.prototype.createAttachment= function(attachmentType,data,token,tags,sectionId){
     var resultStream = new Stream();
-    var linkCard = this.linkCard;
+    var linkSection = this.linkSection;
     var emitter = this;
     this.once('createAttachmentBase.done',function(results){
       console.log('attachments')
       console.log(results)
-      var linkStream = linkCard(cardId,results.id)
+      var linkStream = linkSection(sectionId,results.id)
       linkStream.on('data',function(results){
         //link card
         console.log('link card')
@@ -99,11 +114,10 @@ module.exports = function(settings){
     return responseStream;
   }
 
-  Attachment.prototype.linkCard = function(cardId,attachmentId){
+  Attachment.prototype.linkSection = function(cardId,attachmentId){
     var query =  [
-      'START attachment=node('+attachmentId+'),card=node('+cardId+')',
-      'MATCH (card:Card)',
-      'CREATE attachment-[r:Attached]->card',
+      'START attachment=node('+attachmentId+'),section=node('+cardId+')',
+      'CREATE attachment-[r:Attached]->section',
       'RETURN attachment'
     ];
     console.log('query')

@@ -15,6 +15,7 @@ var ApplicationRoute = require('./Routes/ApplicationRoute')(settings);
 var UserRoute = require('./Routes/UserRoute')(settings);
 var AttachmentRoute = require('./Routes/AttatchmentRoute')(settings);
 var TagsRoute = require('./Routes/TagsRoute')(settings);
+var SectionRoute = require('./Routes/SectionsRoute')(settings);
 //
 /* ========================================================================================================
  *
@@ -84,11 +85,11 @@ app.get('/auth/facebook/callback', function(req, res, next) {
  * ===================================================================================================== */
 
 app.get('/applications/:id',function (req,res){
-                              var response = ApplicationRoute.GetApplication(req.headers['authorization'])
-                              response.on('data',function(results){
-                                  res.json({applications:results})
-                              })
-                            })
+  var response = ApplicationRoute.GetApplication(req.headers['authorization'])
+  response.on('data',function(results){
+    res.json({applications:results})
+  })
+})
 
 
 /* ========================================================================================================
@@ -97,48 +98,48 @@ app.get('/applications/:id',function (req,res){
  *
  * ===================================================================================================== */
 app.delete('/cards/:id',function (req,res){
-                          var response = CardsRoute.DeleteCard(req.headers['authorization'],req.params.id)
-                          response.on('data',function(results){
-                            res.json({})
-                          })
-                      });
+  var response = CardsRoute.DeleteCard(req.headers['authorization'],req.params.id)
+  response.on('data',function(results){
+    res.json({})
+  })
+});
 
 app.get('/cards',function (req,res){
-                      var response = CardsRoute.GetAllCards(req.headers['authorization']);
-                      response.on('data',function(results){
-                      res.json({cards:results})
-                    })//res.json(ret);
+  var response = CardsRoute.GetAllCards(req.headers['authorization']);
+  response.on('data',function(results){
+    res.json({cards:results})
+  })//res.json(ret);
 });
 app.get('/cards/:id',function (req,res){
-                      var response = CardsRoute.GetCard(req.headers['authorization'],req.params.id);
-                      response.on('data',function(results){
-                        res.json(results)
-                      })// UpdateCard
-                     });
+  var response = CardsRoute.GetCard(req.headers['authorization'],req.params.id);
+  response.on('data',function(results){
+    res.json(results)
+  })// UpdateCard
+});
 app.post('/cards',function (req,res){
-                      console.log(req.body.card.tagsIn)
-                      var card = req.body.card
-                      var tagsIn = card.tagsIn;
-                      delete card['attachments'];
-                      delete card['tags'];
-                      delete card['tagsIn'];
-                      var response = CardsRoute.CreateCard(req.headers['authorization'],card,tagsIn)
-                      response.on('data',function(results){
-                        res.json({card:results})
-                      })
-                  });
+  console.log(req.body.card.tagsIn)
+  var card = req.body.card
+  var tagsIn = card.tagsIn;
+  delete card['attachments'];
+  delete card['tags'];
+  delete card['tagsIn'];
+  var response = CardsRoute.CreateCard(req.headers['authorization'],card,tagsIn)
+  response.on('data',function(results){
+    res.json({card:results})
+  })
+});
 app.put('/cards/:id',function (req,res){
-                      var response = CardsRoute.UpdateCard(req.body.card,req.params.id)
-                      response.on('data',function(results){
-                        res.json({})
-                      })
-                  });
+  var response = CardsRoute.UpdateCard(req.body.card,req.params.id)
+  response.on('data',function(results){
+    res.json({})
+  })
+});
 
 app.get('/cards',function (req,res){
-                      var response = CardsRoute.GetAllCards(req.headers['authorization']);
-                      response.on('data',function(results){
-                      res.json({cards:results})
-                    })//res.json(ret);
+  var response = CardsRoute.GetAllCards(req.headers['authorization']);
+  response.on('data',function(results){
+    res.json({cards:results})
+  })//res.json(ret);
 });
 
 app.get('/tags',function(req,res){
@@ -149,24 +150,41 @@ app.get('/tags',function(req,res){
 })
 
 app.post('/attachments',function(req,res){
-                    var body = req.body.attachment;
-                    console.log(body);
-                    var cardId = body.cardsIn[0];
-                    var resultStream;
-                    if(body.type=='Link'){
-
-                      resultStream=LinksRoute.CreateLink(body.data.link,req.headers['authorization'],body.tagsIn,cardId);
-                    }
-                    resultStream.on('data',function(results){
-                      res.json(results);
-                    })
-                    //AttachmentRoute.createAttachment(body.type,{title='',href=},,)
-                  })
+  var body = req.body.attachment;
+  console.log(body);
+  var cardId = body.cardsIn[0];
+  var resultStream;
+  if(body.type=='Link'){
+    console.log('dis link')
+    resultStream=LinksRoute.CreateLink(body.data.link,req.headers['authorization'],body.tagsIn,cardId);
+  }
+  resultStream.on('data',function(results){
+    res.json(results);
+  })
+  //AttachmentRoute.createAttachment(body.type,{title='',href=},,)
+})
 
 app.get('/attachments',function(req,res){
-        AttachmentRoute.once('getAttachment.done',function(results){
-          res.json(results)
-        })
+  AttachmentRoute.once('GetAttachments.done',function(results){
+    console.log(results)
+    res.json({attachments:results})
+  })
+  AttachmentRoute.getAttachments(req.query['ids'])
+})
+
+app.post('/sections',function(req,res){
+  var body = req.body.section
+  console.log(body);
+
+  var resultStream = SectionRoute.CreateSection(body.title,body.type,body.position,body.card)
+  })
+
+app.get('/sections',function(req,res){
+
+  SectionRoute.once('GetSections.done',function(results){
+    res.json({sections:results})
+  });
+  SectionRoute.GetSections(req.query['ids']);
 })
 /* ========================================================================================================
  *
@@ -208,14 +226,14 @@ app.get('/users/:id',function (req,res){UserRoute.GetUser(req,res)})
   app.post('/tags')*/
 
 Object.defineProperty(Object.prototype, "clone", {
-    enumerable: false,
-    value: function(from) {
-        var ret = {}
-        for(var prop in from){
-          ret[prop] = from[prop];
-        }
-        return ret;
+  enumerable: false,
+  value: function(from) {
+    var ret = {}
+    for(var prop in from){
+      ret[prop] = from[prop];
     }
+    return ret;
+  }
 });
 
 app.listen(process.env.PORT || 4730);

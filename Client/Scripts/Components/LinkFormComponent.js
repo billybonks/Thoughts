@@ -4,7 +4,7 @@ App.LinkFormComponent = Ember.Component.extend({
     Submit: function(){
       //title to be set server side
 
-      var card =this.get('card').get('id');
+      var section =this.get('section').get('id');
       var tags = this.get('tagger').getTags()
       var href = this.get('link');
       console.log(tags);
@@ -15,16 +15,11 @@ App.LinkFormComponent = Ember.Component.extend({
           },
           tags:tags,
           type:'Link',
-          cardsIn:[card],
+          cardsIn:[section],
           tagsIn:tags,
         }
 
         var link = this.store.createRecord('attachment', data);
-        if(card){
-          var cards =link.get('cards');
-          //.find()
-         // cards.pushObject(card)
-        }
         link.save();
         this.set('link','');
       }else{

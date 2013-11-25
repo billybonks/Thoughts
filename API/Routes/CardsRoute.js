@@ -77,14 +77,15 @@ module.exports = function(settings){
     var query=[
       'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card) ,',
-      '(attachment)-[Attached?]->(card),',
+      '(section:Section)<-[Has?]-(card),',
       '(tag:Tag)-[Tagged?]->(card)',
       'WHERE user.session_token = {token}',
-      'RETURN card,user,attachment,labels(attachment),tag'//user,card,attachment'
+      'RETURN card,user,section,tag'//user,card,attachment'
     ];
     // console.log(query.join('\n'))
 
     var variableHash = {token:token}
+    console.log(query.join('\n'))
     var queryStream = settings.executeQuery(query.join('\n'),variableHash);
     var responseStream = new Stream()
     // console.log(variableHash)
@@ -93,28 +94,18 @@ module.exports = function(settings){
       var card;
       var user
       var tags = {};
-      var attachments = {};
+      var sections = {};
       for(var i = 0;i<results.length;i++){
-        //  console.log(results)
+
         var result = results[i]
         card = result.card;
         user = result.user;
-        var attachment = result.attachment;
+        var section = result.section;
+        console.log(result)
+        console.log(sections)
         var tag = result.tag;
-        if(attachment){
-          var type = result['labels(attachment)'][0];
-          if(type != 'Tag'){
-            var id = attachment.id
-            var data = Object.clone(attachment.data);
-            attachment.type = type;
-            attachment.id = id;
-            attachment = {
-              id:id,
-              data:data,
-              type:type,
-            }
-            attachments[attachment.id] = attachment
-          }
+        if(section){
+          sections[section.id] = section
         }
         if(tag){
           var id = tag.id;
@@ -132,21 +123,17 @@ module.exports = function(settings){
           left:card.data.left,
           top:card.data.top,
           user:user.id,
-          attachments:[],
-          tags:[]
+          tags:[],
+          sections:[]
         },
-        attachments:[],
-        tags:[],
-      }
-      for(var id in attachments){
-        ret.card.attachments.push(id);
-        ret.attachments.push(attachments[id])
+        tags:[]
       }
       for(var id in tags){
         ret.card.tags.push(id);
-        ret.tags.push(tags[id])
       }
-
+      for(var id in sections){
+        ret.card.sections.push(id);
+      }
       //  console.log(ret);
       responseStream.emit('data',ret)
     });

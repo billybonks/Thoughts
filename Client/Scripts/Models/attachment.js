@@ -1,8 +1,8 @@
 App.Attachment = DS.Model.extend({
   data:DS.attr(),
-  type:DS.attr('string'),
-  cards:DS.belongsTo('card'),
+  section:DS.belongsTo('section'),
   tags:DS.hasMany('tag'),
   cardsIn:DS.attr(),
-  tagsIn:DS.attr()
+  tagsIn:DS.attr(),
+  type:DS.attr('string')
 })

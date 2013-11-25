@@ -1,0 +1,35 @@
+     <div class="controlls">
+        <div class="row">
+          <div class="col-md-1">
+            <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1">
+            <button type="button" class="btn btn-default btn-xs">
+              <span class="glyphicon glyphicon-share-alt"></span>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1">
+            <button type="button" class="btn btn-default btn-xs" {{action onAddSection}}>
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            {{#if section}}
+              {{#view App.PopupView viewName="popup"}}
+                {{section-form store=store card=card store=store}}
+              {{/view}}
+            {{/if}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1">
+            <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
+              <span class="glyphicon glyphicon-edit"></span>
+            </button>
+          </div>
+        </div>
+      </div>

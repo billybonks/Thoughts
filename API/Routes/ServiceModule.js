@@ -19,6 +19,11 @@ module.exports = function(settings){
     this.responseStream.once(event,callback);
   }
 
+  ServiceModule.prototype.on=function(event,callback){
+    console.log('registering '+event);
+    this.responseStream.on(event,callback);
+  }
+
   ServiceModule.prototype.emit=function(event,payload){
     console.log('firing '+event);
     this.responseStream.emit(event,payload)

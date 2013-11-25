@@ -1,20 +1,9 @@
 <div class="container">
-  <div class="col-md-6">
-    <div class="row">
-      {{title-card description=model.description title=model.title username=model.user.name tags=model.tags idz=id}}
-    </div>
-        <div class="row">
-      {{tasks-main tasks=tasks }}
-    </div>
-  </div>
-  <div class="col-md-5">
-        <div class="row">
-      {{question-main questions=questions}}
-    </div>
-        <div class="row">
-      {{link-main links=links card=model store=store}}
-    </div>
-        <div class="row">
-       {{documents-main documents=documents }}
+  <div class="col-md-12">
+      {{card-controlls card=model store=store}}
+        {{title-card description=model.description title=model.title username=model.user.name tags=model.tags idz=id}}
+      {{#each section in model.sections }}
+        {{section-main store=store card=model section=section}}
+      {{/each}}
     </div>
   </div>

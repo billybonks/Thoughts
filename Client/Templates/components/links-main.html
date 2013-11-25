@@ -1,0 +1,8 @@
+{{#each item in data}}
+          {{#view App.ContextMenuView target=link}}
+            <button type="button" class="btn btn-default btn-sm" {{action menu on="dragstart"}}>
+              <span class="glyphicon glyphicon-globe"></span> {{item.data.title}}
+            </button>
+          {{/view}}
+{{/each}}
+

@@ -5,6 +5,11 @@ App.CardController = Ember.ObjectController.extend({
   tasks:[{title:'Make a compost heap'},{title:'Task'},{title:'Fart'},{title:'Take a shower'}],
   actions:{
   },
+  IsRight:function(){
+    console.log('right')
+    console.log(this.get('section'))
+    return true;
+  }.property(),
   sortSomeAttachments:function(){
     console.log('sorting')
     var attachments = this.get('model').get('attachments');
@@ -22,6 +27,7 @@ App.CardController = Ember.ObjectController.extend({
   position:function(){
     return 'left:' + this.get('model').get('left') + 'px;top:' + this.get('model').get('top') + 'px';
   }.property('model.left'),
+
 
 
 
