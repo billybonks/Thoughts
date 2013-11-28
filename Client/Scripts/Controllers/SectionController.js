@@ -1,5 +1,5 @@
 App.SectionController = Ember.ObjectController.extend({
-  word:'lol',
+  isEditing:false,
   IsLink:true,//Ember.computed.equal('section.type', 'Links'),
   IsTask:Ember.computed.equal('section.type', 'Tasks'),
   IsDocument:Ember.computed.equal('section.type', 'Documents'),
@@ -13,7 +13,10 @@ App.SectionController = Ember.ObjectController.extend({
   }.property('section.position'),
   actions:{
     edit:function(){
-      console.log('editing')
+      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     }
+  },
+  close:function(){
+    this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
   }
 });
