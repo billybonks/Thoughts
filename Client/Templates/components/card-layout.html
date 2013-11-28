@@ -14,24 +14,6 @@
       {{yield}}
     </div>
   </div>
-{{#if isEditing}}
-  {{#view App.PopupView viewName="popup"}}
-<button id="closeButton" type="button" class="close" aria-hidden="true">&times;</button>
-    {{link-form store=store section=section}}
-    {{!--{{#if IsLink}}
-      {{link-form store=store card=card}}
-    {{/if}}
-    {{#if IsTask}}
-      {{tasks-form}}
-    {{/if}}
-    {{#if IsDocument}}
-      {{documents-main documents=documents }}
-    {{/if}}
-    {{#if IsQuestion}}
-      {{question-main questions=questions}}
-{{/if}}--}}
-  {{/view}}
-{{/if}}
 
 
 

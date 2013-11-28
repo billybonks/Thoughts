@@ -10,6 +10,7 @@ module.exports = function(grunt) {
           templateFileExtensions :'.html',
         },
         files: {
+          "Templates/result.js": 'Templates/**/*.html',//["Templates/application.html", "Templates/cards.html"]
           "../Deploy/templates.js": 'Templates/**/*.html'//["Templates/application.html", "Templates/cards.html"]
           //"path/to/another.js": ["path/to/sources/*.handlebars", "path/to/more/*.handlebars"]
         },

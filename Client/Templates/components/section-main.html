@@ -1,14 +1,3 @@
-{{#card-layout store=store card=card section=section title=section.title}}
-  {{#if IsLink}}
-    {{links-main tit = section.title data=section.attachments card=card store=store}}
-  {{/if}}
-  {{#if IsTask}}
-    {{tasks-main data=section.attachments card=card store=store}}
-  {{/if}}
-  {{#if IsDocument}}
-    {{documents-main data=section.attachments card=card store=store}}
-  {{/if}}
-  {{#if IsQuestion}}
-    {{question-main data=section.attachments card=card store=store}}
-  {{/if}}
-{{/card-layout}}
+{{#if IsLink}}
+  {{links-main tit = section.title data=section.attachments card=card store=store}}
+{{/if}}

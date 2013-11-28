@@ -1,6 +1,6 @@
-App.SectionMainComponent = Ember.Component.extend({
+App.SectionController = Ember.ObjectController.extend({
   word:'lol',
-  IsLink:Ember.computed.equal('section.type', 'Links'),
+  IsLink:true,//Ember.computed.equal('section.type', 'Links'),
   IsTask:Ember.computed.equal('section.type', 'Tasks'),
   IsDocument:Ember.computed.equal('section.type', 'Documents'),
   IsQuestion:Ember.computed.equal('section.type', 'Questions'),

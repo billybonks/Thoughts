@@ -1,9 +1,11 @@
 <div class="container">
   <div class="col-md-12">
       {{card-controlls card=model store=store}}
-        {{title-card description=model.description title=model.title username=model.user.name tags=model.tags idz=id}}
-      {{#each section in model.sections }}
-        {{section-main store=store card=model section=section}}
+      {{title-card description=model.description title=model.title username=model.user.name tags=model.tags idz=id}}
+      {{#each section in model.sections itemController="section"}}
+        {{#card-layout store=store title=title}}
+            {{links-main title = section.title data=section.attachments card=card store=store}}
+        {{/card-layout}}
       {{/each}}
     </div>
   </div>
