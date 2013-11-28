@@ -148,7 +148,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
-  var buffer = '', stack1, stack2, hashTypes, hashContexts, options;
+  var buffer = '', stack1, hashTypes, hashContexts;
   data.buffer.push("\r\n      <div class=\"panel panel-default col-md-6\" style=\"padding:20px\">\r\n        <div class=\"row borded\" >\r\n          <div class=\"col-md-10\">\r\n            <h4>");
   hashTypes = {};
   hashContexts = {};
@@ -158,6 +158,17 @@ function program1(depth0,data) {
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "edit", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push(">\r\n              <span class=\"glyphicon glyphicon-plus\" ></span> New\r\n            </button>\r\n          </div>\r\n        </div>\r\n        <div class=\"panel-body\"  >\r\n          ");
+  hashTypes = {};
+  hashContexts = {};
+  stack1 = helpers['if'].call(depth0, "IsLink", {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\r\n        </div>\r\n      </div>\r\n    ");
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
+  data.buffer.push("\r\n            ");
   hashContexts = {'title': depth0,'data': depth0,'card': depth0,'store': depth0};
   hashTypes = {'title': "ID",'data': "ID",'card': "ID",'store': "ID"};
   options = {hash:{
@@ -167,31 +178,31 @@ function program1(depth0,data) {
     'store': ("store")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['links-main'] || depth0['links-main']),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "links-main", options))));
-  data.buffer.push("\r\n          ");
+  data.buffer.push("\r\n            ");
   hashTypes = {};
   hashContexts = {};
-  stack2 = helpers['if'].call(depth0, "isEditing", {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack2 = helpers['if'].call(depth0, "isEditing", {hash:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\r\n        </div>\r\n      </div>\r\n    ");
-  return buffer;
-  }
-function program2(depth0,data) {
-  
-  var buffer = '', stack1, hashContexts, hashTypes;
-  data.buffer.push("\r\n          <p> HELLO FU</p>\r\n            ");
-  hashContexts = {'viewName': depth0};
-  hashTypes = {'viewName': "STRING"};
-  stack1 = helpers.view.call(depth0, "App.PopupView", {hash:{
-    'viewName': ("popup")
-  },inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\r\n          ");
   return buffer;
   }
 function program3(depth0,data) {
   
+  var buffer = '', stack1, hashContexts, hashTypes;
+  data.buffer.push("\r\n              ");
+  hashContexts = {'viewName': depth0};
+  hashTypes = {'viewName': "STRING"};
+  stack1 = helpers.view.call(depth0, "App.PopupView", {hash:{
+    'viewName': ("popup")
+  },inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\r\n            ");
+  return buffer;
+  }
+function program4(depth0,data) {
+  
   var buffer = '', stack1, hashContexts, hashTypes, options;
-  data.buffer.push("\r\n            <button id=\"closeButton\" type=\"button\" class=\"close\" aria-hidden=\"true\">&times;</button>\r\n            ");
+  data.buffer.push("\r\n                <button id=\"closeButton\" type=\"button\" class=\"close\" aria-hidden=\"true\">&times;</button>\r\n                ");
   hashContexts = {'store': depth0,'section': depth0};
   hashTypes = {'store': "ID",'section': "ID"};
   options = {hash:{
@@ -199,8 +210,7 @@ function program3(depth0,data) {
     'section': ("section")
   },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
   data.buffer.push(escapeExpression(((stack1 = helpers['link-form'] || depth0['link-form']),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "link-form", options))));
-  data.buffer.push("\r\n                        ");
-  data.buffer.push("\r\n            ");
+  data.buffer.push("\r\n              ");
   return buffer;
   }
 
@@ -230,7 +240,7 @@ function program3(depth0,data) {
     'itemController': ("section")
   },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack2 || stack2 === 0) { data.buffer.push(stack2); }
-  data.buffer.push("\r\n  </div>\r\n</div>\r\n\r\n\r\n");
+  data.buffer.push("\r\n  </div>\r\n</div>\r\n");
   return buffer;
   
 });
@@ -439,16 +449,6 @@ function program1(depth0,data) {
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "Submit", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push(">Submit</button>\r\n</form>");
   return buffer;
-  
-});
-
-Ember.TEMPLATES["components/card-layout"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
-this.compilerInfo = [4,'>= 1.0.0'];
-helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  
-
-
-  data.buffer.push("\r\n");
   
 });
 

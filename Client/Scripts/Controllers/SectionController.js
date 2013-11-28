@@ -1,9 +1,9 @@
 App.SectionController = Ember.ObjectController.extend({
   isEditing:false,
-  IsLink:true,//Ember.computed.equal('section.type', 'Links'),
-  IsTask:Ember.computed.equal('section.type', 'Tasks'),
-  IsDocument:Ember.computed.equal('section.type', 'Documents'),
-  IsQuestion:Ember.computed.equal('section.type', 'Questions'),
+  IsLink:Ember.computed.equal('model.type', 'Links'),
+  IsTask:Ember.computed.equal('model.type', 'Tasks'),
+  IsDocument:Ember.computed.equal('model.type', 'Documents'),
+  IsQuestion:Ember.computed.equal('model.type', 'Questions'),
   IsRight:function(){
     var t = this.get('section').get('position') % 2;
     console.log(t);
