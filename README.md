@@ -23,9 +23,9 @@ MOC
 
  Add section entry to Client\Templates\card.html
    ```             
-    {{#if isProperty}}
-      {{property-main title = section.title data=section.attachments section=section store=store}}
-    {{/if}}
+{{#if isProperty}}
+  {{property-main title = section.title data=section.attachments section=section store=store}}
+{{/if}}
    ```
  Add entry to Client\Scripts\Controllers\SectionController.js
 
