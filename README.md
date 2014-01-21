@@ -17,14 +17,15 @@ MOC
 
  Create a Component Controller Client\Scripts\Components component controller should extend BaseSectionComponent
 
- App.PropertyMainComponent = App.BaseSectionComponent.extend({
-
- })
+     App.PropertyMainComponent = App.BaseSectionComponent.extend({
+    
+     })
 
  Add section entry to Client\Templates\card.html
-   {{#if isProperty}}
-     {{property-main title = section.title data=section.attachments section=section store=store}}
-   {{/if}}
-
+   ```             
+    {{#if isProperty}}
+      {{property-main title = section.title data=section.attachments section=section store=store}}
+    {{/if}}
+   ```
  Add entry to Client\Scripts\Controllers\SectionController.js
 
