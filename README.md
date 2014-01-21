@@ -11,7 +11,7 @@ MOC
 
 
  Adding a new section type
- ==========================
+========
 
  Create display template Client\Templates\Components
 
