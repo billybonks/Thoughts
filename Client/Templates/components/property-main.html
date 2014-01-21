@@ -1,0 +1,34 @@
+<div style="margin-bottom:10px">
+  {{input type="text" class="form-control" placeholder="Enter property name" value=name}}
+  {{input type="text" class="form-control" placeholder="Enter property value" value=value}}
+  {{view Ember.Select content=types selectionBinding=selectedType class="form-control"}}
+  <button {{action 'CreateProperty'}}> submit </button>
+</div>
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each item in data}}
+      <tr>
+        {{#if isNediting}}
+
+        {{else}}
+          <td>{{item.data.name}}</td>
+        {{/if}}
+        {{#if isVediting}}
+          <td>edditing</td>
+        {{else}}
+          <td>{{item.data.value}}</td>
+        {{/if}}
+
+      </tr>
+
+    {{/each}}
+  </tbody>
+</table>
+{{table-entry data=item.data}}

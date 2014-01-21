@@ -31,8 +31,8 @@ module.exports = function(settings){
   }
   Tag.prototype.GetTags=function(ids){
     var responseStream = new Stream();
-    this.GetNodes(ids);
-    this.once('GetNodes.done',function(results){
+    var nodeStream = this.GetNodes(ids);
+    nodeStream.once('GetNodes.done',function(results){
       var ret = [];
       for(var i =0;i<results.length;i++){
         var tag = {
@@ -121,7 +121,7 @@ module.exports = function(settings){
     var TagBase = this.TagBase;
     var Create = this.CreateAndTagEntity;
     var context = this;
-    var emitter = this;
+    var emitter = new Stream();
     console.log('tagging')
     cacheStream.on('data',function(results){
       var count = tags.length;
@@ -155,6 +155,7 @@ module.exports = function(settings){
         }
       }
     });
+    return emitter;
   }
 
 

@@ -1,3 +1,6 @@
+<div style="margin-bottom:10px">
+  {{input type="text" class="form-control" placeholder="enter link press enter to submit" value=newLink action="CreateLink"}}
+</div>
 {{#each item in data}}
           {{#view App.ContextMenuView target=link}}
             <button type="button" class="btn btn-default btn-sm" {{action menu on="dragstart"}}>

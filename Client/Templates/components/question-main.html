@@ -1,18 +1,10 @@
-{{#card-layout title=title}}
-        {{#each questions}}
-          <div class="row borded">
-            <div class="col-md-12">
-              <h5>{{question}}</h5>
-            </div>
-          </div>
-         {{!-- {{#if expanded}}
-          <div class="row borded" style="background:grey">
-            <div class="col-md-12">
-              <h5>{{answer}}</h5>
-            </div>
-          </div>
-          {{/if}} --}}
-        {{/each}}
-{{/card-layout}}
+<div style="margin-bottom:10px">
+  {{input type="text" class="form-control" placeholder="enter question press enter to submit" value=newQuestion action="CreateQuestion"}}
+</div>
+<ul class="list-group">
+{{#each data}}
+  <li class="list-group-item" {{action Hover on="focusIn"}}>{{data.title}}</li>
+{{/each}}
+</ul>
 
 

@@ -3,29 +3,69 @@
     {{card-controlls card=model store=store}}
     {{title-card description=model.description title=model.title username=model.user.name tags=model.tags idz=id}}
     {{#each section in model.sections itemController="section"}}
-      <div class="panel panel-default col-md-6" style="padding:20px">
-        <div class="row borded" >
-          <div class="col-md-10">
-            <h4>{{title}}</h4>
-          </div>
-          <div class="col-md-2">
-            <button type="button" class="btn btn-default btn-sm" {{action edit}}>
-              <span class="glyphicon glyphicon-plus" ></span> New
-            </button>
-          </div>
+    <div class="panel panel-default col-md-6" style="padding:20px">
+      <div class="row borded" >
+        <div class="col-md-10">
+          <h4>{{title}}</h4>
         </div>
-        <div class="panel-body"  >
-          {{#if IsLink}}
+        <div class="pull-right">
+          <span  {{bind-attr class=chevron}} {{action collapse}}></span>
+          <span class="glyphicon glyphicon-remove" {{action deleteSection}}></span>
+        </div>
+      </div>
+      <div class="panel-body"  >
+        {{#if isCollapsed}}
+          {{#if isLink}}
             {{links-main title = section.title data=section.attachments card=card store=store}}
             {{#if isEditing}}
               {{#view App.PopupView viewName="popup"}}
-                <button id="closeButton" type="button" class="close" aria-hidden="true">&times;</button>
-                {{link-form store=store section=section}}
+              {{link-form store=store section=section}}
               {{/view}}
             {{/if}}
           {{/if}}
-        </div>
+          {{#if isTask}}
+            {{tasks-main title = section.title data=section.attachments section=section store=store}}
+            {{#if isEditing}}
+              {{#view App.PopupView viewName="popup"}}
+              {{tasks-form store=store section=section}}
+              {{/view}}
+            {{/if}}
+          {{/if}}
+          {{#if isDocument}}
+            {{document-main title = section.title data=section.attachments section=section store=store}}
+            {{#if isEditing}}
+              {{#view App.PopupView viewName="popup"}}
+              {{document-form store=store section=section}}
+              {{/view}}
+            {{/if}}
+          {{/if}}
+          {{#if isQuestion}}
+            {{question-main title = section.title data=section.attachments section=section store=store}}
+            {{#if isEditing}}
+              {{#view App.PopupView viewName="popup"}}
+              {{question-form store=store section=section}}
+              {{/view}}
+            {{/if}}
+          {{/if}}
+            {{#if isProperty}}
+              {{property-main title = section.title data=section.attachments section=section store=store}}
+              {{#if isEditing}}
+                {{#view App.PopupView viewName="popup"}}
+                {{document-form store=store section=section}}
+                {{/view}}
+              {{/if}}
+          {{/if}}
+          {{#if isTextArea}}
+            {{text-area title = section.title data=section.attachments section=section store=store}}
+              {{#if isEditing}}
+                {{#view App.PopupView viewName="popup"}}
+                  {{document-form store=store section=section}}
+                {{/view}}
+              {{/if}}
+          {{/if}}
+        {{/if}}
       </div>
+    </div>
     {{/each}}
   </div>
 </div>

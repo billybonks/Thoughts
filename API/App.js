@@ -152,11 +152,14 @@ app.get('/tags',function(req,res){
 app.post('/attachments',function(req,res){
   var body = req.body.attachment;
   console.log(body);
-  var cardId = body.cardsIn[0];
   var resultStream;
   if(body.type=='Link'){
     console.log('dis link')
-    resultStream=LinksRoute.CreateLink(body.data.link,req.headers['authorization'],body.tagsIn,cardId);
+    resultStream=LinksRoute.CreateLink(body.data.link,req.headers['authorization'],body.tagsIn,body.section);
+  }
+  if(!resultStream){
+    console.log(body);
+    resultStream = AttachmentRoute.createAttachment(body.data,req.headers['authorization'],[],body.sectionid)
   }
   resultStream.on('data',function(results){
     res.json(results);
@@ -165,12 +168,24 @@ app.post('/attachments',function(req,res){
 })
 
 app.get('/attachments',function(req,res){
-  AttachmentRoute.once('GetAttachments.done',function(results){
+  var resultStream = AttachmentRoute.getAttachments(req.query['ids'])
+  resultStream.once('GetAttachments.done',function(results){
     console.log(results)
     res.json({attachments:results})
   })
-  AttachmentRoute.getAttachments(req.query['ids'])
+
 })
+
+/* ========================================================================================================
+ *
+ * Sections Methods - Keep in alphabetical order
+ *
+ * =====================================================================================================*/
+app.get('/sections',function(req,res){
+  var resultStream = SectionRoute.GetSections(req.query['ids']);
+  resultStream.once('GetSections.done',function(results){
+    res.json({sections:results})
+});
 
 app.post('/sections',function(req,res){
   var body = req.body.section
@@ -179,12 +194,13 @@ app.post('/sections',function(req,res){
   var resultStream = SectionRoute.CreateSection(body.title,body.type,body.position,body.card)
   })
 
-app.get('/sections',function(req,res){
+app.put('/sections',function(req,res){
+  var section = req.body.section
+  var resultstream = SectionRoute.UpdateSection(section)
+})
 
-  SectionRoute.once('GetSections.done',function(results){
-    res.json({sections:results})
-  });
-  SectionRoute.GetSections(req.query['ids']);
+
+
 })
 /* ========================================================================================================
  *

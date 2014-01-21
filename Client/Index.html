@@ -36,7 +36,9 @@
     <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
     <script type="text/javascript" src="/scripts/controllers/LinkController.js"></script>
     <script type="text/javascript" src="/scripts/controllers/SectionController.js"></script>
+    <script type="text/javascript" src="/scripts/controllers/TaskController.js"></script>
 
+    <script type="text/javascript" src="/scripts/Components/BaseSectionComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/LinkFormComponent.js"></script>
@@ -48,7 +50,7 @@
     <script type="text/javascript" src="/scripts/Components/SectionFormComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardControllsComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardLayoutComponent.js"></script>
-
+    <script type="" src="/scripts/Components/PropertyMainComponent.js"></script>
     <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
     <script type="text/javascript" src="/scripts/views/TaggerView.js"></script>
     <script type="text/javascript" src="/scripts/views/PopupView.js"></script>
@@ -90,8 +92,8 @@
     </script>
 
     <script type="text/x-handlebars" data-template-name="popup">
-      <div id="popup" style="left: 470px; position: absolute; top: 387.5px; z-index: 9999; opacity: 1; display: block;" >
-
+    <div id="popup" style="left: 470px; position: absolute; top: 387.5px; z-index: 9999; opacity: 1; display: block;" >
+      <button id="closeButton" type="button" class="close" aria-hidden="true">&times;</button>
             {{yield}}
     </div>
     </script>

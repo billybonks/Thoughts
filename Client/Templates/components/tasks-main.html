@@ -1,8 +1,18 @@
+<div style="margin-bottom:10px">
+  {{input type="text" class="form-control" placeholder="enter link press enter to submit" value=newTask action="CreateTask"}}
+</div>
+<ul class="list-group">
+{{#each data itemController="task"}}
+  <li class="list-group-item" {{action Hover on="focusIn"}}>{{data.title}}
+    <div class="pull-right">
+      <button type="button" class="btn btn-default btn-sm">
+        <span class="glyphicon glyphicon-play"></span>
+      </button>
+      <button type="button" class="btn btn-default btn-sm">
+        <span class="glyphicon glyphicon-stop"></span>
+      </button>
+    </div>
+  </li>
+{{/each}}
+</ul>
 
-        {{#each tasks}}
-          <div class="row borded">
-            <div class="col-md-12">
-              <h5>{{title}}</h5>
-            </div>
-          </div>
-        {{/each}}

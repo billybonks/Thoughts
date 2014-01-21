@@ -14,7 +14,7 @@ module.exports = function(settings){
    * Helper Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  ServiceModule.prototype.once=function(event,callback){
+ /* ServiceModule.prototype.once=function(event,callback){
     console.log('registering '+event);
     this.responseStream.once(event,callback);
   }
@@ -27,10 +27,10 @@ module.exports = function(settings){
   ServiceModule.prototype.emit=function(event,payload){
     console.log('firing '+event);
     this.responseStream.emit(event,payload)
-  }
+  }*/
 
   ServiceModule.prototype.GetNodes=function(ids){
-    var emitter =this;
+    var emitter = new Stream();
     var query = 'START n=node('
     for(var c =0; c <ids.length;c++){
       if(c+1 == ids.length){
@@ -44,6 +44,7 @@ module.exports = function(settings){
     queryStream.on('data',function(results){
       emitter.emit('GetNodes.done',results);
     });
+    return emitter;
   }
 
   ServiceModule.prototype.DeleteEntity=function(id){

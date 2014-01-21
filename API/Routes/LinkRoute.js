@@ -73,7 +73,7 @@ module.exports = function(settings){
     responseStream.on('error',function(error){})
     responseStream.on('data',function(results){
         console.log('token =='+token)
-        createAttachment.call(context,'Link',results,token,tags,cardid);
+        createAttachment.call(context,results,token,tags,cardid);
     })
     return returnStream;
   }

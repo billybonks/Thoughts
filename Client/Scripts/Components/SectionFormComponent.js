@@ -1,5 +1,5 @@
 App.SectionFormComponent = Ember.Component.extend({
-  types:['Links','Documents','Questions','Tasks'],
+  types:['Links','Documents','Questions','Tasks','Properties','TextArea'],
   selectedType:null,
   actions:{
     Submit: function(){

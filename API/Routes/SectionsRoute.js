@@ -24,29 +24,10 @@ module.exports = function(settings){
     var count = 0;
     var sections = {}
     var ret = []
-    var emitter = this;
-    this.on('GetSectionAttachments.done',function(results){
-      var secID;
-      for(var i = 0; i<results.length;i++){
-        for(item in sections){
-          console.log(item)
-        }
-        secID = results[i].section;
-        if(results[i].id){
-          sections[secID].attachments.push(results[i].id);
-        }
-      }
-      console.log('push ' + secID)
-      console.log(sections[secID])
-      ret.push(sections[secID]);
-      counter++;
-      console.log(counter+'==='+count)
-      if(counter===count){
-        this.emit('GetSections.done',ret)
-      }
-    });
-    this.once('GetNodes.done',function(results){
-      console.log(results);
+    var emitter = new Stream();
+    var nodeStream = this.GetNodes(sectionIds);
+
+    nodeStream.once('GetNodes.done',function(results){
 
       count = results.length
       for(var i = 0;i < results.length;i++){
@@ -58,19 +39,39 @@ module.exports = function(settings){
           attachments:[]
         };
         sections[section.id] = section;
-        console.log(section)
-        GetSectionAttachments(section.id,emitter);
+        var attachmentStream = GetSectionAttachments(section.id);
+        attachmentStream.on('GetSectionAttachments.done',function(results){
+          var secID;
+          for(var i = 0; i<results.length;i++){
+            for(item in sections){
+            }
+            secID = results[i].section;
+            if(results[i].id){
+              sections[secID].attachments.push(results[i].id);
+            }
+          }
+          console.log('push ' + secID)
+          console.log(sections[secID])
+          ret.push(sections[secID]);
+          counter++;
+          console.log(counter+'==='+count)
+          if(counter===count){
+            emitter.emit('GetSections.done',ret)
+          }
+        });
       }
     });
-    this.GetNodes(sectionIds);
+
+    return emitter;
   }
 
-  Section.prototype.GetSectionAttachments = function(sectionId,emitter){
+  Section.prototype.GetSectionAttachments = function(sectionId){
     var query =  [
       'start section=node('+sectionId+')',
       'match (attachment:Attachment)-[Attached?]->(section)',
       'return attachment'
     ];
+    var emitter = new Stream();
     var queryStream = settings.executeQuery(query.join('\n'),{});
     queryStream.on('data',function(results){
       var ret = [];
@@ -84,6 +85,7 @@ module.exports = function(settings){
       }
       emitter.emit('GetSectionAttachments.done',ret)
     });
+    return emitter;
   }
   /* ========================================================================================================
    *
@@ -127,6 +129,9 @@ module.exports = function(settings){
     console.log('query')
     var queryStream = settings.executeQuery(query.join('\n'),{});
     return queryStream;
+  }
+  Section.prototype.UpdateSection = function(section){
+
   }
 
   return new Section(settings);
