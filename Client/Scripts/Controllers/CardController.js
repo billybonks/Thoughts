@@ -1,6 +1,29 @@
 App.CardController = Ember.ObjectController.extend({
-
+  word:'hello',
   actions:{
+    Delete:function(){
+      this.get('store').find('card', this.get('model').get('id')).then(function(rec){
+        rec.deleteRecord();
+        rec.save();
+      });
+    },
+    ToggleEdit:function(){
+      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+    },
+    Share:function(){
+    },
+    SaveAsTemplate:function(){
+      var template = {
+        title:this.get('model').get('title'),
+        sectionsIn: this.get('model').get('sections').getEach('id')
+      }
+      template = this.store.createRecord('template', template);
+      var otherSections =this.get('model').get('sections')
+      template.get('sections').then(function(sections){
+        sections.pushObjects(otherSections);
+        template.save();
+      })
+    }
   },
   IsRight:function(){
     console.log('right')

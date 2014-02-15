@@ -26,16 +26,39 @@ App.ApplicationRoute = Ember.Route.extend({
   }
 });
 
-App.CardsRoute = Ember.Route.extend({
-    model: function () {
-        return this.store.find('card');
-    }
-});
-
-App.CardsIndexRoute = Ember.Route.extend({
+App.IndexRoute = Ember.Route.extend({
     model: function () {
         return this.modelFor('cards');
     }
+});
+
+App.CardsRoute = Ember.Route.extend({
+  model: function () {
+    return this.store.find('card');
+  },
+  setupController: function(controller, model) {
+
+    var ret =this.store.all('template').map(function(item, index, enumerable){
+      return {id:item.get('id'),title:item.get('title')}
+    });
+    ret.push({title:'None',id:-1})
+    ret.sort(function compare(a, b) {
+      if (a.id<b.id)
+        return -1;
+      if (a.id>b.id)
+        return 1;
+      // a must be equal to b
+      return 0;
+    })
+    console.log(ret)
+    controller.set('templates',ret);
+  }
+});
+
+App.CardsIndexRoute = Ember.Route.extend({
+  model: function () {
+    return this.modelFor('cards');
+  }
 });
 
 App.EmailsRoute = Ember.Route.extend({
@@ -50,14 +73,18 @@ App.EmailsIndexRoute = Ember.Route.extend({
     }
 });
 
-App.LinksRoute = Ember.Route.extend({
+App.SettingsRoute = Ember.Route.extend({
     model: function () {
-        return this.store.find('link');
+        return this.store.find('setting',0);
+    },
+    setupController: function(controller, model) {
+      console.log(model)
     }
 });
 
-App.LinksIndexRoute = Ember.Route.extend({
+App.SettingsIndexRoute = Ember.Route.extend({
     model: function () {
-        return this.modelFor('links');
+      console.log('QQQQQQQ')
+        return this.modelFor('settings');
     }
 });

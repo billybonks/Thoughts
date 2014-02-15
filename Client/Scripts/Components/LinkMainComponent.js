@@ -1,4 +1,4 @@
-App.LinksMainComponent = Ember.Component.extend({
+App.LinksMainComponent = App.BaseSectionComponent.extend({
   isEditing:false,
   title:'Links',
   actions:{
@@ -6,33 +6,17 @@ App.LinksMainComponent = Ember.Component.extend({
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
       console.log(this.get('popup'))
     },
-    menu:function(){
-      console.log('menu')
-    }
-  },
-});
-
-App.LinkFormComponent = Ember.Component.extend({
-  link:null,
-  actions:{
     Submit: function(){
       //title to be set server side
 
-      var section =this.get('section').get('id');
-      var tags = this.get('tagger').getTags()
-      var href = this.get('link');
-      console.log(tags);
+      var href = this.get('newLink');
       if(this.urlIsWellFormed(href)){
-        var data = {
-          data: {
+        var data =
+          {
             link:href
-          },
-          cardsIn:[section],
-        }
-
-        var link = this.store.createRecord('attachment', data);
-        link.save();
-        this.set('link','');
+          }
+        this.submitAttachment(data);
+        this.set('newLink','');
       }else{
         //TODO : Implement form validation erros
         console.log('error')

@@ -1,34 +1,17 @@
-<div style="margin-bottom:10px">
-  {{input type="text" class="form-control" placeholder="Enter property name" value=name}}
-  {{input type="text" class="form-control" placeholder="Enter property value" value=value}}
-  {{view Ember.Select content=types selectionBinding=selectedType class="form-control"}}
-  <button {{action 'CreateProperty'}}> submit </button>
+<div class="row">
+  <div class="col-md-6"><b>Name</b></div>
+  <div class="col-md-6"><b>Value</b></div>
 </div>
+{{#each item in data}}
+    {{#view App.DraggableElement}}
+      {{table-entry data=item.data}}
+    {{/view}}
+{{/each}}
 
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each item in data}}
-      <tr>
-        {{#if isNediting}}
+<button draggable="true" class="btn btn-default"{{action 'ToggleEdit'}}> New Property </button>
+{{#if isEditing}}
+  {{#view App.PopupView viewName="popup"}}
+    {{property-form store=store section=section }}
+  {{/view}}
+{{/if}}
 
-        {{else}}
-          <td>{{item.data.name}}</td>
-        {{/if}}
-        {{#if isVediting}}
-          <td>edditing</td>
-        {{else}}
-          <td>{{item.data.value}}</td>
-        {{/if}}
-
-      </tr>
-
-    {{/each}}
-  </tbody>
-</table>
-{{table-entry data=item.data}}

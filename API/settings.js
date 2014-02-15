@@ -22,12 +22,13 @@ exports.DBConnect = function(callback){
 exports.executeQuery = function(query,variableHash){
   var queryStream = new Stream();
   neo4j.connect('http://localhost:7474/db/data/',function (err, graph, done) {
-    //console.log(variableHash);
       //console.log(query);
       var data = variableHash;
-    graph.query(query,variableHash, function (err, results) {
-        if(err)
+    graph.query(query,data, function (err, results) {
+        if(err){
+          console.log(err);
           throw err;
+        }
         else
           queryStream.emit('data',results)
       });

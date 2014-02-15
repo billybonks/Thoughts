@@ -3,6 +3,7 @@ var ServiceModule = require('./ServiceModule.js')
 var UserRoute = require('./UserRoute.js')
 var Stream = require('stream');
 var TagsRoute = require('./TagsRoute.js')
+var SectionsRoute = require('./SectionsRoute.js')
 
 module.exports = function(settings){
 
@@ -14,6 +15,7 @@ module.exports = function(settings){
   function Card(settings){
     this.user = new UserRoute(settings);
     this.tags = new TagsRoute(settings);
+    this.sections = new SectionsRoute(settings);;
     this.counter = 0;
   }
 
@@ -31,28 +33,23 @@ module.exports = function(settings){
       'MATCH (user:Person)-[Created]->(card:Card)',
       'WHERE user.session_token = {token}',
       'AND not(has(card.isDeleted))',
+      'AND not(has(card.isTemplate))',
+      'AND not(card-[:Is]->())',
       'RETURN card'
     ]
     var responseStream = new Stream()
     var variablehash = {token:token}
+
     var queryStream = settings.executeQuery(query.join('\n'),variablehash);
+    console.log('executed')
     var GetCard = this.GetCard;
     queryStream.on('data', function (results) {
+
       var cardsCount = results.length
-       var counter= 0;
-      console.log('retCount = '+cardsCount)
-      console.log('retCount = '+counter)
-     if(cardsCount == 0){
-      responseStream.emit('data',
- {
-     id: 2,
-     title: 'Garden packs',
-     description: 'Need to find an easy way to work with soil, test it and improve it, so that packs can be built in large quantities',
-     user: 1,
-     left: 600,
-     top: 0
- })
-     }
+      if(cardsCount == 0){
+        responseStream.emit('data',[])
+      }
+      var counter= 0;
       var ret = [];
       for(var c=0;c<cardsCount;c++){
         var id = results[c].card.id;
@@ -72,17 +69,44 @@ module.exports = function(settings){
     return responseStream;
   }
 
+  Card.prototype.GetTemplates=function(token){
+    var query = [
+      'MATCH (user:Person)-[Created]->(card:Card)',
+      'WHERE user.session_token = {token}',
+      'AND not(has(card.isDeleted))',
+      'AND has(card.isTemplate)',
+      'RETURN card,user'
+    ]
+    console.log(query.join('\n'))
+    var responseStream = new Stream()
+    var variablehash = {token:token}
+    var queryStream = settings.executeQuery(query.join('\n'),variablehash);
+    queryStream.on('data',function(templates){
+      var ret = []
+      for(var i = 0;i<templates.length;i++){
+        ret.push({
+          id:templates[i].card.id,
+          title:templates[i].card.data.title,
+          user:templates[i].user.id
+        });
+      }
+      responseStream.emit('data',ret)
+      console.log(ret)
+    })
+    return responseStream;
+  }
   //Currently sideloading data aswell
   Card.prototype.GetCard=function (token,id){
     var query=[
       'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card) ,',
-      '(section:Section)<-[Has?]-(card),',
+      '(section:Section)<-[h?:Has]-(card),',
       '(tag:Tag)-[Tagged?]->(card)',
       'WHERE user.session_token = {token}',
+      'AND not(has(section.isDeleted))',
       'RETURN card,user,section,tag'//user,card,attachment'
     ];
-    // console.log(query.join('\n'))
+    console.log(query.join('\n'))
 
     var variableHash = {token:token}
     console.log(query.join('\n'))
@@ -146,7 +170,7 @@ module.exports = function(settings){
    *
    * ===================================================================================================== */
   Card.prototype.CreateCard=function (token,data,tags){
-    console.log('Creating card Tag')
+    /// console.log(data)
     var newCard = 'CREATE (n:Card {data}) RETURN n';
     var newCardHash = {data:data};
     var user = this.user;
@@ -159,27 +183,76 @@ module.exports = function(settings){
       var response = user.CreatedEntity(token,cardId)
       response.on('data', function (results) {
         var user = results.user;
-        var card = results.entity;
-        tagger.TagEntity(cardId,tags)
-        tagger.responseStream.once('TagEntity.done',function(results){
-          console.log('tagger');
-          console.log(results);
-          responseStream.emit('data',results);
-        })
+        var card = {
+          id:results.entity.id,
+          title:results.entity.data.title,
+          top:results.entity.data.top,
+          left:results.entity.data.left,
+          user:results.user.id
+          //tags
+        }
+        if(tags.length > 1){
+          var resultStream = tagger.TagEntity(cardId,tags)
+          resultStream.on('data',function(results){
+            responseStream.emit('data',results);
+            console.log(results);
+          })
+        }else{
+          responseStream.emit('data',card);
+        }
       });
     });
     return responseStream;
   }
+
+  Card.prototype.CreateCardFromTemplate = function(token,data,tags,templateId){
+    var responseStream = this.GetCard(token,templateId);
+    var DuplicateCard = this.DuplicateCard;
+    var context = this;
+    responseStream.on('data',function(results){
+      delete results.card.id
+      delete results.card.isTemplate
+      var responseStream = DuplicateCard.call(context,data,results.card.sections,results.card.tags,token);
+    })
+  }
+
 
   Card.prototype.DeleteCard=function (token, id){
     var responseStream = this.DeleteEntity(id);
     return responseStream;
   }
 
+  Card.prototype.DuplicateCard = function(data,sections,tags,token){
+    var resultStream = new Stream()
+    console.log('DUPPPPS')
+    console.log(this);
+    console.log(this.sections);
+    var responseStream = this.sections.GetSections(sections);
+    var CardsRoute = this;
+    var SectionRoute = this.sections;
+
+    responseStream.on('data',function(results){
+      responseStream = CardsRoute.CreateCard.call(CardsRoute,token,data,tags);
+      responseStream.on('data',function(card){
+        var counter = 0
+        for(var i =0;i<results.length;i++){
+          resultStream = SectionRoute.DuplicateAndLink.call(SectionRoute,results[i],card.id,token)
+          resultStream.on('data',function(section){
+            counter++;
+            if(counter === results.length){
+              console.log(card)
+              resultStream.emit('data',{})
+            }
+          })
+        }
+      })
+
+    })
+  }
+
   Card.prototype.UpdateCard=function (data,id){
     var query = ['START card=node('+id+')',
                  'SET card.title = {title},',
-                 'card.description = {description},',
                  'card.top = {top},',
                  'card.left = {left}',
                  ' RETURN card'];
@@ -193,5 +266,16 @@ module.exports = function(settings){
     return responseStream;
   }
 
+  Card.prototype.LinkCardToSection = function(sectionID,cardID){
+    var responseStream = new Stream();
+    var query = ['START card=node('+cardID+') ,section=node('+sectionID+')',
+                 'CREATE card-[r:Is]->section',
+                 'RETURN section'];
+    var queryStream = settings.executeQuery(query.join('\n'),{});
+    queryStream.on('data',function(results){
+      responseStream.emit(results)
+    })
+    return responseStream;
+  }
   return new Card(settings)
 }

@@ -1,32 +1,33 @@
 {{#each itemController="card"}}
-      {{#view  App.DraggableCardView}}
-        <div class="controlls">
-                    <div class="row">
-                      <div class="col-md-1">
-                        <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
-                          <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-1">
-                        <button type="button" class="btn btn-default btn-xs">
-                          <span class="glyphicon glyphicon-share-alt"></span>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-1">
-                        <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
-                          {{#if editing}}
-                          <span class="glyphicon glyphicon-check"></span>
-                          {{else}}
-                          <span class="glyphicon glyphicon-edit"></span>
-                          {{/if}}
-                        </button>
-                      </div>
-                    </div>
-        </div>
+<div class="col-md-4">
+  <div class="controlls">
+    <div class="row">
+      <div class="col-md-1">
+        <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
+          <span class="glyphicon glyphicon-remove"></span>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1">
+        <button type="button" class="btn btn-default btn-xs">
+          <span class="glyphicon glyphicon-share-alt"></span>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1">
+        <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
+          {{#if editing}}
+          <span class="glyphicon glyphicon-check"></span>
+          {{else}}
+          <span class="glyphicon glyphicon-edit"></span>
+          {{/if}}
+        </button>
+      </div>
+    </div>
+  </div>
+
         {{title-card description=description title=title username=user.name tags=tags idz=id}}
-      {{/view}}
+  </div>
 {{/each}}

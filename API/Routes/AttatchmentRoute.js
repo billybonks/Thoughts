@@ -32,7 +32,7 @@ module.exports = function(settings){
         console.log(attachment);
         ret.push(attachment);
       }
-      resultStream.emit('GetAttachments.done',ret)
+      resultStream.emit('data',ret)
     });
     return resultStream;
   }
@@ -95,10 +95,11 @@ module.exports = function(settings){
       console.log(results)
       var linkStream = linkSection(sectionId,results.id)
       linkStream.on('data',function(results){
-        //link card
-        console.log('link card')
-        console.log(results)
-        createAttachmentReturn.emit('data',results);
+        var attachment = {attachment:{id:results[0].attachment.id,
+                                      data:results[0].attachment.data,
+                                      section:sectionId}};
+        console.log(results);
+        createAttachmentReturn.emit('data',attachment);
       })
     });
     return createAttachmentReturn;
@@ -136,7 +137,6 @@ module.exports = function(settings){
       'CREATE user-[r:Created]->attachment',
       'RETURN attachment'
     ];
-    console.log('linking owner')
     var variableHash = {token:sessionToken}
     var relStream = settings.executeQuery(query.join('\n'),variableHash);
     return relStream;
@@ -157,18 +157,32 @@ module.exports = function(settings){
 
 
   //
-  Attachment.prototype.updateAttachment = function(){
-    var query = ['START link=node('+req.params.id+')',
-                 'SET link.title = {title},',
-                 'link.description = {description},',
-                 'link.href = {href}',
-                 'RETURN link'];
-    var variableHash = req.body.link;
-    delete variableHash['user'];
+  Attachment.prototype.updateAttachment = function(attachment,id){
+    var query = ['START attachment=node('+id+') SET'];
+    var variableHash = {}
+    var counter = 0;
+    for(key in attachment.data){
+      counter++;
+      if(attachment.data[key] != null){
+        var str = 'attachment.'+key+' = {'+key+'}';
+        if(counter < Object.keys(attachment.data).length)
+          query.push(str+',')
+          else
+          query.push(str)
+          variableHash[key] = attachment.data[key]
+      }
+    }
+    query.push('RETURN attachment')
+    console.log(query.join('\n'))
+    console.log(variableHash.question)
+    var resultStream = new Stream();
+
     var queryStream = settings.executeQuery(query.join('\n'),variableHash);
     queryStream.on('data',function(results){
-      res.json({})
+      console.log(results)
+      resultStream.emit('done',results)
     })
+    return resultStream;
   }
 
   return new Attachment(settings);

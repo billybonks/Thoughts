@@ -1,10 +1,10 @@
 var ServiceModule = require('./ServiceModule.js')
 var Stream = require('stream');
-
+var AttatchmentRoute = require('./AttatchmentRoute.js')
 module.exports = function(settings){
 
   function Section(settings){
-
+    this.attachment = new AttatchmentRoute(settings);
   }
   /* ========================================================================================================
    *
@@ -56,7 +56,7 @@ module.exports = function(settings){
           counter++;
           console.log(counter+'==='+count)
           if(counter===count){
-            emitter.emit('GetSections.done',ret)
+            emitter.emit('data',ret)
           }
         });
       }
@@ -110,6 +110,7 @@ module.exports = function(settings){
               type:data.type,
               position:data.position,
               card:cardId,
+              title:data.title
               //get payloads code
             }
         responseStream.emit('data',section)
@@ -118,6 +119,45 @@ module.exports = function(settings){
     return responseStream;
   }
 
+  Section.prototype.DeleteSection = function(sectionId){
+    var query = ['START section=node('+sectionId+')',
+                 'SET section.isDeleted = true'];
+    var returnStream = new Stream();
+    var queryStream = settings.executeQuery(query.join('\n'),{});
+    queryStream.on('data',function(results){
+      returnStream.emit('data',{})
+    })
+    return returnStream;
+  }
+
+  Section.prototype.DuplicateAndLink = function(section,cardId,token){
+    var returnStream = new Stream();
+    var resultStream = this.attachment.getAttachments(section.attachments);
+    var CreateSection = this.CreateSection
+    var context = this;
+    var attRoute = this.attachment
+    resultStream.on('data',function(attachments){
+      resultStream = CreateSection.call(context,section.title,section.type,section.position,cardId);
+      resultStream.on('data',function(section){
+        var counter = 0;
+        var attachmentIds = []
+        for(var i = 0;i<attachments.length;i++){
+          resultStream = attRoute.createAttachment.call(attRoute,attachments[i].data,token,[],section.id)
+            resultStream.on('data',function(result){
+            counter++;
+            attachmentIds.push(result.id)
+            if(counter === attachments.length){
+               returnStream.emit('data',{})
+               console.log(section.id)
+            }
+          })
+        }
+      })
+
+
+    })
+    return returnStream;
+  }
 
   Section.prototype.LinkCard = function(sectiontId,cardId){
     var query =  [
@@ -130,8 +170,21 @@ module.exports = function(settings){
     var queryStream = settings.executeQuery(query.join('\n'),{});
     return queryStream;
   }
-  Section.prototype.UpdateSection = function(section){
 
+  Section.prototype.UpdateSection = function(section,sectionID){
+    var query =  [
+      'START section=node('+sectionID+')',
+      'Set section.title = {title},',
+      'section.position  = {position},',
+      'section.collapsed = {collapsed}',
+      'RETURN section'
+    ];
+    var resultStream = new Stream();
+    var queryStream = settings.executeQuery(query.join('\n'),section);
+    queryStream.on('data',function(results){
+      resultStream.emit('data',results);
+    })
+    return resultStream;
   }
 
   return new Section(settings);

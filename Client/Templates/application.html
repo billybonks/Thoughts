@@ -17,7 +17,7 @@
       <li>{{#link-to 'cards'}} Cards{{/link-to}}</li>
       <li>{{#link-to 'emails'}} Emails{{/link-to}}</li>
       <li>{{#link-to 'links'}} Links{{/link-to}}</li>
-      <li>{{#link-to 'settings.profile'}} Actions{{/link-to}}</li>
+      <li>{{#link-to 'settings'}} Actions{{/link-to}}</li>
       {{/if}}
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -31,14 +31,14 @@
   </div><!-- /.navbar-collapse -->
 </nav>
 
-<div class="row" style="margin-bottom:10px">
+<div class="row" style="margin-bottom:50px">
   <div class="col-md-1">
     <h2 id="Timer" style="margin:0px"></h2>
   </div>
 </div>
-<div style="margin-top:60px">
-  {{outlet}}
-</div>
+  {{!#view App.DropDelete}}
+    {{outlet}}
+{{!/view}}
 {{#if menuOpen}}
 <div class="card contextMenu" style="left:100px;top:200px">
   <ul class="list-group" style="margin: 0px;">

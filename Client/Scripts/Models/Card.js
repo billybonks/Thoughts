@@ -1,6 +1,5 @@
 App.Card = DS.Model.extend({
   title: DS.attr('string'),
-  description: DS.attr('string'),
   left: DS.attr('number'),
   top: DS.attr('number'),
   user: DS.belongsTo('user', { async: true }),
@@ -8,4 +7,5 @@ App.Card = DS.Model.extend({
   sections: DS.hasMany('section',{async:true}),
   tags:DS.hasMany('tag',{async:true}),
   tagsIn:DS.attr(),
+  template:DS.attr()
 });

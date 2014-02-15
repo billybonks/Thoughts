@@ -29,7 +29,7 @@ module.exports = function(settings){
     this.responseStream.emit(event,payload)
   }*/
 
-  ServiceModule.prototype.GetNodes=function(ids){
+  ServiceModule.prototype.GetNodes=function(ids,filters){
     var emitter = new Stream();
     var query = 'START n=node('
     for(var c =0; c <ids.length;c++){
@@ -39,7 +39,7 @@ module.exports = function(settings){
         query += ids[c]+',';
       }
     }
-    query +=  ') return n';
+    query +=  ') Where not(has(n.isDeleted)) return n';
     var queryStream = settings.executeQuery(query,{});
     queryStream.on('data',function(results){
       emitter.emit('GetNodes.done',results);

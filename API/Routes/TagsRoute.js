@@ -122,33 +122,30 @@ module.exports = function(settings){
     var Create = this.CreateAndTagEntity;
     var context = this;
     var emitter = new Stream();
-    console.log('tagging')
+    var tags = []
     cacheStream.on('data',function(results){
       var count = tags.length;
       var counter = 0
       for(var i = 0; i < tags.length;i++){
         console.log(tags[i] in cache);
         if(tags[i] in cache){
-          console.log('retag');
           var result = TagBase.call(context,nodeId,cache[tags[i]].id)
-          console.log(result)
           result.on('data',function(results){
+            tags.push(results[0].t.id)
             counter++;
             console.log('counter = '+counter)
             if(counter == count){
               console.log('done')
-              emitter.emit('TagEntity.done',{});
+              emitter.emit('data',tags);
             }
           })
         }else{
-          console.log('newTag');
           var result = Create.call(context,tags[i],'',nodeId)
           result.on('data',function(results){
             counter++;
-            console.log('counter = '+counter)
+            tags.push(results[0].n.id)
             if(counter == count){
-              console.log('done')
-              emitter.emit('TagEntity.done',{});
+              emitter.emit('data',tags);
             }
           })
 

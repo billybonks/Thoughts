@@ -29,3 +29,4 @@ MOC
    ```
  Add entry to Client\Scripts\Controllers\SectionController.js
 
+ Add array entry to  Client\Scripts\Components\SectionFormComponent

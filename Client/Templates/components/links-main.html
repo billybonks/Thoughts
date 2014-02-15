@@ -1,11 +1,9 @@
 <div style="margin-bottom:10px">
-  {{input type="text" class="form-control" placeholder="enter link press enter to submit" value=newLink action="CreateLink"}}
+  {{input type="text" class="form-control" placeholder="enter link press enter to submit" value=newLink action="Submit"}}
 </div>
+  <ul>
 {{#each item in data}}
-          {{#view App.ContextMenuView target=link}}
-            <button type="button" class="btn btn-default btn-sm" {{action menu on="dragstart"}}>
-              <span class="glyphicon glyphicon-globe"></span> {{item.data.title}}
-            </button>
-          {{/view}}
+    <li><a {{bind-attr href=item.data.href}}>{{item.data.title}}</a></li>
 {{/each}}
+</ul>
 

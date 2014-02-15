@@ -67,13 +67,17 @@ App.CardFormComponent = Ember.Component.extend({
   actions:{
     Submit: function(){
       var tags = this.get('tagger').getTags()
-      var card = this.store.createRecord('card', {
+       var data = {
         title: this.get('title'),
-        description: this.get('description'),
         left:0,
         top:0,
         tagsIn : tags
-      });
+      }
+
+      if(this.get('selectedTemplate')>0){
+        data.template = this.get('selectedTemplate');
+      }
+      var card = this.store.createRecord('card', data);
       card.save();
       this.set('title','');
       this.set('description','');

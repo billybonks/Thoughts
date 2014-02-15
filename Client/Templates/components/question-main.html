@@ -1,10 +1,31 @@
 <div style="margin-bottom:10px">
   {{input type="text" class="form-control" placeholder="enter question press enter to submit" value=newQuestion action="CreateQuestion"}}
 </div>
-<ul class="list-group">
-{{#each data}}
-  <li class="list-group-item" {{action Hover on="focusIn"}}>{{data.title}}</li>
-{{/each}}
-</ul>
+<div class="panel-group">
+  {{#each item in data itemController="question"}}
+   <div class="panel panel-default">
+    <div class="panel-heading" {{action 'ToggleAnswer'}}>
+      <h4 class="panel-title" {{action 'ToggleAnswer'}}>
+          {{data.question}}
+      </h4>
+    </div>
+    <div  {{bind-attr class="answerClass"}}>
+      <div class="panel-body">
+        {{#if data.answer}}
+          {{#if isEditingAnswer}}
+            {{textarea class="form-control" placeholder="enter answer" value=data.answer}}
+            <button class="btn btn-deafult" {{action 'UpdateQuestion'}}>Save</button>
+          {{else}}
+        <p {{action 'ToggleEditAnswer'}}>{{data.answer}}</p>
+          {{/if}}
+        {{else}}
+          {{textarea class="form-control" placeholder="enter answer" value=answer}}
+          <button class="btn btn-deafult" {{action 'NewAnswer'}}>Answer now</button>
+        {{/if}}
 
+      </div>
+    </div>
+  </div>
+  {{/each}}
+</div>
 

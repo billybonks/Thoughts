@@ -31,6 +31,21 @@ module.exports = function(settings){
       res.json({user:user})
     })
   }
+
+  User.prototype.GetUser=function (token){
+    var query = 'Match (user:Person) where user.session_token = {token} return user'
+    var queryStream = settings.executeQuery(query,{token:token});
+    var returnStream = new Stream();
+    queryStream.on('data',function(results){
+      var user =  {
+        id: results[0].user.id,
+        name: results[0].user.data.name,
+        email: results[0].user.data.email
+      }
+      returnStream.emit('data',user);
+    });
+    return returnStream;
+  }
   /* ========================================================================================================
    *
    * Write Methods - Keep in alphabetical order
