@@ -99,9 +99,9 @@ module.exports = function(settings){
   Card.prototype.GetCard=function (token,id){
     var query=[
       'Start card=node('+id+')',
-      'MATCH (user:Person)-[Created]->(card:Card) ,',
-      '(section:Section)<-[h?:Has]-(card),',
-      '(tag:Tag)-[Tagged?]->(card)',
+      'MATCH (user:Person)-[Created]->(card:Card)',
+      'MATCH OPTIONAL (section:Section)<-[h:Has]-(card),',
+      '(tag:Tag)-[Tagged]->(card)',
       'WHERE user.session_token = {token}',
       'AND not(has(section.isDeleted))',
       'RETURN card,user,section,tag'//user,card,attachment'
