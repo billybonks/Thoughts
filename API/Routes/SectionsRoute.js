@@ -68,7 +68,7 @@ module.exports = function(settings){
   Section.prototype.GetSectionAttachments = function(sectionId){
     var query =  [
       'start section=node('+sectionId+')',
-      'match (attachment:Attachment)-[Attached?]->(section)',
+      'optional match (attachment)-[:Attached]->(section)',
       'return attachment'
     ];
     var emitter = new Stream();

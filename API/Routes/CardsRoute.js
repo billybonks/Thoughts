@@ -57,10 +57,11 @@ module.exports = function(settings){
         resultStream.on('data',function(result){
           ret.push(result.card)
           counter++
+          console.log('got another card')
           if(cardsCount ==counter){
-            responseStream.emit('data',ret)
-            console.log('CARDS')
+             console.log('CARDS')
             console.log(ret)
+            responseStream.emit('data',ret)
           }
         })
 
@@ -100,8 +101,8 @@ module.exports = function(settings){
     var query=[
       'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card)',
-      'MATCH OPTIONAL (section:Section)<-[h:Has]-(card),',
-      '(tag:Tag)-[Tagged]->(card)',
+      'OPTIONAL MATCH  (section)<-[h:Has]-(card),',
+      '(tag)-[Tagged]->(card)',
       'WHERE user.session_token = {token}',
       'AND not(has(section.isDeleted))',
       'RETURN card,user,section,tag'//user,card,attachment'

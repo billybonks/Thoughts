@@ -18,7 +18,7 @@ module.exports = function(settings){
    * Read Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  User.prototype.GetUser=function (req, res){
+  User.prototype.GetUserById=function (req, res){
     var id = req.params.id;
     var query = 'start user=node('+id+') return user'
     var queryStream = settings.executeQuery(query,{});
@@ -34,6 +34,7 @@ module.exports = function(settings){
 
   User.prototype.GetUser=function (token){
     var query = 'Match (user:Person) where user.session_token = {token} return user'
+   // console.log(token)
     var queryStream = settings.executeQuery(query,{token:token});
     var returnStream = new Stream();
     queryStream.on('data',function(results){

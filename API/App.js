@@ -105,6 +105,7 @@ app.get('/settings/:id',function(req,res){
   SettingsRoute.GetSettings(req.headers['authorization']).on('data',function(settings){
     console.log('about to respond')
     res.json({settings:settings})
+    console.log('responded')
   })
 })
 
@@ -125,8 +126,10 @@ app.get('/cards',function (req,res){
   var response = CardsRoute.GetAllCards(req.headers['authorization']);
   response.on('data',function(results){
     res.json({cards:results})
+    console.log('response Sent')
   })//res.json(ret);
 });
+
 app.get('/cards/:id',function (req,res){
   var response = CardsRoute.GetCard(req.headers['authorization'],req.params.id);
   response.on('data',function(results){
@@ -324,6 +327,7 @@ app.post('/sections',function(req,res){
       var response = CardsRoute.GetCard(req.headers['authorization'],results.card);
       response.on('data',function(card){
         res.json({card:card.card,section:results})
+       // res.json({section:results})
       })
       // res.json({section:results});
     })
@@ -377,7 +381,7 @@ app.post('/links',function (req,res){
  * Users Methods - Keep in alphabetical order
  *
  * ===================================================================================================== */
-app.get('/users/:id',function (req,res){UserRoute.GetUser(req,res)})
+app.get('/users/:id',function (req,res){UserRoute.GetUserById(req,res)})
 
 /* ========================================================================================================
  *
