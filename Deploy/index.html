@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>App</title>
+    <link id="bs-css" href="style.css" rel="stylesheet"/>
+  </head>
+  <body>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://builds.emberjs.com/handlebars-1.0.0.js"></script>
+    <script src="http://builds.emberjs.com/beta/ember.js"></script>
+    <script src="http://builds.emberjs.com/canary/ember-data.js"></script>
+
+    <script type="text/javascript" src="/External/bpopup.js"></script>
+    <script type="text/javascript" src="/External/Param.js"></script>
+    <script type="text/javascript" src="/External/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/External/tagger.js"></script>
+    <script type="text/javascript" src="/External/typehead.js"></script>
+
+    <script type="text/javascript" src="emberApp.js"></script>
+    <script type="text/javascript" src="templates.js"></script>
+
+
+    <script type="text/x-handlebars" data-template-name="draggablecard">
+      <div class="card" {{bind-attr style=position}}>
+        {{yield}}
+    </div>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="cardview">
+      <div class="card">
+        {{yield}}
+    </div>
+    </script>
+    <script type="text/x-handlebars" data-template-name="contextMenu">
+      <div class="col-md-3">
+        {{yield}}
+    </div>
+    </script>
+
+
+    <script type="text/x-handlebars" data-template-name="user">
+  <input id="tags" type="text" class="taggerInput" placeholder="Enter tags"/>
+    </script>
+
+    <script type="text/x-handlebars" data-template-name="popup">
+      <div id="popup" style="left: 470px; position: absolute; top: 387.5px; z-index: 9999; opacity: 1; display: block;" >
+
+            {{yield}}
+    </div>
+    </script>
+    <script type="text/x-handlebars" data-template-name="hello_popup">
+      hello world
+    </script>
+    <script type="text/x-handlebars" data-template-name="canvas">
+      <div class="containezr" style="height:1000px;">
+  {{outlet}}
+    </div>
+    </script>
+  </body>
+</html>
