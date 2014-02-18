@@ -3,7 +3,9 @@
 </div>
   <ul>
 {{#each item in data}}
-    <li><a {{bind-attr href=item.data.href}}>{{item.data.title}}</a></li>
+    {{#view App.LinkView model=item}}
+      <li><a {{bind-attr href=item.data.href}}>{{item.data.title}}</a></li>
+    {{/view}}
 {{/each}}
 </ul>
 

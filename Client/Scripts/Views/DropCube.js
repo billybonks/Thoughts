@@ -3,9 +3,17 @@ App.DropCube = Ember.View.extend({
   click:function(e){
     console.log('clicked')
   },
-  dragEnter:function(e){console.log('ENTER')},
-  dragLeave:function(e){console.log('LEAVE')},
-  drop:function(e){
-    console.log('DROPPED');
+  dragEnter: DragNDrop.cancel,
+  dragOver: DragNDrop.cancel,
+  drop: function(event) {
+    if(event.originalEvent.dataTransfer.getData('Type') === 'Attachment'){
+     this.store.find('attachment',event.originalEvent.dataTransfer.getData('id')).then(function(obj){
+        obj.deleteRecord();
+        obj.save();
+      })
+
+    }
+    event.preventDefault();
+    return false;
   }
 })

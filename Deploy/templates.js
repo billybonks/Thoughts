@@ -504,9 +504,11 @@ function program28(depth0,data) {
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "SaveAsTemplate", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push(">Save as tempalte</button>\r\n        ");
-  hashTypes = {};
-  hashContexts = {};
-  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.DropCube", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+  hashContexts = {'store': depth0};
+  hashTypes = {'store': "ID"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.DropCube", {hash:{
+    'store': ("store")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\r\n      </div>\r\n\r\n      <div class=\"col-md-3\">\r\n        ");
   hashContexts = {'card': depth0,'store': depth0};
   hashTypes = {'card': "ID",'store': "ID"};
@@ -819,8 +821,21 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 
 function program1(depth0,data) {
   
+  var buffer = '', stack1, hashContexts, hashTypes;
+  data.buffer.push("\r\n    ");
+  hashContexts = {'model': depth0};
+  hashTypes = {'model': "ID"};
+  stack1 = helpers.view.call(depth0, "App.LinkView", {hash:{
+    'model': ("item")
+  },inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\r\n");
+  return buffer;
+  }
+function program2(depth0,data) {
+  
   var buffer = '', stack1, hashContexts, hashTypes, options;
-  data.buffer.push("\r\n    <li><a ");
+  data.buffer.push("\r\n      <li><a ");
   hashContexts = {'href': depth0};
   hashTypes = {'href': "ID"};
   options = {hash:{
@@ -831,7 +846,7 @@ function program1(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "item.data.title", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</a></li>\r\n");
+  data.buffer.push("</a></li>\r\n    ");
   return buffer;
   }
 
@@ -902,34 +917,22 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 Ember.TEMPLATES["components/property-main"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', stack1, hashTypes, hashContexts, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, self=this;
+  var buffer = '', stack1, hashContexts, hashTypes, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this;
 
 function program1(depth0,data) {
   
-  var buffer = '', stack1, hashTypes, hashContexts;
+  var buffer = '', hashContexts, hashTypes;
   data.buffer.push("\r\n    ");
-  hashTypes = {};
-  hashContexts = {};
-  stack1 = helpers.view.call(depth0, "App.DraggableElement", {hash:{},inverse:self.noop,fn:self.program(2, program2, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  hashContexts = {'model': depth0};
+  hashTypes = {'model': "ID"};
+  data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.PropertyView", {hash:{
+    'model': ("item")
+  },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("\r\n");
   return buffer;
   }
-function program2(depth0,data) {
-  
-  var buffer = '', stack1, hashContexts, hashTypes, options;
-  data.buffer.push("\r\n      ");
-  hashContexts = {'data': depth0};
-  hashTypes = {'data': "ID"};
-  options = {hash:{
-    'data': ("item.data")
-  },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-  data.buffer.push(escapeExpression(((stack1 = helpers['table-entry'] || depth0['table-entry']),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "table-entry", options))));
-  data.buffer.push("\r\n    ");
-  return buffer;
-  }
 
-function program4(depth0,data) {
+function program3(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes;
   data.buffer.push("\r\n  ");
@@ -937,12 +940,12 @@ function program4(depth0,data) {
   hashTypes = {'viewName': "STRING"};
   stack1 = helpers.view.call(depth0, "App.PopupView", {hash:{
     'viewName': ("popup")
-  },inverse:self.noop,fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  },inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\r\n");
   return buffer;
   }
-function program5(depth0,data) {
+function program4(depth0,data) {
   
   var buffer = '', stack1, hashContexts, hashTypes, options;
   data.buffer.push("\r\n    ");
@@ -958,18 +961,20 @@ function program5(depth0,data) {
   }
 
   data.buffer.push("<div class=\"row\">\r\n  <div class=\"col-md-6\"><b>Name</b></div>\r\n  <div class=\"col-md-6\"><b>Value</b></div>\r\n</div>\r\n");
-  hashTypes = {};
-  hashContexts = {};
-  stack1 = helpers.each.call(depth0, "item", "in", "data", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  hashContexts = {'itemController': depth0};
+  hashTypes = {'itemController': "STRING"};
+  stack1 = helpers.each.call(depth0, "item", "in", "data", {hash:{
+    'itemController': ("property")
+  },inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\r\n\r\n<button draggable=\"true\" class=\"btn btn-default\"");
+  data.buffer.push("\r\n<button draggable=\"true\" class=\"btn btn-default\"");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "ToggleEdit", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
   data.buffer.push("> New Property </button>\r\n");
   hashTypes = {};
   hashContexts = {};
-  stack1 = helpers['if'].call(depth0, "isEditing", {hash:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+  stack1 = helpers['if'].call(depth0, "isEditing", {hash:{},inverse:self.noop,fn:self.program(3, program3, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\r\n\r\n");
   return buffer;
@@ -1257,7 +1262,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = '', hashContexts, hashTypes;
-  data.buffer.push("\r\n          ");
+  data.buffer.push("\r\n    ");
   hashContexts = {'class': depth0,'toggleDone': depth0,'value': depth0};
   hashTypes = {'class': "STRING",'toggleDone': "ID",'value': "ID"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.EditBox", {hash:{
@@ -1265,14 +1270,14 @@ function program1(depth0,data) {
     'toggleDone': ("isNediting"),
     'value': ("data.name")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\r\n        ");
+  data.buffer.push("\r\n    ");
   return buffer;
   }
 
 function program3(depth0,data) {
   
   var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("\r\n        <p ");
+  data.buffer.push("\r\n    <p ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "toggleN", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -1280,14 +1285,14 @@ function program3(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "data.name", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</p>\r\n        ");
+  data.buffer.push("</p>\r\n    ");
   return buffer;
   }
 
 function program5(depth0,data) {
   
   var buffer = '', hashContexts, hashTypes;
-  data.buffer.push("\r\n          ");
+  data.buffer.push("\r\n    ");
   hashContexts = {'class': depth0,'toggleDone': depth0,'value': depth0};
   hashTypes = {'class': "STRING",'toggleDone': "ID",'value': "ID"};
   data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.EditBox", {hash:{
@@ -1295,14 +1300,14 @@ function program5(depth0,data) {
     'toggleDone': ("isVediting"),
     'value': ("data.value")
   },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("\r\n        ");
+  data.buffer.push("\r\n    ");
   return buffer;
   }
 
 function program7(depth0,data) {
   
   var buffer = '', hashTypes, hashContexts;
-  data.buffer.push("\r\n          <p ");
+  data.buffer.push("\r\n    <p ");
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "toggleV", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -1310,21 +1315,21 @@ function program7(depth0,data) {
   hashTypes = {};
   hashContexts = {};
   data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "data.value", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-  data.buffer.push("</p>\r\n        ");
+  data.buffer.push("</p>\r\n    ");
   return buffer;
   }
 
-  data.buffer.push("\r\n\r\n<div class=\"row\" draggable=\"true\">\r\n      <div class=\"col-md-6\">\r\n        ");
+  data.buffer.push("<div class=\"row\">\r\n  <div class=\"col-md-6\">\r\n    ");
   hashTypes = {};
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "isNediting", {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\r\n      </div>\r\n      <div class=\"col-md-6\">\r\n        ");
+  data.buffer.push("\r\n  </div>\r\n  <div class=\"col-md-6\">\r\n    ");
   hashTypes = {};
   hashContexts = {};
   stack1 = helpers['if'].call(depth0, "isVediting", {hash:{},inverse:self.program(7, program7, data),fn:self.program(5, program5, data),contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\r\n      </div>\r\n    </div>");
+  data.buffer.push("\r\n  </div>\r\n</div>");
   return buffer;
   
 });

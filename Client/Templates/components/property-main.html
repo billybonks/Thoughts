@@ -2,12 +2,9 @@
   <div class="col-md-6"><b>Name</b></div>
   <div class="col-md-6"><b>Value</b></div>
 </div>
-{{#each item in data}}
-    {{#view App.DraggableElement}}
-      {{table-entry data=item.data}}
-    {{/view}}
+{{#each item in data itemController='property'}}
+    {{view App.PropertyView model=item}}
 {{/each}}
-
 <button draggable="true" class="btn btn-default"{{action 'ToggleEdit'}}> New Property </button>
 {{#if isEditing}}
   {{#view App.PopupView viewName="popup"}}

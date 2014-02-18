@@ -10,7 +10,6 @@ var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 var FacebookRoute = require('./Routes/FacebookRoute')(settings);
 var GoogleRoute = require('./Routes/GoogleRoute')(settings);
 //Route Requires
-var LinksRoute = require('./Routes/LinkRoute')(settings);
 var CardsRoute = require('./Routes/CardsRoute')(settings);
 var ApplicationRoute = require('./Routes/ApplicationRoute')(settings);
 var UserRoute = require('./Routes/UserRoute')(settings);
@@ -271,6 +270,14 @@ app.get('/attachments',function(req,res){
 
 });
 
+app.delete('/attachments/:id',function(req,res){
+  var resultStream = AttachmentRoute.deleteAttachment(req.params.id)
+  resultStream.on('data',function(results){
+    res.json()
+  })
+
+});
+
 
 /* ========================================================================================================
  *
@@ -356,25 +363,6 @@ app.put('/sections/:id',function(req,res){
   var resultstream = SectionRoute.UpdateSection(section)
 })*/
 
-/* ========================================================================================================
- *
- * Links Methods - Keep in alphabetical order
- *
- * =====================================================================================================*/
-app.delete('/links/:id',function (req,res){
-  var response = LinksRoute.deleteAttachment(req.params.id)
-  response.on('data',function(results){
-    res.json(results);
-  })
-})
-app.get('/links',function (req,res){LinksRoute.GetAllLinks(req,res)})
-app.get('/links/:id',LinksRoute.GetLink)
-app.post('/links',function (req,res){
-  var responseStream = LinksRoute.GetLinkTitle(req.body.link.href);
-  responseStream.on('error',function(error){})
-  responseStream.on('data',function(results){LinksRoute.createAttachment('Link',results,req.headers['authorization'])})
-});
-// app.update('/links/:id',LinksRoute.UpdateLink)
 
 /* ========================================================================================================
  *

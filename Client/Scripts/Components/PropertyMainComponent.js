@@ -22,17 +22,34 @@ App.PropertyFormComponent = App.BaseSectionComponent.extend({
   }
 });
 
-App.TableEntryComponent = Ember.Component.extend({
+App.PropertyController = Ember.ObjectController.extend({
     isNediting:false,
     isVediting:false,
     actions:{
       toggleV:function(){this.get('isVediting')? this.set('isVediting', false): this.set('isVediting', true);},
       toggleN:function(){this.get('isNediting')? this.set('isNediting', false): this.set('isNediting', true);},
     }
+});
+
+
+
+App.PropertyView = Ember.View.extend(DragNDrop.DragAndDroppable,{
+  templateName:'property',
+  dragStart: function(event) {
+    console.log('dragStart');
+    var model = this.get('model')
+    var dataTransfer = event.originalEvent.dataTransfer;
+    dataTransfer.setData('Type', 'Attachment');
+    dataTransfer.setData('AttachmentType', 'Property');
+    dataTransfer.setData('id', model.get('id'));
+  }
+});
+App.TableEntryComponent = Ember.Component.extend({
+
 })
 //  {{table-entry data=item.data}}
 App.DraggableElement = Ember.View.extend({
-    layoutName:'draggableElement',
+
 
     dragLeave:function(e){console.log('startDrag')},
     drop:function(e){console.log('drop')}

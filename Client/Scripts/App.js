@@ -33,8 +33,23 @@ Ember.Handlebars.registerHelper("debug", function (optionalValue) {
 });
 
 
+DragNDrop = Ember.Namespace.create();
 
+DragNDrop.cancel = function(event) {
+    console.log('cancel')
+    event.preventDefault();
+    return false;
+};
 
+DragNDrop.DragAndDroppable = Ember.Mixin.create({
+  layoutName:'DragAndDroppable',
+  attributeBindings: 'draggable',
+  dragEnter: DragNDrop.cancel,
+  dragOver: DragNDrop.cancel,
+  draggable: 'true',
+  dragStart: DragNDrop.cancel,
+  drop:DragNDrop.cancel
+});
 /*
 App.ApplicationSerializer = DS.RESTSerializer.extend({
   serializeHasMany: function(record, json, relationship) {

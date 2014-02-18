@@ -115,9 +115,30 @@
     </div>
     </script>
 
+    <script type="text/x-handlebars" data-template-name="DragAndDroppable">
+        {{yield}}
+    </script>
     <script type="text/x-handlebars" data-template-name="draggableElement">
       <div draggable="true">
         {{yield}}
+      </div>
+    </script>
+    <script type="text/x-handlebars" data-template-name="property">
+      <div class="row">
+        <div class="col-md-6">
+          {{#if isNediting}}
+          {{view App.EditBox class="form-control"  toggleDone=isNediting value=model.data.name}}
+          {{else}}
+          <p {{action toggleN}}>{{model.data.name}}</p>
+          {{/if}}
+        </div>
+        <div class="col-md-6">
+          {{#if isVediting}}
+          {{view App.EditBox class="form-control"  toggleDone=isVediting value=model.data.value}}
+          {{else}}
+          <p {{action toggleV}}>{{model.data.value}}</p>
+          {{/if}}
+        </div>
       </div>
     </script>
 
