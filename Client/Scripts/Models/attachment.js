@@ -1,3 +1,4 @@
+'use strict';
 App.Attachment = DS.Model.extend({
   data:DS.attr(),
   section:DS.belongsTo('section'),

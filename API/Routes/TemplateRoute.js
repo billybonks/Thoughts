@@ -18,5 +18,19 @@ module.exports = function(settings){
 
   Template.prototype = new ServiceModule(settings);
 
+  //todo: return user and section
+  Template.prototype.GetTemplates = function(auth){
+    var query = ['match (template:Card)',
+                 'where has(template.isTemplate)',
+                 'return template']
+    return settings.executeQuery(query.join('\n'),{})
+  }
+
+  Template.prototype.GetObject = function(template){
+    return {
+      id:template.id,
+      title:template.data.title
+    }
+  }
   return new Template(settings)
 }

@@ -21,8 +21,7 @@ module.exports = function(){
    * ===================================================================================================== */
   Application.prototype.GetApplication=function (token){
     var sessionToken = {token:token};
-    var query = 'START n=node(*) WHERE has (n.session_token) and n.session_token={token} RETURN n';//'START n=node:nodes(session_token = {token}) RETURN n';
-    console.log(this.varia);
+    var query = 'START n=node(*) WHERE has (n.session_token) and n.session_token={token} RETURN n';
     return this.executeQuery(query,sessionToken);
   };
 
@@ -30,7 +29,7 @@ module.exports = function(){
 
   */
 
-  Application.prototype.FormatApplicationObject=function(application){
+  Application.prototype.FormatObject=function(application){
     var data = application.data;
     return{id:data.session_token,token:data.session_token,name:data.first_name};
   };

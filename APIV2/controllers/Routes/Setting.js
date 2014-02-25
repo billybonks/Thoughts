@@ -1,4 +1,4 @@
-var SettingsRoute = require('./../Settings')();
+
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================

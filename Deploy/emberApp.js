@@ -1,3 +1,4 @@
+'use strict';
 App = Ember.Application.create({
 
       ready: function () {
@@ -19,19 +20,6 @@ App = Ember.Application.create({
         });
       }
     });
-
-Ember.Handlebars.registerHelper("debug", function (optionalValue) {
-    console.log("Current Context");
-    console.log("====================");
-    console.log(this);
-
-    if (optionalValue) {
-        console.log("Value");
-        console.log("====================");
-        console.log(optionalValue);
-    }
-});
-
 
 DragNDrop = Ember.Namespace.create();
 
@@ -59,28 +47,33 @@ App.ApplicationSerializer = DS.RESTSerializer.extend({
     json[key] = get(record, key).mapBy('id');
   }
 });*/
+'use strict';
 App.Router.map(function () {
-    this.resource('settings', { path: '/settings' }, function () {
-        this.route('profile');
-    });
-    this.resource('card', { path: '/card/:card_id' });
-    this.resource('cards', { path: '/cards' }, function () {
-        this.route('index');
-    });
-    this.resource('emails', { path: '/emails' }, function () {
-        this.route('index');
-    });
-    this.resource('links', { path: '/links' }, function () {
-        this.route('index');
-    });
+  this.resource('settings', { path: '/settings' }, function () {
+    this.route('profile');
+  });
+  this.resource('card', { path: '/card/:card_id' });
+  this.resource('cards', { path: '/cards' }, function () {
+    this.route('index');
+  });
+  this.resource('emails', { path: '/emails' }, function () {
+    this.route('index');
+  });
+  this.resource('links', { path: '/links' }, function () {
+    this.route('index');
+  });
+  this.resource('template', { path: '/template/:template_id' });
+  this.resource('templates', { path: '/templates' }, function () {
+    this.route('index');
+  });
 });
 
 App.ApplicationRoute = Ember.Route.extend({
-    model: function () {
-        var sessionToken = $.cookie(AppSettings.CookieName);
-        m = this.store.find('application', sessionToken)
-        return m;
-    },
+  model: function () {
+    var sessionToken = $.cookie(AppSettings.CookieName);
+    var m = this.store.find('application', sessionToken)
+    return m;
+  },
   setupController: function(controller, model) {
     controller.SubscribeToContextMenuEvents();
     controller.set('model', model);
@@ -88,9 +81,9 @@ App.ApplicationRoute = Ember.Route.extend({
 });
 
 App.IndexRoute = Ember.Route.extend({
-    model: function () {
-        return this.modelFor('cards');
-    }
+  model: function () {
+    return this.modelFor('cards');
+  }
 });
 
 App.CardsRoute = Ember.Route.extend({
@@ -104,10 +97,12 @@ App.CardsRoute = Ember.Route.extend({
     });
     ret.push({title:'None',id:-1})
     ret.sort(function compare(a, b) {
-      if (a.id<b.id)
+      if (a.id<b.id){
         return -1;
-      if (a.id>b.id)
+      }
+      if (a.id>b.id){
         return 1;
+      }
       // a must be equal to b
       return 0;
     })
@@ -122,33 +117,46 @@ App.CardsIndexRoute = Ember.Route.extend({
   }
 });
 
+App.TemplatesRoute = Ember.Route.extend({
+  model: function () {
+    return this.store.find('template');
+  }
+});
+
+App.TemplatesIndexRoute = Ember.Route.extend({
+  model: function () {
+    return this.modelFor('templates');
+  }
+});
+
 App.EmailsRoute = Ember.Route.extend({
-    model: function () {
-        return this.store.find('email');
-    }
+  model: function () {
+    return this.store.find('email');
+  }
 });
 
 App.EmailsIndexRoute = Ember.Route.extend({
-    model: function () {
-        return this.modelFor('email');
-    }
+  model: function () {
+    return this.modelFor('email');
+  }
 });
 
 App.SettingsRoute = Ember.Route.extend({
-    model: function () {
-        return this.store.find('setting',0);
-    },
-    setupController: function(controller, model) {
-      console.log(model)
-    }
+  model: function () {
+    return this.store.find('setting',0);
+  },
+  setupController: function(controller, model) {
+    console.log(model)
+  }
 });
 
 App.SettingsIndexRoute = Ember.Route.extend({
-    model: function () {
-      console.log('QQQQQQQ')
-        return this.modelFor('settings');
-    }
+  model: function () {
+    console.log('QQQQQQQ')
+    return this.modelFor('settings');
+  }
 });
+'use strict';
 window.AppSettings =
   {
     WebserviceURL: 'http://localhost:4730',
@@ -164,15 +172,15 @@ window.AppSettings =
         success: function (data, textStatus, jqXHR) {
           window.location = data;
         },
-          dataType: "json",
-            type: "GET"
+          dataType: 'json',
+            type: 'GET'
 });
 }
 
 }
+'use strict';
 App.ApplicationController = Ember.Controller.extend({
     currentDrag: null,
-    word2:'null',
     menuOpen:false,
     actions: {
         ClearToken: function () {
@@ -181,11 +189,10 @@ App.ApplicationController = Ember.Controller.extend({
         StartDrag:  function(){
             return function (model) {
                 this.set('currentDrag', model);
-            }
+            };
         },
     },
     MouseMove: function (application) {
-        var name = "Mozilla";
         var controller = application;
          function mouseMove (event) {
              console.log(controller.get('currentDrag'));
@@ -202,7 +209,7 @@ App.ApplicationController = Ember.Controller.extend({
         },
         after: function(name, timestamp, event, beforeRet) {
         }
-      }
+      };
    },
    SetContextType: function (model) {
       return {
@@ -210,9 +217,10 @@ App.ApplicationController = Ember.Controller.extend({
         },
         after: function(name, timestamp, event, beforeRet) {
         }
-      }
+      };
    }
 });
+'use strict';
 App.CardController = Ember.ObjectController.extend({
   word:'hello',
   actions:{
@@ -238,6 +246,21 @@ App.CardController = Ember.ObjectController.extend({
         sections.pushObjects(otherSections);
         template.save();
       })
+    },
+    CreateSection: function(){
+      console.log(this.get('model').get('id'))
+      var section = this.store.createRecord('section', {
+        title: 'tester',
+        type : 'Links',
+        position:'0'
+      });
+      section.save().then(function(section){
+        this.get('model.sections').then(function(sections){
+          sections.push(section);
+        })
+        this.get('model').save();
+      });
+
     }
   },
   IsRight:function(){
@@ -250,13 +273,6 @@ App.CardController = Ember.ObjectController.extend({
     var attachments = this.get('model').get('attachments');
     var tags = this.get('model').get('tags');
     var tit = this.get('model').get('title');
-    console.log('sorting');
-    for(var i = 0;i<attachments.length;i++){
-      var a = attachments[i];
-      if(a.type=="Link"){
-        links.push(a)
-      }
-    }
     return '';
   }.observes('model.attachments.@each.type'),
   position:function(){
@@ -290,119 +306,62 @@ App.CardController = Ember.ObjectController.extend({
   },
   */
 });
+'use strict';
 App.CardsController = Ember.ArrayController.extend({
-   word:'helloz',
    templates:'?',
    test:function(){
-     console.log('hello')
    }
 });
-App.IndexController = Ember.ArrayController.extend({
-
-});
-App.LinkController = Ember.Controller.extend({
-  isEditing:false,
-  actions: {
-    del: function () {
-      var model = this.get('model');
-      model.deleteRecord();
-      model.save();
-    },
-    edit:function(){
-      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
-      }
-    },
-})
-App.QuestionController = Ember.ObjectController.extend({
-   displayAnswer : false,
-   class:'panel-collapse collapse in',
-   actions:{
-     UpdateQuestion:function(){
-       console.log(this.get('model').get('data').answer)
-       this.get('model').save();
-       this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
-     },
-     ToggleAnswer:function(){
-        this.get('displayAnswer')? this.set('displayAnswer', false): this.set('displayAnswer', true);
-     },
-     ToggleEditAnswer:function(){
-       this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
-     },
-     NewAnswer:function(){
-        this.get('model').get('data').answer = this.get('answer');
-        this.get('model').save();
-        this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
-     }
-   },
-   answerClass:function(){
-     if(this.get('displayAnswer')){
-       return 'panel-collapse collapse in'
-     }
-     return 'panel-collapse collapse out'
-   }.property('displayAnswer')
-});
+'use strict';
 App.SectionController = Ember.ObjectController.extend({
   isEditing:false,
-  isLink:Ember.computed.equal('model.type', 'Links'),
-  isTask:Ember.computed.equal('model.type', 'Tasks'),
-  isDocument:Ember.computed.equal('model.type', 'Documents'),
-  isQuestion:Ember.computed.equal('model.type', 'Questions'),
-  isProperty:Ember.computed.equal('model.type', 'Properties'),
+  isLinks:Ember.computed.equal('model.type', 'Links'),
+  isProperties:Ember.computed.equal('model.type', 'Properties'),
+  isQuestions:Ember.computed.equal('model.type', 'Questions'),
+  isTasks:Ember.computed.equal('model.type', 'Tasks'),
   isTextArea:Ember.computed.equal('model.type', 'TextArea'),
   isCard:Ember.computed.equal('model.type', 'Card'),
   isCollapsed:Ember.computed.bool('model.collapsed'),
-  actions:{
-    ToggleEdit:function(){
+    actions:{
+      ToggleEdit:function(){
 
-      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+        this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+      },
+        deleteSection:function(){
+          var model = this.get('model');
+          model.deleteRecord();
+          model.save()
+        },
+          collapse:function(){
+            var model = this.get('model');
+            model.get('collapsed')? model.set('collapsed', false): model.set('collapsed', true);
+            model.save();
+            return false;
+          },
+            UpdateSection:function(){
+              this.get('model').save();
+              this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+            }
     },
-    deleteSection:function(){
-      var model = this.get('model');
-      model.deleteRecord();
-      model.save()
-    },
-    collapse:function(){
-      var model = this.get('model');
-      model.get('collapsed')? model.set('collapsed', false): model.set('collapsed', true);
-      model.save();
-      return false;
-    },
-    UpdateSection:function(){
-      this.get('model').save();
-      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
-    }
-  },
-  close:function(){
-    this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
-  },
-  chevron:function(){
-    var model = this.get('model');
-    if(model.get('collapsed')){
-      return "glyphicon glyphicon-chevron-up"
-    }else{
-      return "glyphicon glyphicon-chevron-down"
-    }
-  }.property('model.collapsed')
+      close:function(){
+        this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+      },
+        chevron:function(){
+          var model = this.get('model');
+          if(model.get('collapsed')){
+            return 'glyphicon glyphicon-chevron-up';
+          }else{
+            return 'glyphicon glyphicon-chevron-down';
+          }
+        }.property('model.collapsed')
 
-});
-App.TaskController = Ember.ObjectController.extend({
-  actions:{
-    Start:function(){
-
-    },
-    Stop:function(){
-
-    },
-    Hover:function(){
-      console.log('enter')
-    }
-  }
-})
+   });
+'use strict';
 App.WallView = Ember.View.extend(Ember.Evented, {
     layoutName : 'canvas',
     mouseMove: function (event) {
       console.log('mouseMoveEvent');
-        Em.instrument("mouse.move",event,function(){},this)
+        Em.instrument('mouse.move',event,function(){},this)
        // this.trigger('movement', event);
     },
     mouseLeave: function (event) {
@@ -428,6 +387,7 @@ App.WallView = Ember.View.extend(Ember.Evented, {
 </div>
 */
 
+'use strict';
 App.ContextMenuView = Ember.View.extend({
    layoutName : 'contextMenu',
    contextMenu:function(event){
@@ -437,10 +397,11 @@ App.ContextMenuView = Ember.View.extend({
        x:event.clientX,
        y:event.clientY
      }
-     Em.instrument("contextMenu.open",payload,function(){},this)
+     Em.instrument('contextMenu.open',payload,function(){},this)
      return false;
    }
  })
+'use strict';
 App.DraggableCardView = Ember.View.extend({
   layoutName: 'draggablecard',
   subscription:null,
@@ -463,12 +424,12 @@ App.DraggableCardView = Ember.View.extend({
       before: function(name, timestamp, event) {
         console.log(this.x)
         console.log(event.clientX)
-       if(this.model.get('left') == null){
+       if(this.model.get('left') === null){
           this.model.set('left',0);
           this.model.set('top',0);
 
         }
-        if (this.x == -1) {
+        if (this.x === -1) {
           this.x = event.clientX;
           this.y = event.clientY;
           return;
@@ -488,6 +449,7 @@ App.DraggableCardView = Ember.View.extend({
     }
   }
 });
+'use strict';
 App.DropCube = Ember.View.extend({
   templateName:'Qube',
   click:function(e){
@@ -507,6 +469,7 @@ App.DropCube = Ember.View.extend({
     return false;
   }
 })
+'use strict';
 App.DropDelete = Ember.View.extend({
  /* layoutName:'dropDelete',
   drop:function(e){
@@ -518,6 +481,7 @@ App.DropDelete = Ember.View.extend({
   dragEnter:function(e){console.log('entered Drop Delete')},
   dragLeave:function(e){console.log('left Drop Delete')},*/
 })
+'use strict';
 App.Dropable = Ember.View.extend({
   layoutName:'dropDelete',
   /*drop:function(e){
@@ -529,13 +493,13 @@ App.Dropable = Ember.View.extend({
   dragEnter:function(e){console.log('entered dropable')},
   dragLeave:function(e){console.log('left dropable')},*/
 })
-//  $('element_to_pop_up').bPopup();
-
+'use strict';
 App.PopupView = Ember.View.extend({
   layoutName : 'popup',
   actions:{
     close:function(){
-      Em.instrument("mouse.move",event,function(){},this)
+      var event = 'event'
+      Em.instrument('mouse.move',event,function(){},this)
       console.log('close')
     }
   },
@@ -557,12 +521,13 @@ function onClose(controller){
 
   return togglePopup;
 }
+'use strict';
 App.TaggerView = Ember.View.extend({
-  templateName: 'user',
+  templateName: 'TaggerView',
   tagger : null,
   didInsertElement: function () {
     this.tagger = new Tagger($('#tags'), {
-      source: ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Dakota", "North Carolina", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
+      source: ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
     });
   },
   getTags:function(){
@@ -597,12 +562,14 @@ App.TaggerView = Ember.View.extend({
 
 
 */
+'use strict';
 App.Application = DS.Model.extend({
    token: DS.attr('string'),
    name: DS.attr('string')
     //user: DS.belongsTo('user'),
 });
 
+'use strict';
 App.Card = DS.Model.extend({
   title: DS.attr('string'),
   left: DS.attr('number'),
@@ -615,59 +582,24 @@ App.Card = DS.Model.extend({
   template:DS.attr()
 });
 
+'use strict';
 App.Comment = DS.Model.extend({
     body: DS.attr('string'),
     idea: DS.belongsTo('Card'),
     user: DS.belongsTo('user')
 });
-
-App.Comment.FIXTURES = [
- {
-     id: 1,
-     body: 'Cool Idea',
-
- },
- {
-     id: 2,
-     body: 'Lets test some sand',
- },
- {
-     id: 3,
-     body: 'Ahoy Ahoy',
- }
-];
+'use strict';
 App.Document = DS.Model.extend({
     title: DS.attr('string'),
 });
-
-App.Document.FIXTURES = [
- {
-     id: 1,
-     title: 'Plants',
-
- },
- {
-     id: 2,
-     title: 'Soil',
- },
- {
-     id: 3,
-     title: 'Teraformer',
- }
-];
+'use strict';
 App.Email = DS.Model.extend({
     from: DS.attr('string'),
     title: DS.attr('string'),
     body: DS.attr('string')
 });
 
-App.Email.FIXTURES = [
- {
-     id: 1,
-     title: 'Perma culture townships',
-     body: 'its hectic, thats why we need to implement permaculture into the townships. like imagine community dumping spots where everything is organised. organic matter, recyclables etc etc etc.only issue is i wonder what the scale is, so would have to have many around the place. then you use the organic matter to make compost. use recyclables for crazy projects like plastic bottle couches'
- }
- ]
+'use strict';
 App.Link = DS.Model.extend({
   title: DS.attr('string'),
   href: DS.attr('string'),
@@ -677,12 +609,14 @@ App.Link = DS.Model.extend({
 });
 
 
+'use strict';
 App.Payload = DS.Model.extend({
    data: DS.attr('string'),
    name: DS.attr('string')
     //user: DS.belongsTo('user'),
 });
 
+'use strict';
 App.Section = DS.Model.extend({
    title: DS.attr('string'),
    attachments: DS.hasMany('attachment',{async:true}),
@@ -693,6 +627,7 @@ App.Section = DS.Model.extend({
     //user: DS.belongsTo('user'),
 });
 
+'use strict';
 App.Setting = DS.Model.extend({
   name: DS.attr('string'),
   email: DS.attr('string'),
@@ -700,6 +635,7 @@ App.Setting = DS.Model.extend({
   google: DS.attr('boolean'),
 });
 
+'use strict';
 App.Template = DS.Model.extend({
   title: DS.attr('string'),
   user: DS.belongsTo('user', { async: true }),
@@ -708,11 +644,15 @@ App.Template = DS.Model.extend({
   sectionsIn:DS.attr()
 });
 
+'use strict';
 App.User = DS.Model.extend({
-    name: DS.attr('string'),
-    email: DS.attr('string')
+  name: DS.attr('string'),
+  email: DS.attr('string'),
+  profileImg: DS.attr('string'),
+  firstname: DS.attr('string')
 });
 
+'use strict';
 App.Attachment = DS.Model.extend({
   data:DS.attr(),
   section:DS.belongsTo('section'),
@@ -722,10 +662,12 @@ App.Attachment = DS.Model.extend({
   tagsIn:DS.attr(),
   type:DS.attr('string')
 })
+'use strict';
 App.Tag = DS.Model.extend({
   title: DS.attr('string')
 });
 
+'use strict';
 App.BaseSectionComponent = Ember.Component.extend({
   section:null,
   isEditing:false,
@@ -734,13 +676,21 @@ App.BaseSectionComponent = Ember.Component.extend({
       data: data,
       sectionid: this.get('section').get('id'),
       type:this.get('section').get('type')
-    }
-    var attachment = this.store.createRecord('attachment', attachment);
-    attachment.save();
+    };
+    var context = this;
+    attachment = this.store.createRecord('attachment', attachment);
+    this.store.find('section',this.get('section').get('id')).then(function(section){
+      context.get('section.attachments').then(function(attachments){
+        attachment.save().then(function(attachment){
+          attachments.pushObject(attachment);
+          section.save();
+        });
+      });
+    });
   }
 });
 
-
+'use strict';
 App.CardControllsComponent = Ember.Component.extend({
   edit:false,
   share:false,
@@ -758,6 +708,28 @@ App.CardControllsComponent = Ember.Component.extend({
     },
   }
 });
+'use strict';
+App.CardFormComponent = Ember.Component.extend({
+  title:null,
+  description:null,
+  store: null,
+  actions:{
+    Submit: function(){
+      var tags = this.get('tagger').getTags();
+      var card = this.store.createRecord('card', {
+        title: this.get('title'),
+        description: this.get('description'),
+        left:0,
+        top:0,
+        tagsIn : tags
+      });
+      card.save();
+      this.set('title','');
+      this.set('description','');
+    }
+  },
+});
+'use strict';
 App.CardMainComponent = Ember.Component.extend({
   isFocoused: false,
   eventID: -1,
@@ -767,11 +739,11 @@ App.CardMainComponent = Ember.Component.extend({
   actions: {
     StartDrag: function (application) {
       console.log('drag');
-      subscription = Em.subscribe('mouse',this.get('MouseMove')(this.get('model')));
+      this.subscription = Em.subscribe('mouse',this.get('MouseMove')(this.get('model')));
     },
     StopDrag: function (model) {
       model.save();
-      Ember.Instrumentation.unsubscribe(this.get('subscription'))
+      Ember.Instrumentation.unsubscribe(this.get('subscription'));
     },
     focus: function () {
       this.set('isFocoused', this.get('isFocoused') ? false : true);
@@ -795,9 +767,9 @@ App.CardMainComponent = Ember.Component.extend({
       x : -1,
       y : -1,
       before: function(name, timestamp, event) {
-        console.log(this.x)
-        console.log(event.clientX)
-        if(this.model.get('left') == null){
+        console.log(this.x);
+        console.log(event.clientX);
+        if(this.model.get('left') === null){
           this.model.set('left',0);
           this.model.set('top',0);
         }
@@ -809,14 +781,14 @@ App.CardMainComponent = Ember.Component.extend({
 
         var left = parseInt(this.model.get('left'),10);
         var top = parseInt(this.model.get('top'),10);
-        console.log(left-diffX)
+//        console.log(left-diffX);
 
         this.x = event.clientX;
         this.y = event.clientY;
       },
       after: function(name, timestamp, event, beforeRet) {
       }
-    }
+    };
   }
 });
 
@@ -826,13 +798,13 @@ App.CardFormComponent = Ember.Component.extend({
   store: null,
   actions:{
     Submit: function(){
-      var tags = this.get('tagger').getTags()
+      var tags = this.get('tagger').getTags();
        var data = {
         title: this.get('title'),
         left:0,
         top:0,
         tagsIn : tags
-      }
+      };
 
       if(this.get('selectedTemplate')>0){
         data.template = this.get('selectedTemplate');
@@ -845,13 +817,97 @@ App.CardFormComponent = Ember.Component.extend({
     }
   },
 });
-App.DocumentsMainComponent = Ember.Component.extend({
-  title:'Documents',
+'use strict';
+App.SectionFormComponent = Ember.Component.extend({
+  types:['Links','Documents','Questions','Tasks','Properties','TextArea','Card'],
+  selectedType:null,
   actions:{
+    Submit: function(){
+      console.log(this.get('card').get('id'));
+      var section = this.store.createRecord('section', {
+        title: this.get('title'),
+        type : this.get('selectedType'),
+        position:this.get('card').get('sections.length')
+      });
+      var card = this.get('card');
+      section.set('card',this.get('card'));
+      this.get('card.sections').then(function(sections){
+        section.save().then(function(section){
+          sections.pushObject(section);
+          card.save();
+        });
+      });
+
+    }
+  }
+});
+'use strict';
+App.SideBarComponent = Ember.Component.extend({
+  Active:false,
+  CurrentForm:'',
+  card:false,
+  link:false,
+  actions:{
+    NewCard: function(){
+      this.get('Active') ? this.set('Active',false) : this.set('Active',true);
+      this.set('card',true);
+      this.set('link',false);
+    },
+    NewLink: function(){
+      this.get('Active') ? this.set('Active',false) : this.set('Active',true);
+      this.set('card',false);
+      this.set('link',true);
+    }
+  },
+  DisplayForm:function(){
+    if(this.get('Active')){
+      return 'display:block;';
+    }else{
+      return 'display:none;';
+    }
+  }.property('Active')
+});
+'use strict';
+App.TasksMainComponent = App.BaseSectionComponent.extend({
+  title:'Tasks',
+  actions:{
+    CreateTask:function(){
+      var data = {
+        title:this.get('newTask'),
+      };
+      this.submitAttachment(data);
+      this.set('newTask','');
+    }
   },
   willInsertElement:function(){
   }
 });
+'use strict';
+App.LinkController = Ember.Controller.extend({
+  isEditing:false,
+  actions: {
+    del: function () {
+      var model = this.get('model');
+      model.deleteRecord();
+      model.save();
+    },
+    edit:function(){
+      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+      }
+    },
+})
+'use strict';
+App.LinkView = Ember.View.extend(DragNDrop.DragAndDroppable,{
+  dragStart: function(event) {
+    console.log('dragStart');
+    var model = this.get('model')
+    var dataTransfer = event.originalEvent.dataTransfer;
+    dataTransfer.setData('Type', 'Attachment');
+    dataTransfer.setData('AttachmentType', 'link');
+    dataTransfer.setData('id', model.get('id'));
+  }
+});
+'use strict';
 App.LinksMainComponent = App.BaseSectionComponent.extend({
   isEditing:false,
   title:'Links',
@@ -891,25 +947,16 @@ App.LinksMainComponent = App.BaseSectionComponent.extend({
   }
 });
 
-
-App.LinkView = Ember.View.extend(DragNDrop.DragAndDroppable,{
-  dragStart: function(event) {
-    console.log('dragStart');
-    var model = this.get('model')
-    var dataTransfer = event.originalEvent.dataTransfer;
-    dataTransfer.setData('Type', 'Attachment');
-    dataTransfer.setData('AttachmentType', 'link');
-    dataTransfer.setData('id', model.get('id'));
-  }
-});
-App.PropertyMainComponent = App.BaseSectionComponent.extend({
-  actions:{
-    ToggleEdit:function(){
-      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+'use strict';
+App.PropertyController = Ember.ObjectController.extend({
+    isNediting:false,
+    isVediting:false,
+    actions:{
+      toggleV:function(){this.get('isVediting')? this.set('isVediting', false): this.set('isVediting', true);},
+      toggleN:function(){this.get('isNediting')? this.set('isNediting', false): this.set('isNediting', true);},
     }
-  },
 });
-
+'use strict';
 App.PropertyFormComponent = App.BaseSectionComponent.extend({
   types:['string','number'],
   actions:{
@@ -925,18 +972,15 @@ App.PropertyFormComponent = App.BaseSectionComponent.extend({
     }
   }
 });
-
-App.PropertyController = Ember.ObjectController.extend({
-    isNediting:false,
-    isVediting:false,
-    actions:{
-      toggleV:function(){this.get('isVediting')? this.set('isVediting', false): this.set('isVediting', true);},
-      toggleN:function(){this.get('isNediting')? this.set('isNediting', false): this.set('isNediting', true);},
+'use strict';
+App.PropertyMainComponent = App.BaseSectionComponent.extend({
+  actions:{
+    ToggleEdit:function(){
+      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     }
+  },
 });
-
-
-
+'use strict';
 App.PropertyView = Ember.View.extend(DragNDrop.DragAndDroppable,{
   templateName:'property',
   dragStart: function(event) {
@@ -948,24 +992,36 @@ App.PropertyView = Ember.View.extend(DragNDrop.DragAndDroppable,{
     dataTransfer.setData('id', model.get('id'));
   }
 });
-App.TableEntryComponent = Ember.Component.extend({
-
-})
-//  {{table-entry data=item.data}}
-App.DraggableElement = Ember.View.extend({
-
-
-    dragLeave:function(e){console.log('startDrag')},
-    drop:function(e){console.log('drop')}
-})
-
-App.EditBox = Ember.TextField.extend({
-  keyDown:function(e){
-    if(e.keyCode == 13){
-      this.get('toggleDone')? this.set('toggleDone', false): this.set('toggleDone', true);
-    }
-  }
+'use strict';
+App.QuestionController = Ember.ObjectController.extend({
+   displayAnswer : false,
+   class:'panel-collapse collapse in',
+   actions:{
+     UpdateQuestion:function(){
+       console.log(this.get('model').get('data').answer)
+       this.get('model').save();
+       this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
+     },
+     ToggleAnswer:function(){
+        this.get('displayAnswer')? this.set('displayAnswer', false): this.set('displayAnswer', true);
+     },
+     ToggleEditAnswer:function(){
+       this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
+     },
+     NewAnswer:function(){
+        this.get('model').get('data').answer = this.get('answer');
+        this.get('model').save();
+        this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
+     }
+   },
+   answerClass:function(){
+     if(this.get('displayAnswer')){
+       return 'panel-collapse collapse in'
+     }
+     return 'panel-collapse collapse out'
+   }.property('displayAnswer')
 });
+'use strict';
 App.QuestionMainComponent = App.BaseSectionComponent.extend({
   layoutName:'cardview',
   title:'Questions',
@@ -987,47 +1043,21 @@ App.QuestionMainComponent = App.BaseSectionComponent.extend({
     this.set('layoutName','cardview');
   }
 });
-App.SectionFormComponent = Ember.Component.extend({
-  types:['Links','Documents','Questions','Tasks','Properties','TextArea','Card'],
-  selectedType:null,
+'use strict';
+App.TaskController = Ember.ObjectController.extend({
   actions:{
-    Submit: function(){
-      console.log(this.get('card').get('id'))
-      var section = this.store.createRecord('section', {
-        title: this.get('title'),
-        type : this.get('selectedType'),
-        position:this.get('card').get('sections.length')
-      });
-      section.set('card',this.get('card'));
-      section.save();
+    Start:function(){
+
+    },
+    Stop:function(){
+
+    },
+    Hover:function(){
+      console.log('enter')
     }
   }
-});
-App.SideBarComponent = Ember.Component.extend({
-  Active:false,
-  CurrentForm:'',
-  card:false,
-  link:false,
-  actions:{
-    NewCard: function(){
-      this.get('Active') ? this.set('Active',false) : this.set('Active',true)
-      this.set('card',true);
-      this.set('link',false);
-    },
-    NewLink: function(){
-      this.get('Active') ? this.set('Active',false) : this.set('Active',true)
-      this.set('card',false);
-      this.set('link',true);
-    }
-  },
-  DisplayForm:function(){
-    if(this.get('Active')){
-      return "display:block;";
-    }else{
-      return "display:none;" ;
-    }
-  }.property('Active')
-});
+})
+'use strict';
 App.TasksMainComponent = App.BaseSectionComponent.extend({
   title:'Tasks',
   actions:{
@@ -1042,6 +1072,7 @@ App.TasksMainComponent = App.BaseSectionComponent.extend({
   willInsertElement:function(){
   }
 });
+'use strict';
 App.TextAreaComponent = App.BaseSectionComponent.extend({
   text:null,
   newText:null,
@@ -1057,7 +1088,7 @@ App.TextAreaComponent = App.BaseSectionComponent.extend({
         value:this.get('newText'),
       }
       this.submitAttachment(data);
-      text = newText;
+      this.set('text',this.get('newText'));
     },
   Update:function(){
       var data = {

@@ -10,6 +10,7 @@ var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 var FacebookRoute = require('./Routes/FacebookRoute')(settings);
 var GoogleRoute = require('./Routes/GoogleRoute')(settings);
 //Route Requires
+var TemplateRoute = require('./Routes/TemplateRoute')(settings);
 var CardsRoute = require('./Routes/CardsRoute')(settings);
 var ApplicationRoute = require('./Routes/ApplicationRoute')(settings);
 var UserRoute = require('./Routes/UserRoute')(settings);
@@ -18,25 +19,33 @@ var TagsRoute = require('./Routes/TagsRoute')(settings);
 var SectionRoute = require('./Routes/SectionsRoute')(settings);
 var SettingsRoute = require('./Routes/SettingsRoute')(settings);
 var Proessor = require('./Routes/AttachmentProcessor')(settings);
+var fs = require('fs')
+
+fs.readdir('/',function(err,files){
+  if(err){
+    console.log(err);
+  }
+  console.log(files);
+})
 //
 /* ========================================================================================================
  *
  * Http Setup - Keep in alphabetical order
  *
  * ===================================================================================================== */
-var allowCrossDomain = function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // intercept OPTIONS method
-  if ('OPTIONS' == req.method) {
-    res.send(200);
-  }
-  else {
-    next();
-  }
-};
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+      res.send(200);
+    }
+    else {
+      next();
+    }
+  };
 var app = express();
 app.use(express.bodyParser());
 app.use(express.methodOverride());
@@ -92,21 +101,29 @@ app.get('/auth/facebook/callback', function(req, res, next) {
 app.get('/applications/:id',function (req,res){
   var response = ApplicationRoute.GetApplication(req.headers['authorization'])
   response.on('data',function(results){
-    response =CardsRoute.GetTemplates(req.headers['authorization'])
+    if(results.length > 0){
+      application = ApplicationRoute.FormatObject(results[0].n);
+    }else{
+      //404 error
+    }
+    response =CardsRoute.GetTemplates(req.headers['authorization']);
     response.on('data',function(templates){
-      res.json({applications:results,templates:templates})
+      UserRoute.GetUser(req.headers['authorization']).on('data',function(results){
+        var user = UserRoute.FormatApplicationObject(results[0].user);
+        res.json({application:application,user:user,templates:templates})
+      });
     })
-
   })
-})
+});
 
+//
 app.get('/settings/:id',function(req,res){
   SettingsRoute.GetSettings(req.headers['authorization']).on('data',function(settings){
     console.log('about to respond')
     res.json({settings:settings})
     console.log('responded')
   })
-})
+});
 
 /* ========================================================================================================
  *
@@ -173,6 +190,18 @@ app.get('/templates/:id',function(req,res){
   template.isTempalte = true;
   console.log(template)
   // var response = CardsRoute.CreateCard(req.headers['authorization'],,req.body.template.tagsIn)
+
+})
+
+app.get('/templates',function(req,res){
+  GetObject = TemplateRoute.GetObject
+  TemplateRoute.GetTemplates(req.headers['authorization']).on('data',function(results){
+    var ret = []
+    for(var i = 0; i< results.length;i++){
+      ret.push(GetObject(results[i].template));
+    }
+    res.json({templates:ret})
+  })
 
 })
 
@@ -287,7 +316,9 @@ app.delete('/attachments/:id',function(req,res){
 
 app.get('/sections',function(req,res){
   var resultStream = SectionRoute.GetSections(req.query['ids']);
+  console.log('seccies')
   resultStream.once('data',function(results){
+    console.log('seccies done')
     res.json({sections:results})
   })
 });
@@ -334,7 +365,7 @@ app.post('/sections',function(req,res){
       var response = CardsRoute.GetCard(req.headers['authorization'],results.card);
       response.on('data',function(card){
         res.json({card:card.card,section:results})
-       // res.json({section:results})
+        // res.json({section:results})
       })
       // res.json({section:results});
     })
@@ -353,11 +384,6 @@ app.put('/sections/:id',function(req,res){
   })
 });
 
-
-
-
-
-
 /*app.put('/sections',function(req,res){
   var section = req.body.section
   var resultstream = SectionRoute.UpdateSection(section)
@@ -369,13 +395,7 @@ app.put('/sections/:id',function(req,res){
  * Users Methods - Keep in alphabetical order
  *
  * ===================================================================================================== */
-app.get('/users/:id',function (req,res){UserRoute.GetUserById(req,res)})
-
-/* ========================================================================================================
- *
- * Tags Methods - Keep in alphabetical order
- *
- * ===================================================================================================== */
+app.get('/users/:id',function (req,res){UserRoute.GetUserById(req,res)});
 
 /*app.get('/tags/:id')
   app.update('/tags/:id')

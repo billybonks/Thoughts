@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+
+
+
+    <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>App</title>
@@ -12,6 +15,7 @@
    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="http://builds.emberjs.com/handlebars-1.0.0.js"></script>
   <script src="http://builds.emberjs.com/beta/ember.js"></script>
+
     <!--<script src="http://builds.emberjs.com/canary/ember-data.js"></script>-->
 <script type="text/javascript" src="/scripts/External/edata.js"></script>
     <!-- <script type="text/javascript" src="/scripts/External/jquery.js"></script>
@@ -34,26 +38,16 @@
     <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
     <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
     <script type="text/javascript" src="/scripts/controllers/CardsController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/LinkController.js"></script>
     <script type="text/javascript" src="/scripts/controllers/SectionController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/TaskController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/IndexController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/QuestionController.js"></script>
+
 
     <script type="text/javascript" src="/scripts/Components/BaseSectionComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/LinkFormComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardFormComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/LinkMainComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/QuestionMainComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/TasksMainComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/DocumentsMainComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/SectionFormComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardControllsComponent.js"></script>
     <script type="text/javascript" src="/scripts/Components/CardLayoutComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/PropertyMainComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/TextAreaComponent.js"></script>
 
     <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
     <script type="text/javascript" src="/scripts/views/TaggerView.js"></script>
@@ -78,79 +72,17 @@
     <script type="text/javascript" src="/scripts/models/Template.js"></script>
     <script type="text/javascript" src="/scripts/models/Settings.js"></script>
 
-    <script type="text/x-handlebars" data-template-name="draggablecard">
-      <div class="card" {{bind-attr style=position}}>
-        {{yield}}
-    </div>
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="cardview">
-      <div class="card">
-        {{yield}}
-    </div>
-    </script>
-    <script type="text/x-handlebars" data-template-name="contextMenu">
-      <div class="col-md-3">
-        {{yield}}
-    </div>
-    </script>
-
-
-    <script type="text/x-handlebars" data-template-name="user">
-  <input id="tags" type="text" class="taggerInput" placeholder="Enter tags"/>
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="popup">
-    <div id="popup" style="left: 470px; position: absolute; top: 387.5px; z-index: 9999; opacity: 1; display: block;" >
-      <button id="closeButton" type="button" class="close" aria-hidden="true">&times;</button>
-            {{yield}}
-    </div>
-    </script>
-    <script type="text/x-handlebars" data-template-name="hello_popup">
-      hello world
-    </script>
-    <script type="text/x-handlebars" data-template-name="canvas">
-      <div class="containezr" style="height:1000px;">
-  {{outlet}}
-    </div>
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="DragAndDroppable">
-        {{yield}}
-    </script>
-    <script type="text/x-handlebars" data-template-name="draggableElement">
-      <div draggable="true">
-        {{yield}}
-      </div>
-    </script>
-    <script type="text/x-handlebars" data-template-name="property">
-      <div class="row">
-        <div class="col-md-6">
-          {{#if isNediting}}
-          {{view App.EditBox class="form-control"  toggleDone=isNediting value=model.data.name}}
-          {{else}}
-          <p {{action toggleN}}>{{model.data.name}}</p>
-          {{/if}}
-        </div>
-        <div class="col-md-6">
-          {{#if isVediting}}
-          {{view App.EditBox class="form-control"  toggleDone=isVediting value=model.data.value}}
-          {{else}}
-          <p {{action toggleV}}>{{model.data.value}}</p>
-          {{/if}}
-        </div>
-      </div>
-    </script>
-
-    <script type="text/x-handlebars" data-template-name="Qube">
-    <div class="col-md-5" style="border:solid 1px;background:white">
-    Drop here to delete
-    </div>
-    </script>
-    <script type="text/x-handlebars" data-template-name="dropDelete">
-      <div id="dropdelete"style="position:absolute;top:60px;height:100%;width:100%">
-        {{yield}}
-      </div>
-    </script>
+<script type="text/javascript" src="../Plugins/Links/LinkController.js"></script>
+<script type="text/javascript" src="../Plugins/Links/LinkView.js"></script>
+<script type="text/javascript" src="../Plugins/Links/LinksMainComponent.js"></script>
+<script type="text/javascript" src="../Plugins/Properties/PropertyController.js"></script>
+<script type="text/javascript" src="../Plugins/Properties/PropertyFormComponent.js"></script>
+<script type="text/javascript" src="../Plugins/Properties/PropertyMainComponent.js"></script>
+<script type="text/javascript" src="../Plugins/Properties/PropertyView.js"></script>
+<script type="text/javascript" src="../Plugins/Questions/QuestionController.js"></script>
+<script type="text/javascript" src="../Plugins/Questions/QuestionMainComponent.js"></script>
+<script type="text/javascript" src="../Plugins/Tasks/TasksController.js"></script>
+<script type="text/javascript" src="../Plugins/Tasks/TasksMainComponent.js"></script>
+<script type="text/javascript" src="../Plugins/TextArea/TextAreaComponent.js"></script>
   </body>
 </html>

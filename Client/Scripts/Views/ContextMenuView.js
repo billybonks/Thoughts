@@ -1,4 +1,5 @@
-﻿App.ContextMenuView = Ember.View.extend({
+'use strict';
+App.ContextMenuView = Ember.View.extend({
    layoutName : 'contextMenu',
    contextMenu:function(event){
      console.log()
@@ -7,7 +8,7 @@
        x:event.clientX,
        y:event.clientY
      }
-     Em.instrument("contextMenu.open",payload,function(){},this)
+     Em.instrument('contextMenu.open',payload,function(){},this)
      return false;
    }
  })

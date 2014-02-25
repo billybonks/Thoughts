@@ -41,7 +41,6 @@ module.exports = function(settings){
     var variablehash = {token:token}
 
     var queryStream = settings.executeQuery(query.join('\n'),variablehash);
-    console.log('executed')
     var GetCard = this.GetCard;
     queryStream.on('data', function (results) {
 
@@ -57,10 +56,7 @@ module.exports = function(settings){
         resultStream.on('data',function(result){
           ret.push(result.card)
           counter++
-          console.log('got another card')
           if(cardsCount ==counter){
-             console.log('CARDS')
-            console.log(ret)
             responseStream.emit('data',ret)
           }
         })
@@ -69,6 +65,7 @@ module.exports = function(settings){
     });
     return responseStream;
   }
+
 
   Card.prototype.GetTemplates=function(token){
     var query = [
@@ -96,6 +93,7 @@ module.exports = function(settings){
     })
     return responseStream;
   }
+
   //Currently sideloading data aswell
   Card.prototype.GetCard=function (token,id){
     var query=[
@@ -107,15 +105,10 @@ module.exports = function(settings){
       'AND not(has(section.isDeleted))',
       'RETURN card,user,section,tag'//user,card,attachment'
     ];
-    console.log(query.join('\n'))
-
     var variableHash = {token:token}
-    console.log(query.join('\n'))
     var queryStream = settings.executeQuery(query.join('\n'),variableHash);
     var responseStream = new Stream()
-    // console.log(variableHash)
     queryStream.on('data',function(results){
-      // console.log(results);
       var card;
       var user
       var tags = {};
@@ -126,8 +119,6 @@ module.exports = function(settings){
         card = result.card;
         user = result.user;
         var section = result.section;
-        console.log(result)
-        console.log(sections)
         var tag = result.tag;
         if(section){
           sections[section.id] = section

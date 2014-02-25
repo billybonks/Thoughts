@@ -1,4 +1,4 @@
-var User = require('./../User.js')();
+var User = require('./../UserController.js')();
 
 module.exports = function (app) {
   'use strict';
@@ -10,7 +10,7 @@ module.exports = function (app) {
 
   app.get('/users/:id',function (req,res){
     var id = req.params.id;
-    User.GetUser(id).on('data',function(results){
+    User.GetUserById(id).on('data',function(results){
       res.json({user:User.FormatObject(results[0].user)});
     });
 

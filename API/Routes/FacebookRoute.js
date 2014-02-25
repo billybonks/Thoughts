@@ -36,7 +36,7 @@ module.exports = function(settings){
       resultStream.on('data', function (results) {
         console.log(results)
         if(results == null){
-          console.log('creating user')
+
           resultStream = CreateUser(user)
           resultStream.on('data',function(dbUser){
             console.log('user created')
@@ -71,6 +71,7 @@ module.exports = function(settings){
    * ===================================================================================================== */
 
   FacebookRoute.prototype.FBUserToDBUser = function (body) {
+    var gravatar =this.GetGravatarImage(body.email)
     return user = {
       email: body.email,
       name: body.name,
@@ -78,7 +79,7 @@ module.exports = function(settings){
       last_name: body.last_name,
       gender: body.gender,
       locale: body.locale,
-
+      profileImg : gravatar
     }
   }
 

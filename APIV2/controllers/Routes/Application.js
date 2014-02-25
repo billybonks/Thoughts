@@ -1,4 +1,6 @@
-var ApplicationRoute = require('./../Application')();
+var ApplicationController = require('./../Application')();
+var UserController = require('./../UserController')();
+var CardController = require('./../CardController')();
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -8,22 +10,20 @@ module.exports = function (app) {
    * ===================================================================================================== */
 
   app.get('/applications/:id',function (req,res){
-    var application = ApplicationRoute;
-   // var cards = CardsRoute;
-    application.GetApplication(req.headers.authorization).on('data', function (results) {
+    var response = ApplicationController.GetApplication(req.headers.authorization);
+    response.on('data',function(results){
       if(results.length > 0){
-        var node = results[0].n;
-        var retApp = application.FormatApplicationObject(node);
-        /*cards.GetTemplates(req.headers['authorization']).on('data',function(templates){
-
-          res.json({applications:retApp,templates:templates})
-        })*/
-        res.json({applications:retApp});
-
+        var application = ApplicationController.FormatObject(results[0].n);
       }else{
-        res.json({applications:{}});
+        //404 error
       }
+      response =CardController.GetTemplates(req.headers.authorization);
+      response.on('data',function(templates){
+        UserController.GetUser(req.headers.authorization).on('data',function(results){
+          var user = UserController.FormatObject(results[0].user);
+          res.json({application:application,user:user,templates:templates});
+        });
+      });
     });
   });
-
 };

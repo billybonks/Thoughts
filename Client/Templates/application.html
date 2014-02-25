@@ -7,7 +7,7 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="#">Cards</a>
+    <a class="navbar-brand" href="#">Welcome</a>
   </div>
 
   <!-- Collect the nav links, forms, and other content for toggling -->
@@ -17,7 +17,8 @@
       <li>{{#link-to 'cards'}} Cards{{/link-to}}</li>
       <li>{{#link-to 'emails'}} Emails{{/link-to}}</li>
       <li>{{#link-to 'links'}} Links{{/link-to}}</li>
-      <li>{{#link-to 'settings'}} Actions{{/link-to}}</li>
+      <li>{{#link-to 'templates'}} Templates{{/link-to}}</li>
+      <li>{{#link-to 'settings'}} Settings{{/link-to}}</li>
       {{/if}}
     </ul>
     <ul class="nav navbar-nav navbar-right">
@@ -36,8 +37,8 @@
     <h2 id="Timer" style="margin:0px"></h2>
   </div>
 </div>
-  {{!#view App.DropDelete}}
-    {{outlet}}
+{{!#view App.DropDelete}}
+{{outlet}}
 {{!/view}}
 {{#if menuOpen}}
 <div class="card contextMenu" style="left:100px;top:200px">

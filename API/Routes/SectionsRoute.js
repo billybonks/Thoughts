@@ -69,6 +69,7 @@ module.exports = function(settings){
     var query =  [
       'start section=node('+sectionId+')',
       'optional match (attachment)-[:Attached]->(section)',
+      'Where not(has(attachment.isDeleted))',
       'return attachment'
     ];
     var emitter = new Stream();

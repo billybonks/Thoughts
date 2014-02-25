@@ -1,7 +1,6 @@
-﻿App.CardsController = Ember.ArrayController.extend({
-   word:'helloz',
+'use strict';
+App.CardsController = Ember.ArrayController.extend({
    templates:'?',
    test:function(){
-     console.log('hello')
    }
 });

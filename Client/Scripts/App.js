@@ -1,3 +1,4 @@
+'use strict';
 App = Ember.Application.create({
 
       ready: function () {
@@ -19,19 +20,6 @@ App = Ember.Application.create({
         });
       }
     });
-
-Ember.Handlebars.registerHelper("debug", function (optionalValue) {
-    console.log("Current Context");
-    console.log("====================");
-    console.log(this);
-
-    if (optionalValue) {
-        console.log("Value");
-        console.log("====================");
-        console.log(optionalValue);
-    }
-});
-
 
 DragNDrop = Ember.Namespace.create();
 

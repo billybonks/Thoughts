@@ -1,10 +1,10 @@
-//  $('element_to_pop_up').bPopup();
-
+'use strict';
 App.PopupView = Ember.View.extend({
   layoutName : 'popup',
   actions:{
     close:function(){
-      Em.instrument("mouse.move",event,function(){},this)
+      var event = 'event'
+      Em.instrument('mouse.move',event,function(){},this)
       console.log('close')
     }
   },

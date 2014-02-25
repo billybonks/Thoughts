@@ -21,22 +21,15 @@ module.exports = function(settings){
    * ===================================================================================================== */
   Application.prototype.GetApplication=function (token){
     var sessionToken = {token:token};
-    var query = 'START n=node(*) WHERE has (n.session_token) and n.session_token={token} RETURN n';//'START n=node:nodes(session_token = {token}) RETURN n';
-    var resultStream= new Stream();
-    var queryStream = settings.executeQuery(query,sessionToken);
-    queryStream.on('data', function (results) {
-      if(results.length > 0){
-        var data = results[0].n.data;
-        data.id = data.session_token;
-        var ret = {id:data.session_token,token:data.session_token,name:data.first_name}
-        console.log(ret)
-      }else{
-        ret = [{id:sessionToken.token}];
-      }
-      resultStream.emit('data',ret)
-    });
-    return resultStream;
+    var query = 'START n=node(*) WHERE has (n.session_token) and n.session_token={token} RETURN n';
+    return settings.executeQuery(query,sessionToken);
   }
+
+  Application.prototype.FormatObject=function(application){
+    var data = application.data;
+    console.log(application)
+    return{id:data.session_token,token:data.session_token,name:data.first_name};
+  };
   /* ========================================================================================================
    *
    * Write Methods - Keep in alphabetical order

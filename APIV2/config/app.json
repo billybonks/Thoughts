@@ -1,45 +1,51 @@
 {
- "host": "localhost",
+  "host": "localhost",
 
- "port": 8000,
-//
-// "i18n": {
-//     "fallback": "en-US",
-//     "contentPath": "path:./locales"
-// },
-//
- "routes": {
-     "routePath": "path:./controllers"
- }
-//
-//  "view engines": {
-//      "js": {
-//         "module": "adaro",
-//         "settings": {
-//             "helpers": null,
-//             "stream": false
-//         }
-//      },
-//
-//     "dust": {
-//         "module": "adaro",
-//         "settings": {
-//             "helpers": null,
-//             "stream": false
-//         }
-//     }
-// },
-// "express": {
-//     "x-powered-by": false,
-//     "trust proxy": false,
-//     "jsonp callback name": null,
-//     "json replacer": null,
-//     "json spaces": 0,
-//     "case sensitive routing": false,
-//     "strict routing": false,
-//     "view cache": true,
-//     "view engine": "js",
-//     "views": "path:./.build/templates"
-// }
+    "port": 4730,
+      //
+      // "i18n": {
+      //     "fallback": "en-US",
+      //     "contentPath": "path:./locales"
+      // },
+      //
+      "facebook_token_url": "https://graph.facebook.com/oauth/access_token",
+      "routes": {
+        "routePath": "path:./controllers"
+      },
+        "domain":"localhost",
+        //
+        //  "view engines": {
+        //      "js": {
+        //         "module": "adaro",
+        //         "settings": {
+        //             "helpers": null,
+        //             "stream": false
+        //         }
+        //      },
+        //
+        //     "dust": {
+        //         "module": "adaro",
+        //         "settings": {
+        //             "helpers": null,
+        //             "stream": false
+        //         }
+        //     }
+        // },
+        // "express": {
+        //     "x-powered-by": false,
+        //     "trust proxy": false,
+        //     "jsonp callback name": null,
+        //     "json replacer": null,
+        //     "json spaces": 0,
+        //     "case sensitive routing": false,
+        //     "strict routing": false,
+        //     "view cache": true,
+        //     "view engine": "js",
+        //     "views": "path:./.build/templates"
+        // }
+        "facebook_authorization_url": "https://www.facebook.com/dialog/oauth",
 
+          "facebook_client_id": "171284626406184",
+            "facebook_client_secret": "d6265fa2fd27376c2d939ecc9fe64c04",
+              "facebook_callback_url": "http://localhost:4730/auth/facebook/callback"
 }

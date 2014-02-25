@@ -1,3 +1,4 @@
+'use strict';
 App.Card = DS.Model.extend({
   title: DS.attr('string'),
   left: DS.attr('number'),

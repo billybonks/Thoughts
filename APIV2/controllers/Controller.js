@@ -15,6 +15,18 @@ module.exports = function(){
    * Helper Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
+  Controller.prototype.BuildStartStatement=function(ids,varname){
+    var query = 'START '+varname+'=node(';
+    for(var c =0; c <ids.length;c++){
+      if(c+1 == ids.length){
+        query += ids[c];
+      }else{
+        query += ids[c]+',';
+      }
+    }
+    return query+')';
+  };
+
   Controller.prototype.GetNodes=function(ids,filters){
     var emitter = new Stream();
     var query = 'START n=node(';
@@ -28,7 +40,7 @@ module.exports = function(){
     query +=  ') Where not(has(n.isDeleted)) return n';
     var queryStream = this.executeQuery(query,{});
     queryStream.on('data',function(results){
-      emitter.emit('GetNodes.done',results);
+      emitter.emit('data',results);
     });
     return emitter;
   };

@@ -1,3 +1,4 @@
+'use strict';
 App.DropCube = Ember.View.extend({
   templateName:'Qube',
   click:function(e){

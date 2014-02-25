@@ -16,7 +16,7 @@
       </div>
     </div>
     {{#each section in model.sections itemController="section"}}
-      <div class="panel panel-default col-md-6" style="padding:20px">
+      <div class="panel panel-default col-md-6" style="padding:20px;display:inline-block">
       <div class="row borded" >
         <div class="col-md-10">
           {{#if isEditing}}
@@ -31,8 +31,8 @@
         </div>
       </div>
      {{!#if isCollapsed}}
-      <div class="panel-body">
-          {{#if isLink}}
+        <div class="panel-body">
+          {{#if isLinks}}
             {{links-main title = section.title section=section data=section.attachments card=card store=store}}
             {{#if isEditing}}
               {{#view App.PopupView viewName="popup"}}
@@ -56,10 +56,10 @@
               {{/view}}
             {{/if}}
           {{/if}}
-          {{#if isQuestion}}
+          {{#if isQuestions}}
             {{question-main title = section.title data=section.attachments section=section store=store}}
           {{/if}}
-          {{#if isProperty}}
+          {{#if isProperties}}
               {{property-main title = section.title data=section.attachments section=section store=store}}
           {{/if}}
           {{#if isTextArea}}

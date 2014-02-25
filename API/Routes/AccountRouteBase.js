@@ -96,6 +96,18 @@ module.exports = function(settings){
   AccountRouteBase.prototype.GetGravatar= function(email){
     var md5sum = crypto.createHash('md5');
   }
+  /* ========================================================================================================
+   *
+   * Helper Methods - Keep in alphabetical order
+   *
+   * ===================================================================================================== */
+  AccountRouteBase.prototype.GetGravatarImage = function (email) {
+    var md5sum = crypto.createHash('md5');
+    md5sum.update(email.trim().toLowerCase());
+    var gravatarID = md5sum.digest('hex');
+    return 'http://www.gravatar.com/avatar/'+gravatarID
+  }
 
   return new AccountRouteBase();
 }
+

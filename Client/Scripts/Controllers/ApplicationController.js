@@ -1,6 +1,6 @@
-﻿App.ApplicationController = Ember.Controller.extend({
+'use strict';
+App.ApplicationController = Ember.Controller.extend({
     currentDrag: null,
-    word2:'null',
     menuOpen:false,
     actions: {
         ClearToken: function () {
@@ -9,11 +9,10 @@
         StartDrag:  function(){
             return function (model) {
                 this.set('currentDrag', model);
-            }
+            };
         },
     },
     MouseMove: function (application) {
-        var name = "Mozilla";
         var controller = application;
          function mouseMove (event) {
              console.log(controller.get('currentDrag'));
@@ -30,7 +29,7 @@
         },
         after: function(name, timestamp, event, beforeRet) {
         }
-      }
+      };
    },
    SetContextType: function (model) {
       return {
@@ -38,6 +37,6 @@
         },
         after: function(name, timestamp, event, beforeRet) {
         }
-      }
+      };
    }
 });

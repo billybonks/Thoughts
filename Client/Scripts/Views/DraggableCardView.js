@@ -1,3 +1,4 @@
+'use strict';
 App.DraggableCardView = Ember.View.extend({
   layoutName: 'draggablecard',
   subscription:null,
@@ -20,12 +21,12 @@ App.DraggableCardView = Ember.View.extend({
       before: function(name, timestamp, event) {
         console.log(this.x)
         console.log(event.clientX)
-       if(this.model.get('left') == null){
+       if(this.model.get('left') === null){
           this.model.set('left',0);
           this.model.set('top',0);
 
         }
-        if (this.x == -1) {
+        if (this.x === -1) {
           this.x = event.clientX;
           this.y = event.clientY;
           return;

@@ -7,6 +7,7 @@ var express = require('express'),
 
 app.configure = function configure(nconf, next) {
   // Async method run on startup.
+
   next(null);
 };
 

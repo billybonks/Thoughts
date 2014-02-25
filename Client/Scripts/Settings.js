@@ -1,3 +1,4 @@
+'use strict';
 window.AppSettings =
   {
     WebserviceURL: 'http://localhost:4730',
@@ -13,8 +14,8 @@ window.AppSettings =
         success: function (data, textStatus, jqXHR) {
           window.location = data;
         },
-          dataType: "json",
-            type: "GET"
+          dataType: 'json',
+            type: 'GET'
 });
 }
 

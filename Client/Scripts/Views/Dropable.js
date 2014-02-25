@@ -1,3 +1,4 @@
+'use strict';
 App.Dropable = Ember.View.extend({
   layoutName:'dropDelete',
   /*drop:function(e){

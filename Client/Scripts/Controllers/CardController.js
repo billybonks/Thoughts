@@ -1,3 +1,4 @@
+'use strict';
 App.CardController = Ember.ObjectController.extend({
   word:'hello',
   actions:{
@@ -23,6 +24,21 @@ App.CardController = Ember.ObjectController.extend({
         sections.pushObjects(otherSections);
         template.save();
       })
+    },
+    CreateSection: function(){
+      console.log(this.get('model').get('id'))
+      var section = this.store.createRecord('section', {
+        title: 'tester',
+        type : 'Links',
+        position:'0'
+      });
+      section.save().then(function(section){
+        this.get('model.sections').then(function(sections){
+          sections.push(section);
+        })
+        this.get('model').save();
+      });
+
     }
   },
   IsRight:function(){
@@ -35,13 +51,6 @@ App.CardController = Ember.ObjectController.extend({
     var attachments = this.get('model').get('attachments');
     var tags = this.get('model').get('tags');
     var tit = this.get('model').get('title');
-    console.log('sorting');
-    for(var i = 0;i<attachments.length;i++){
-      var a = attachments[i];
-      if(a.type=="Link"){
-        links.push(a)
-      }
-    }
     return '';
   }.observes('model.attachments.@each.type'),
   position:function(){
