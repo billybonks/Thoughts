@@ -1,18 +1,18 @@
-test put Card
+##Test##
+-put Card
+-get settings
+-put settings
+-get settings
 
-test get settings
+##Add##
+-tags controler
+-tags webservice methods
+-Complete GetTemplateByID
+-Put GetTemplateByID
 
-test put settings
 
-test create card form template
 
-test create card
-
-Add tags controler
-
-Complete GetTemplateByID
-Put GetTemplateByID
-
+##Errors to fix##
 Create template of a card that has 0sections throws error
   im thinking add a message saying sorry you cant create a template with 0 sections unless we add some sort of savable config
 
@@ -24,3 +24,5 @@ Fix popup
   errors are linked :)
 
 Application model, needs to foward a guest access token if user isnt logged in, as they may want to view the public cards
+
+##Extensions##
