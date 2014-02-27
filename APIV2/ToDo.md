@@ -1,14 +1,14 @@
 ##Test##
--put Card
--get settings
--put settings
--get settings
+- put Card
+- get settings
+- put settings
+- get settings
 
 ##Add##
--tags controler
--tags webservice methods
--Complete GetTemplateByID
--Put GetTemplateByID
+- tags controler
+- tags webservice methods
+- Complete GetTemplateByID
+- Put GetTemplateByID
 
 
 
