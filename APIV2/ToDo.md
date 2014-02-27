@@ -26,3 +26,5 @@ Fix popup
 Application model, needs to foward a guest access token if user isnt logged in, as they may want to view the public cards
 
 ##Extensions##
+
+Add a tempaltes viewing and editng section, prob a good idea to base it of the cards work, but the model templates and the the model card are imcompatible so will see how we work witht this

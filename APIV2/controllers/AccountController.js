@@ -2,7 +2,7 @@
 var Stream = require('stream');
 var crypto = require('crypto');
 var controller = require('./controller.js');
-
+var db = require('./../lib/Database')
 module.exports = function(){
   'use strict';
   /* ========================================================================================================
@@ -58,6 +58,7 @@ module.exports = function(){
     var newUser = 'CREATE (n:'+accountLabel+' {data}) RETURN n';
     var newUserHash = {data:accountData};
     var queryStream = this.executeQuery(newUser,newUserHash);
+    var context = this;
     var returnStream = new Stream();
     queryStream.on('data', function (account) {
       var accountId = account[0].n.id;
@@ -66,7 +67,7 @@ module.exports = function(){
         'CREATE user-[r:Linked]->account',
         'RETURN account'
       ];
-      var queryStream = this.executeQuery(query.join('\n'),{});
+      var queryStream = context.executeQuery(query.join('\n'),{});
       queryStream.on('data',function(results){
         returnStream.emit('data',null);
       });

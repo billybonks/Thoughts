@@ -14,16 +14,16 @@ module.exports = function(){
   function SettinsController(){
   }
 
-  SettinsController.prototype = new controller();
+  SettinsController.prototype = new Controller();
 
-    SettingsRoute.prototype.GetSettings = function(token){
+  SettinsController.prototype.GetSettings = function(token){
     var settings = {id:0};
     var resultStream = new Stream()
-    var GetUserLinkedAccounts = this.GetUserLinkedAccounts
-    this.users.GetUser(token).on('data',function(user){
-      console.log(user)
-      settings.name = user.name;
-      var responseStream=GetUserLinkedAccounts(user.id);
+    var context = this;
+    UserController.GetUser(token).on('data',function(user){
+      var user = user[0].user;
+      settings.name = user.data.name;
+      var responseStream=context.GetUserLinkedAccounts.call(context,user.id);
       responseStream.on('data',function(accounts){
         console.log(accounts);
         for(var i = 0; i < accounts.length; i++){
@@ -42,7 +42,7 @@ module.exports = function(){
     return resultStream;
   }
 
-  SettingsRoute.prototype.GetUserLinkedAccounts= function(userId){
+  SettinsController.prototype.GetUserLinkedAccounts= function(userId){
     var query = "Start user=node("+userId+") Match user-[l:Linked]->account return labels(account)";
     var responseStream = this.executeQuery(query,{});
     return responseStream;
