@@ -1,6 +1,7 @@
 
 //require staements
 var controller = require('./controller.js');
+var AttachmentController = require('./AttachmentController')();
 var Stream = require('stream');
 
 module.exports = function(){
@@ -21,22 +22,21 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   SectionController.prototype.GetSections=function(sectionIds){
-    var context = this.GetSectionAttachments;
+    console.log(sectionIds);
+    var context = this;
     var counter =0;
     var count = 0;
     var sections = {};
     var ret = [];
     var emitter = new Stream();
-    var nodeStream = this.GetNodes(sectionIds);
-    this.BuildStartStatement(sectionIds);
-    var query = [this.BuildStartStatement(sectionIds),
-                 'Optional Match (attachment)-[a:Attached]->(section)',
-                 'return section,attachment'];
-    console.log(query.join('\n'));
+    var query = [this.BuildStartStatement(sectionIds,'section'),
+                 'Where not(has(section.isDeleted))',
+                 'return section'];
     this.executeQuery(query.join('\n'),{}).on('data',function(results){
-      console.log(results);
       var sections = [];
-      for(var i = 0;i<results.length;i++){
+      var sectionIds=[]
+      count=results.length;
+      for(var i = 0;i<count;i++){
         var sectionId = results[i].section.id;
         if(!(sectionId in sections)){
           sections[results[i].section.id] = {
@@ -44,13 +44,32 @@ module.exports = function(){
             data : results[i].section.data,
             attachments:[]
           };
+          sectionIds.push(results[i].section.id);
         }
-        var attachmentId = results[i].attachment.id;
+        /*  var attachmentId = results[i].attachment.id;
         if(!(attachmentId in sections[sectionId].attachments)){
           sections[sectionId].attachments[attachmentId] = { id : attachmentId, data : results[i].attachment.data};
-        }
+        }*/
       }
-      emitter.emit('data',sections);
+      //TEMP METHOD TO FIX ATTACHMETNS BUG WHEN GETTING FROM NEO4js
+      for(var section in sections){
+        context.GetSectionAttachments(section).on('data',function(results){
+          counter++;
+          for(var a = 0; a<results.length;a++){
+            var attachment = results[a];
+            sections[attachment.section].attachments.push(attachment.id);
+          }
+          console.log(count);
+          if (counter === count){
+            var ret = []
+            for(var s = 0;s<sectionIds.length;s++){
+              ret.push(sections[sectionIds[0]])
+            }
+            emitter.emit('data',ret);
+          }
+        });
+      }
+
     });
     return emitter;
   };
@@ -71,10 +90,10 @@ module.exports = function(){
         if(results[i].attachment){
           ret.push({id:results[i].attachment.id,data:results[i].attachment.data,section:sectionId});
         }else{
-          ret.push({section:sectionId});
+          // ret.push({section:sectionId});
         }
       }
-      emitter.emit('GetSectionAttachments.done',ret);
+      emitter.emit('data',ret);
     });
     return emitter;
   };
@@ -82,6 +101,107 @@ module.exports = function(){
   /* ========================================================================================================
    *
    * Write Methods - Keep in alphabetical order
+   *
+   * ===================================================================================================== */
+  SectionController.prototype.CreateSection = function(title,type,position,cardId){
+    var responseStream = new Stream();
+    var query = 'CREATE (n:Section {data}) RETURN n';
+    var variableHash = {data:{title:title,type:type,position:position}};
+    var queryStream = this.executeQuery(query,variableHash);
+    var context = this;
+    queryStream.once('data',function(results){
+
+      var resultStream = context.LinkCard.call(context,results[0].n.id,cardId);
+      resultStream.on('data',function(results){
+        console.log(results[0])
+        var data = results[0].section.data;
+        var section =
+            {
+              id:results[0].section.id,
+              type:data.type,
+              position:data.position,
+              card:cardId,
+              title:data.title
+              //get payloads code
+            }
+        responseStream.emit('data',section)
+      })
+    })
+    return responseStream;
+  }
+
+  SectionController.prototype.DeleteSection = function(sectionId){
+    var query = ['START section=node('+sectionId+')',
+                 'SET section.isDeleted = true'];
+    var returnStream = new Stream();
+    var queryStream = this.executeQuery(query.join('\n'),{});
+    queryStream.on('data',function(results){
+      returnStream.emit('data',{})
+    })
+    return returnStream;
+  }
+
+  SectionController.prototype.DuplicateAndLink = function(section,cardId,token){
+    var returnStream = new Stream();
+    console.log('lllllllllllllllllll');
+    console.log(section);
+    var resultStream = AttachmentController.getAttachments(section.attachments);
+    var CreateSection = this.CreateSection
+    var context = this;
+    var attRoute = AttachmentController
+    resultStream.on('data',function(attachments){
+      resultStream = CreateSection.call(context,section.title,section.type,section.position,cardId);
+      resultStream.on('data',function(section){
+        var counter = 0;
+        var attachmentIds = []
+        for(var i = 0;i<attachments.length;i++){
+          resultStream = attRoute.createAttachment.call(attRoute,attachments[i].data,token,[],section.id)
+          resultStream.on('data',function(result){
+            counter++;
+            attachmentIds.push(result.id)
+            if(counter === attachments.length){
+              returnStream.emit('data',{})
+              console.log(section.id)
+            }
+          })
+        }
+      })
+
+
+    })
+    return returnStream;
+  }
+
+  SectionController.prototype.LinkCard = function(sectiontId,cardId){
+    var query =  [
+      'START section=node('+sectiontId+'),card=node('+cardId+')',
+      'MATCH (card:Card)',
+      'CREATE section<-[r:Has]-card',
+      'RETURN section'
+    ];
+    console.log('query')
+    var queryStream = this.executeQuery(query.join('\n'),{});
+    return queryStream;
+  }
+
+  SectionController.prototype.UpdateSection = function(section,sectionID){
+    var query =  [
+      'START section=node('+sectionID+')',
+      'Set section.title = {title},',
+      'section.position  = {position},',
+      'section.collapsed = {collapsed}',
+      'RETURN section'
+    ];
+    var resultStream = new Stream();
+    var queryStream = this.executeQuery(query.join('\n'),section);
+    queryStream.on('data',function(results){
+      resultStream.emit('data',results);
+    })
+    return resultStream;
+  }
+  /* ========================================================================================================
+   *
+   * Helper Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
   SectionController.prototype.FormatObject = function(section,attachments){
@@ -93,10 +213,11 @@ module.exports = function(){
       attachments:[]
     };
     for(var aID in attachments){
-      section.attachments.push(aID);
+      section.attachments.push(attachments[aID]);
     }
     return section;
   };
+
 
   return new SectionController();
 };

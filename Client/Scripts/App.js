@@ -1,4 +1,3 @@
-'use strict';
 App = Ember.Application.create({
 
       ready: function () {

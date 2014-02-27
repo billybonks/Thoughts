@@ -30,6 +30,8 @@ module.exports = function(){
       var session = md5sum.digest('hex');
       var query = 'START n=node('+userRec.id+') SET n.session_token = {session} RETURN n';
       var variableHash = {session:session};
+           console.log('wwwwwwwwwwwwwww');
+    console.log(this);
       var queryStream = this.executeQuery(query,variableHash);
       queryStream.on('data', function (results) {
         resultStream.emit('data', results[0].n);

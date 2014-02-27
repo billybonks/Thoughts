@@ -16,7 +16,7 @@ module.exports = function (app) {
   });
 
   app.get('/templates',function(req,res){
-    GetObject = TemplateController.GetObject;
+    var GetObject = TemplateController.GetObject;
     TemplateController.GetTemplates(req.headers.authorization).on('data',function(results){
       var ret = [];
       for(var i = 0; i< results.length;i++){
@@ -38,11 +38,12 @@ module.exports = function (app) {
 
     var responseStream = SectionController.GetSections(sections);
     responseStream.on('data',function(results){
+      console.log(results);
       responseStream = CardController.CreateCard(req.headers.authorization,template,[]);
       responseStream.on('data',function(card){
         var counter = 0;
         for(var i =0;i<results.length;i++){
-          resultStream = SectionController.DuplicateAndLink(results[i],card.id,req.headers.authorization);
+          var resultStream = SectionController.DuplicateAndLink(results[i],card.id,req.headers.authorization);
           resultStream.on('data',function(section){
             counter++;
             if(counter === results.length){

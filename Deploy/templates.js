@@ -547,7 +547,6 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-  data.buffer.push("\r\n");
   hashContexts = {'store': depth0,'templates': depth0,'w': depth0};
   hashTypes = {'store': "ID",'templates': "ID",'w': "ID"};
   options = {hash:{

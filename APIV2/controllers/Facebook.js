@@ -22,7 +22,7 @@ module.exports = function(){
       if (error){
         done(error);
       }
-
+      var context = this;
       var CreateUser = this.CreateUser;
       var CreateSession =this.CreateSession;
       var CreateOAuthAccount = this.CreateOAuthAccount;
@@ -34,9 +34,9 @@ module.exports = function(){
       var account = this.GetLinkedAccountNodeData(body, accessToken);
       resultStream.on('data', function (results) {
         if(results === null){
-          resultStream = CreateUser(user);
+          resultStream = CreateUser.call(context,user);
           resultStream.on('data',function(dbUser){
-            resultStream = CreateOAuthAccount('Facebook',account,dbUser.id);
+            resultStream = CreateOAuthAccount.call(context,'Facebook',account,dbUser.id);
             //link Account
             resultStream.on('data',function(results){
               resultStream = CreateSession(dbUser);
@@ -49,7 +49,7 @@ module.exports = function(){
 
           if(!results.data.session_token){
             console.log(results);
-            resultStream = CreateSession(results);
+            resultStream = CreateSession.call(context,results);
             resultStream.on('data',function(results){
               done(null, results.data, 'info');
             });

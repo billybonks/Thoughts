@@ -37,10 +37,9 @@ module.exports = function(){
       'AND not(card-[:Is]->())',
       'RETURN card'
     ];
-    var usercontroller = this;
+    var context = this;
     var responseStream = new Stream();
     var variablehash = {token:token};
-    var context = this;
     var queryStream = this.executeQuery(query.join('\n'),variablehash);
     queryStream.on('data', function (results) {
 
@@ -52,9 +51,10 @@ module.exports = function(){
       var ret = [];
       for(var c=0;c<cardsCount;c++){
         var id = results[c].card.id;
-        var resultStream = usercontroller.GetCard.call(context,token,id);
+        var resultStream = context.GetCard.call(context,token,id);
         resultStream.on('data',function(results){
           var sections = [];
+          var sectionIds = [];
           var result,card,user,section,tag;
           for(var i = 0;i<results.length;i++){
 
@@ -65,6 +65,7 @@ module.exports = function(){
             tag = result.tag;
             if(section){
               sections[section.id] = section;
+              sectionIds.push(section.id);
             }
             /* if(tag){
               var id = tag.id;
@@ -73,7 +74,7 @@ module.exports = function(){
               tags[tag.id] = tag;
             }*/
           }
-          ret.push(usercontroller.FormatObject(user,tag,sections,card));
+          ret.push(context.FormatObject(user,tag,sectionIds,card));
           counter++;
           if(cardsCount ==counter){
             responseStream.emit('data',ret);
@@ -159,7 +160,6 @@ module.exports = function(){
           var resultStream = tagger.TagEntity(cardId,tags);
           resultStream.on('data',function(results){
             responseStream.emit('data',results);
-            console.log(results);
           });
         }else{
           responseStream.emit('data',card);
@@ -259,9 +259,8 @@ module.exports = function(){
       //ret.card.tags.push(id);
     }
     for(id in sections){
-      ret.sections.push(id);
+      ret.sections.push(sections[id]);
     }
-    console.log(ret);
     return ret;
   };
 

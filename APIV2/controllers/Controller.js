@@ -27,7 +27,7 @@ module.exports = function(){
     return query+')';
   };
 
-  Controller.prototype.GetNodes=function(ids,filters){
+  Controller.prototype.GetNodes=function(ids){
     var emitter = new Stream();
     var query = 'START n=node(';
     for(var c =0; c <ids.length;c++){
