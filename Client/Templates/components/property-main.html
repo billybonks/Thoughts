@@ -5,7 +5,7 @@
 {{#each item in data itemController='property'}}
     {{view App.PropertyView model=item}}
 {{/each}}
-<button draggable="true" class="btn btn-default"{{action 'ToggleEdit'}}> New Property </button>
+<button class="btn btn-default"{{action 'ToggleEdit'}}> New Property </button>
 {{#if isEditing}}
   {{#view App.PopupView viewName="popup"}}
     {{property-form store=store section=section }}

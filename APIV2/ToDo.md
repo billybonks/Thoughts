@@ -1,15 +1,12 @@
 ##Test##
-- put Card
-- get settings
-- put settings
-- get settings
+
 
 ##Add##
 - tags controler
 - tags webservice methods
 - Complete GetTemplateByID
 - Put GetTemplateByID
-
+- put settings
 
 
 ##Errors to fix##
@@ -28,3 +25,8 @@ Application model, needs to foward a guest access token if user isnt logged in, 
 ##Extensions##
 
 Add a tempaltes viewing and editng section, prob a good idea to base it of the cards work, but the model templates and the the model card are imcompatible so will see how we work witht this
+
+Build Guest view
+
+##Build Extensions##
+move templates to relative plugins folder and add build task

@@ -20,8 +20,12 @@ module.exports = function (app) {
       response =CardController.GetTemplates(req.headers.authorization);
       response.on('data',function(templates){
         UserController.GetUser(req.headers.authorization).on('data',function(results){
-          var user = UserController.FormatObject(results[0].user);
-          res.json({application:application,user:user,templates:templates});
+          if(!results[0]){
+            res.json({application:{id:0,name:'guest',token:-1}});
+          }else{
+            var user = UserController.FormatObject(results[0].user);
+            res.json({application:application,user:user,templates:templates});
+          }
         });
       });
     });

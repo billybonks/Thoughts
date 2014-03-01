@@ -9,6 +9,7 @@ App.CardController = Ember.ObjectController.extend({
       });
     },
     ToggleEdit:function(){
+      console.log('editing')
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     },
     Share:function(){

@@ -1,4 +1,4 @@
-{{#each itemController="card"}}
+{{#each item in model itemController="card"}}
 <div class="col-md-4">
   <div class="controlls">
     <div class="row">
@@ -28,6 +28,6 @@
     </div>
   </div>
 
-        {{title-card description=description title=title username=user.name tags=tags idz=id}}
+        {{title-card model=item tags=tags idz=id isEditing=isEditing store=store}}
   </div>
 {{/each}}

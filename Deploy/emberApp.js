@@ -1,4 +1,3 @@
-'use strict';
 App = Ember.Application.create({
 
       ready: function () {
@@ -231,6 +230,7 @@ App.CardController = Ember.ObjectController.extend({
       });
     },
     ToggleEdit:function(){
+      console.log('editing')
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     },
     Share:function(){
@@ -579,7 +579,7 @@ App.Card = DS.Model.extend({
   sections: DS.hasMany('section',{async:true}),
   tags:DS.hasMany('tag',{async:true}),
   tagsIn:DS.attr(),
-  template:DS.attr()
+ // template:DS.attr()
 });
 
 'use strict';
@@ -700,8 +700,10 @@ App.CardControllsComponent = Ember.Component.extend({
     onDelete:function(){
     },
     onShare:function(){
+      this.get('section') ? this.set('section',false):this.set('section',true);
     },
     onEdit:function(){
+      this.get('section') ? this.set('section',false):this.set('section',true);
     },
     onAddSection:function(){
       this.get('section') ? this.set('section',false):this.set('section',true);
@@ -880,6 +882,29 @@ App.TasksMainComponent = App.BaseSectionComponent.extend({
     }
   },
   willInsertElement:function(){
+  }
+});
+'use strict';
+App.TitleCardComponent = Ember.Component.extend({
+  actions:{
+    onDelete:function(){
+    },
+    onShare:function(){
+      this.get('section') ? this.set('section',false):this.set('section',true);
+    },
+    onEdit:function(){
+      this.get('section') ? this.set('section',false):this.set('section',true);
+    },
+    onAddSection:function(){
+      this.get('section') ? this.set('section',false):this.set('section',true);
+    },
+    Save:function(){
+      console.log(this.get('model.title'));
+      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+      this.get('store').find('Card',this.get('model.id')).then(function(card){
+        card.save();
+      });
+    },
   }
 });
 'use strict';

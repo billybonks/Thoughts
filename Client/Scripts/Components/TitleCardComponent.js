@@ -1,9 +1,5 @@
 'use strict';
-App.CardControllsComponent = Ember.Component.extend({
-  edit:false,
-  share:false,
-  section:false,
-
+App.TitleCardComponent = Ember.Component.extend({
   actions:{
     onDelete:function(){
     },
@@ -15,6 +11,13 @@ App.CardControllsComponent = Ember.Component.extend({
     },
     onAddSection:function(){
       this.get('section') ? this.set('section',false):this.set('section',true);
+    },
+    Save:function(){
+      console.log(this.get('model.title'));
+      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+      this.get('store').find('Card',this.get('model.id')).then(function(card){
+        card.save();
+      });
     },
   }
 });
