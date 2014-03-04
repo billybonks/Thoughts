@@ -1,0 +1,8 @@
+  <script type="text/x-handlebars" data-template-name="modal">
+    {{#modal-dialog action="close"}}
+      <h3 class="flush--top">Name Change Modal</h5>
+      <p>Enter a new name:</p>
+      <p>{{input value=name}}</p>
+      <button {{action "close"}}>Done</button>
+    {{/modal-dialog}}
+  </script>

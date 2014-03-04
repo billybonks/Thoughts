@@ -20,6 +20,22 @@ App.Router.map(function () {
 });
 
 App.ApplicationRoute = Ember.Route.extend({
+  actions: {
+    openModal: function(modalName, model) {
+      this.controllerFor(modalName).set('model', model);
+      return this.render(modalName, {
+        into: 'application',
+        outlet: 'modal'
+      });
+    },
+
+    closeModal: function() {
+      return this.disconnectOutlet({
+        outlet: 'modal',
+        parentView: 'application'
+      });
+    }
+  },
   model: function () {
     var sessionToken = $.cookie(AppSettings.CookieName);
     var m = this.store.find('application', sessionToken)
@@ -107,3 +123,19 @@ App.SettingsIndexRoute = Ember.Route.extend({
     return this.modelFor('settings');
   }
 });
+
+App.CardRoute = Ember.Route.extend({
+  actions: {
+    openModal: function(modalName, model) {
+      return true
+    },
+
+    closeModal: function() {
+      return this.disconnectOutlet({
+        outlet: 'modal',
+        parentView: 'application'
+      });
+    }
+  }
+});
+

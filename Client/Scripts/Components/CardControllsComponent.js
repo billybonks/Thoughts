@@ -17,6 +17,9 @@ App.CardControllsComponent = Ember.Component.extend(App.PopupMixin,{
       this.TogglePopup('section');
       //this.get('section') ? this.set('section',false):this.set('section',true);
     },
+    openModal:function(modalName,model){
+      return this.sendAction('openModal',modalName,model);
+    }
   },
   didInsertElement:function(){
     this.SubscribePopup(this,'section');

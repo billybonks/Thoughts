@@ -31,7 +31,8 @@ module.exports = function(){
     var emitter = new Stream();
     var query = [this.BuildStartStatement(sectionIds,'section'),
                  'Where not(has(section.isDeleted))',
-                 'return section'];
+                 'Optional Match (attachment)-[a:Attached]->(section)',
+                 'return section,attachment'];
     this.executeQuery(query.join('\n'),{}).on('data',function(results){
       var sections = [];
       var sectionIds=[]
@@ -46,30 +47,15 @@ module.exports = function(){
           };
           sectionIds.push(results[i].section.id);
         }
-        /*  var attachmentId = results[i].attachment.id;
-        if(!(attachmentId in sections[sectionId].attachments)){
-          sections[sectionId].attachments[attachmentId] = { id : attachmentId, data : results[i].attachment.data};
-        }*/
-      }
-      //TEMP METHOD TO FIX ATTACHMETNS BUG WHEN GETTING FROM NEO4js
-      for(var section in sections){
-        context.GetSectionAttachments(section).on('data',function(results){
-          counter++;
-          for(var a = 0; a<results.length;a++){
-            var attachment = results[a];
-            sections[attachment.section].attachments.push(attachment.id);
+        if(results[i].attachment){
+          var attachmentId = results[i].attachment.id;
+          if(!(attachmentId in sections[sectionId].attachments)){
+            sections[sectionId].attachments[attachmentId] = { id : attachmentId, data : results[i].attachment.data};
           }
-          console.log(count);
-          if (counter === count){
-            var ret = []
-            for(var s = 0;s<sectionIds.length;s++){
-              ret.push(sections[sectionIds[0]])
-            }
-            emitter.emit('data',ret);
-          }
-        });
+        }
       }
-
+      console.log(sections);
+      emitter.emit('data',sections);
     });
     return emitter;
   };
@@ -213,7 +199,7 @@ module.exports = function(){
       attachments:[]
     };
     for(var aID in attachments){
-      section.attachments.push(attachments[aID]);
+      section.attachments.push(aID);
     }
     return section;
   };

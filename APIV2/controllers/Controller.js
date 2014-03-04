@@ -1,5 +1,6 @@
 var Stream = require('stream');
 var neo4j = require('neo4j-js');
+var nconf = require('nconf');
 
 module.exports = function(){
   'use strict';
@@ -56,7 +57,7 @@ module.exports = function(){
 
   Controller.prototype.executeQuery = function(query,variableHash){
     var queryStream = new Stream();
-    neo4j.connect('http://localhost:7474/db/data/',function (err, graph, done) {
+    neo4j.connect(nconf.get('database'),function (err, graph, done) {
       console.log(query);
       console.log(variableHash);
       graph.query(query,variableHash, function (err, results) {

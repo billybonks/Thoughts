@@ -2,7 +2,7 @@ var fs =require('fs')
 
 module.exports = function(grunt) {
 
-  var plugins = fs.readdirSync('C:/Users/bonks/Documents/GitHub/Thoughts/Client/Plugins')
+  var plugins = fs.readdirSync('Plugins')
   var ret = {plugins:[]}
 
   for(var i = 0; i<plugins.length;i++){

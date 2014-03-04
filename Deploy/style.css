@@ -43,6 +43,28 @@ body {
   padding:0px;
   margin:0px;
 }
+
+.modaler {
+  margin: 10px auto;
+  width: 300px;
+  background-color: #fff;
+  padding: 1em;
+}
+
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index:10000;
+}
+
+.flush--top {
+  margin-top: 0;
+}
 .btn-social.github
 {
     background: #6d6d6d;

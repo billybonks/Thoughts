@@ -28,5 +28,9 @@ Add a tempaltes viewing and editng section, prob a good idea to base it of the c
 
 Build Guest view
 
+Add sideloading of attachments since data loaded /sections
+
+Add i18n support discourse did this well http://eviltrout.com/2013/11/24/i18n-in-ember.html
 ##Build Extensions##
+
 move templates to relative plugins folder and add build task

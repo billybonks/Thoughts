@@ -39,6 +39,9 @@ App.CardController = Ember.ObjectController.extend({
         })
         this.get('model').save();
       });
+    },
+    openModal:function(modalName){
+     return true;
     }
   },
   close:function(card){

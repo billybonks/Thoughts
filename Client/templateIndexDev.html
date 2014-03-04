@@ -1,28 +1,30 @@
 
 
 
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>App</title>
-   <link id="bs-css" href="Content/bootstrap.css" rel="stylesheet"/>
+    <link id="bs-css" href="Content/bootstrap.css" rel="stylesheet"/>
     <link id="login" href="Content/Login.css" rel="stylesheet"/>
     <link id="cards" href="Content/Cards.css" rel="stylesheet"/>
     <link id="cards" href="Content/tagger.css" rel="stylesheet"/>
     <link id="cards" href="Content/popup.css" rel="stylesheet"/>
   </head>
   <body>
-   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="http://builds.emberjs.com/handlebars-1.0.0.js"></script>
-  <script src="http://builds.emberjs.com/beta/ember.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://builds.emberjs.com/handlebars-1.0.0.js"></script>
+    <script src="http://builds.emberjs.com/beta/ember.js"></script>
 
     <!--<script src="http://builds.emberjs.com/canary/ember-data.js"></script>-->
-<script type="text/javascript" src="/scripts/External/edata.js"></script>
+    <script type="text/javascript" src="/scripts/External/edata.js"></script>
     <!-- <script type="text/javascript" src="/scripts/External/jquery.js"></script>
-    <script type="text/javascript" src="/scripts/External/handlebars.js"></script>
-    <script type="text/javascript" src="/scripts/External/ember.js"></script>
+<script type="text/javascript" src="/scripts/External/handlebars.js"></script>
+<script type="text/javascript" src="/scripts/External/ember.js"></script>
 
-    -->
+-->
+
+
     <script type="text/javascript" src="/scripts/External/bpopup.js"></script>
     <script type="text/javascript" src="/scripts/External/Param.js"></script>
     <script type="text/javascript" src="/scripts/External/jquery.cookie.js"></script>
@@ -35,29 +37,17 @@
     <script type="text/javascript" src="/scripts/App.js"></script>
     <script type="text/javascript" src="/scripts/Router.js"></script>
 
-    <script type="text/javascript" src="/scripts/controllers/ApplicationController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/CardController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/CardsController.js"></script>
-    <script type="text/javascript" src="/scripts/controllers/SectionController.js"></script>
+    <!-- build:script controllers-->
+    <!-- /build -->
 
 
-    <script type="text/javascript" src="/scripts/Components/BaseSectionComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/CardMainComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/SideBarComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/CardFormComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/SectionFormComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/CardControllsComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/CardLayoutComponent.js"></script>
-    <script type="text/javascript" src="/scripts/Components/TitleCardComponent.js"></script>
+    <!-- build:script components-->
+    <!-- /build -->
 
-    <script type="text/javascript" src="/scripts/views/CanvasView.js"></script>
-    <script type="text/javascript" src="/scripts/views/TaggerView.js"></script>
-    <script type="text/javascript" src="/scripts/views/PopupView.js"></script>
-    <script type="text/javascript" src="/scripts/views/ContextMenuView.js"></script>
-    <script type="text/javascript" src="/scripts/views/DraggableCardView.js"></script>
-    <script type="text/javascript" src="/scripts/views/DropDelete.js"></script>
-    <script type="text/javascript" src="/scripts/views/Dropable.js"></script>
-    <script type="text/javascript" src="/scripts/views/DropCube.js"></script>
+
+    <!-- build:script views-->
+    <!-- /build -->
+
 
     <script type="text/javascript" src="/scripts/models/Email.js"></script>
     <script type="text/javascript" src="/scripts/models/Application.js"></script>
@@ -75,5 +65,21 @@
 
     <!-- build:script plugins-->
     <!-- /build -->
+
+    <script type="text/x-handlebars" data-template-name="newsection">
+    {{#modal-dialog action="close"}}
+      <form role="form">
+        <div class="form-group">
+          <label for="link">Title</label>
+          {{input type="text" value=newTitle class="form-control"  id="title" placeholder="Enter title"}}
+          </div>
+        <div class="form-group">
+          <label for="type">Type</label>
+          {{view Ember.Select content=types selectionBinding=selectedType class="form-control"}}
+          </div>
+          <button type="submit" class="btn btn-success" {{action Submit}}>Save</button>
+      </form>
+    {{/modal-dialog}}
+    </script>
   </body>
 </html>

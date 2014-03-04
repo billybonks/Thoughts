@@ -15,7 +15,7 @@
   </div>
   <div class="row">
     <div class="col-md-1">
-      <button type="button" class="btn btn-default btn-xs" {{action onAddSection}}>
+      <button type="button" class="btn btn-default btn-xs" {{action  'openModal' 'newsection' card}}>
         <span class="glyphicon glyphicon-plus"></span>
       </button>
 
@@ -29,10 +29,3 @@
     </div>
   </div>
 </div>
-{{#if openPopup}}
-  {{#view App.PopupView viewName="popup" context=context}}
-    {{#if section}}
-      {{section-form store=store card=card store=store}}
-    {{/if}}
-  {{/view}}
-{{/if}}

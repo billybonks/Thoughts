@@ -40,10 +40,13 @@ DragNDrop.DragAndDroppable = Ember.Mixin.create({
 
 App.PopupMixin = Ember.Mixin.create({
   openPopup:false,
-  SubscribePopup:function(context){
+  SubscribePopup:function(context,content){
     Ember.subscribe(this.toString(), {
       after: function(name, timestamp, payload) {
         context.get('openPopup')? context.set('openPopup', false): context.set('openPopup', true);
+        if(content){
+          context.get(content)? context.set(content, false): context.set(content, true);
+        }
       }
     });
   },
@@ -52,8 +55,9 @@ App.PopupMixin = Ember.Mixin.create({
     if(content){
       this.get(content)? this.set(content, false): this.set(content, true);
     }
+  }
 });
-/*
+                                    /*
 App.ApplicationSerializer = DS.RESTSerializer.extend({
   serializeHasMany: function(record, json, relationship) {
     var key = relationship.key;
@@ -84,6 +88,22 @@ App.Router.map(function () {
 });
 
 App.ApplicationRoute = Ember.Route.extend({
+  actions: {
+    openModal: function(modalName, model) {
+      this.controllerFor(modalName).set('model', model);
+      return this.render(modalName, {
+        into: 'application',
+        outlet: 'modal'
+      });
+    },
+
+    closeModal: function() {
+      return this.disconnectOutlet({
+        outlet: 'modal',
+        parentView: 'application'
+      });
+    }
+  },
   model: function () {
     var sessionToken = $.cookie(AppSettings.CookieName);
     var m = this.store.find('application', sessionToken)
@@ -171,6 +191,23 @@ App.SettingsIndexRoute = Ember.Route.extend({
     return this.modelFor('settings');
   }
 });
+
+App.CardRoute = Ember.Route.extend({
+  actions: {
+    openModal: function(modalName, model) {
+      return true
+    },
+
+    closeModal: function() {
+      return this.disconnectOutlet({
+        outlet: 'modal',
+        parentView: 'application'
+      });
+    }
+  }
+});
+
+
 'use strict';
 window.AppSettings =
   {
@@ -276,7 +313,9 @@ App.CardController = Ember.ObjectController.extend({
         })
         this.get('model').save();
       });
-
+    },
+    openModal:function(modalName){
+     return true;
     }
   },
   close:function(card){
@@ -288,15 +327,15 @@ App.CardController = Ember.ObjectController.extend({
     return true;
   }.property(),
   sortSomeAttachments:function(){
-    console.log('sorting')
-    var attachments = this.get('model').get('attachments');
-    var tags = this.get('model').get('tags');
-    var tit = this.get('model').get('title');
-    return '';
-  }.observes('model.attachments.@each.type'),
-  position:function(){
-    return 'left:' + this.get('model').get('left') + 'px;top:' + this.get('model').get('top') + 'px';
-  }.property('model.left'),
+  console.log('sorting')
+  var attachments = this.get('model').get('attachments');
+  var tags = this.get('model').get('tags');
+  var tit = this.get('model').get('title');
+  return '';
+}.observes('model.attachments.@each.type'),
+                                                   position:function(){
+  return 'left:' + this.get('model').get('left') + 'px;top:' + this.get('model').get('top') + 'px';
+}.property('model.left'),
 
 
 
@@ -330,6 +369,33 @@ App.CardsController = Ember.ArrayController.extend({
    templates:'?',
    test:function(){
    }
+});
+'use strict';
+App.NewsectionController = Ember.ObjectController.extend({
+  types:['Links','Documents','Questions','Tasks','Properties','TextArea','Card'],
+  selectedType:null,
+  actions:{
+    Submit: function(){
+      console.log(this.get('model.id'));
+      var section = this.store.createRecord('section', {
+        title: this.get('newTitle'),
+        type : this.get('selectedType'),
+        position:this.get('model.sections.length')
+      });
+      var card = this.get('model');
+      section.set('card',card);
+      this.get('model.sections').then(function(sections){
+        section.save().then(function(section){
+          sections.pushObject(section);
+          card.save();
+        });
+      });
+      this.send('close')
+    },
+    close: function() {
+      return this.send('closeModal');
+    }
+  }
 });
 'use strict';
 App.SectionController = Ember.ObjectController.extend({
@@ -523,17 +589,23 @@ App.PopupView = Ember.View.extend({
     }
   },
   didInsertElement: function (arg1, arg2) {
+    var close = onClose(this.get('context'))
     $('#popup').bPopup({
       closeClass:'close',
-      onClose: onClose(this.get('context'))
+     // onClose: close
+    });
+    Ember.subscribe('popup.close', {
+      after: function(name, timestamp, payload) {
+        close();
+      }
     });
   }
 });
 
 function onClose(context){
   function togglePopup(){
-    Ember.instrument(context.toString(), {}, function() {
-    });
+      Ember.instrument(context.toString(), {}, function() {
+      });
   }
   return togglePopup;
 }
@@ -722,10 +794,17 @@ App.CardControllsComponent = Ember.Component.extend(App.PopupMixin,{
       this.get('section') ? this.set('section',false):this.set('section',true);
     },
     onAddSection:function(){
-      this.TogglePopup('section')
+      this.TogglePopup('section');
       //this.get('section') ? this.set('section',false):this.set('section',true);
     },
-  }
+    openModal:function(modalName,model){
+      return this.sendAction('openModal',modalName,model);
+    }
+  },
+  didInsertElement:function(){
+    this.SubscribePopup(this,'section');
+  },
+
 });
 'use strict';
 App.CardFormComponent = Ember.Component.extend({
@@ -837,6 +916,14 @@ App.CardFormComponent = Ember.Component.extend({
   },
 });
 'use strict';
+App.ModalDialogComponent = Ember.Component.extend({
+  actions: {
+    close: function() {
+      return this.sendAction();
+    }
+  }
+});
+'use strict';
 App.SectionFormComponent = Ember.Component.extend({
   types:['Links','Documents','Questions','Tasks','Properties','TextArea','Card'],
   selectedType:null,
@@ -856,7 +943,8 @@ App.SectionFormComponent = Ember.Component.extend({
           card.save();
         });
       });
-
+      Ember.instrument('popup.close', {}, function() {
+      });
     }
   }
 });
@@ -1019,14 +1107,6 @@ App.PropertyFormComponent = App.BaseSectionComponent.extend({
 });
 'use strict';
 App.PropertyMainComponent = App.BaseSectionComponent.extend({
-  actions:{
-    TogglePopup:function(content){
-      this.get('openPopup')? this.set('openPopup', false): this.set('openPopup', true);
-      if(content){
-        this.get(content)? this.set(content, false): this.set(content, true);
-      }
-    }
-  },
   didInsertElement:function(){
     console.log(this.toString());
     this.SubscribePopup(this);
