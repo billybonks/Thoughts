@@ -9,20 +9,23 @@ App.PopupView = Ember.View.extend({
     }
   },
   didInsertElement: function (arg1, arg2) {
-    var controller = this.get('controller')
-
+    var close = onClose(this.get('context'))
     $('#popup').bPopup({
       closeClass:'close',
-      onClose: onClose(controller)
+     // onClose: close
+    });
+    Ember.subscribe('popup.close', {
+      after: function(name, timestamp, payload) {
+        close();
+      }
     });
   }
 });
 
-function onClose(controller){
+function onClose(context){
   function togglePopup(){
-    console.log('closing '+controller.get('word'))
-    controller.close()
+      Ember.instrument(context.toString(), {}, function() {
+      });
   }
-
   return togglePopup;
 }

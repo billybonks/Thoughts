@@ -1,31 +1,31 @@
 App = Ember.Application.create({
 
-      ready: function () {
-        var token = $.urlParam('token');
-        if (token) {
-          $.cookie(AppSettings.CookieName, token);
-          window.location = 'http://'+AppSettings.domain+'/'
-        }
-        token = $.cookie(AppSettings.CookieName);
-        if(!token){
-          window.location = 'http://'+AppSettings.domain+'/login.html'
-        }
+  ready: function () {
+    var token = $.urlParam('token');
+    if (token) {
+      $.cookie(AppSettings.CookieName, token);
+      window.location = 'http://'+AppSettings.domain+'/'
+    }
+    token = $.cookie(AppSettings.CookieName);
+    if(!token){
+      window.location = 'http://'+AppSettings.domain+'/login.html'
+    }
 
-        App.ApplicationAdapter = DS.RESTAdapter.extend({
-          //  namespace: 'api',
-          host: AppSettings.WebserviceURL,
-          headers: { 'Authorization': token },
-         // defaultSerializer: 'App/appacitiveREST'
-        });
-      }
+    App.ApplicationAdapter = DS.RESTAdapter.extend({
+      //  namespace: 'api',
+      host: AppSettings.WebserviceURL,
+      headers: { 'Authorization': token },
+      // defaultSerializer: 'App/appacitiveREST'
     });
+  }
+});
 
 DragNDrop = Ember.Namespace.create();
 
 DragNDrop.cancel = function(event) {
-    console.log('cancel')
-    event.preventDefault();
-    return false;
+  console.log('cancel')
+  event.preventDefault();
+  return false;
 };
 
 DragNDrop.DragAndDroppable = Ember.Mixin.create({
@@ -36,6 +36,22 @@ DragNDrop.DragAndDroppable = Ember.Mixin.create({
   draggable: 'true',
   dragStart: DragNDrop.cancel,
   drop:DragNDrop.cancel
+});
+
+App.PopupMixin = Ember.Mixin.create({
+  openPopup:false,
+  SubscribePopup:function(context){
+    Ember.subscribe(this.toString(), {
+      after: function(name, timestamp, payload) {
+        context.get('openPopup')? context.set('openPopup', false): context.set('openPopup', true);
+      }
+    });
+  },
+  TogglePopup:function(content){
+    this.get('openPopup')? this.set('openPopup', false): this.set('openPopup', true);
+    if(content){
+      this.get(content)? this.set(content, false): this.set(content, true);
+    }
 });
 /*
 App.ApplicationSerializer = DS.RESTSerializer.extend({
@@ -262,6 +278,9 @@ App.CardController = Ember.ObjectController.extend({
       });
 
     }
+  },
+  close:function(card){
+    console.log('card closing');
   },
   IsRight:function(){
     console.log('right')
@@ -504,21 +523,18 @@ App.PopupView = Ember.View.extend({
     }
   },
   didInsertElement: function (arg1, arg2) {
-    var controller = this.get('controller')
-
     $('#popup').bPopup({
       closeClass:'close',
-      onClose: onClose(controller)
+      onClose: onClose(this.get('context'))
     });
   }
 });
 
-function onClose(controller){
+function onClose(context){
   function togglePopup(){
-    console.log('closing '+controller.get('word'))
-    controller.close()
+    Ember.instrument(context.toString(), {}, function() {
+    });
   }
-
   return togglePopup;
 }
 'use strict';
@@ -668,7 +684,7 @@ App.Tag = DS.Model.extend({
 });
 
 'use strict';
-App.BaseSectionComponent = Ember.Component.extend({
+App.BaseSectionComponent = Ember.Component.extend(App.PopupMixin,{
   section:null,
   isEditing:false,
   submitAttachment:function(data){
@@ -687,11 +703,11 @@ App.BaseSectionComponent = Ember.Component.extend({
         });
       });
     });
-  }
+  },
 });
 
 'use strict';
-App.CardControllsComponent = Ember.Component.extend({
+App.CardControllsComponent = Ember.Component.extend(App.PopupMixin,{
   edit:false,
   share:false,
   section:false,
@@ -706,7 +722,8 @@ App.CardControllsComponent = Ember.Component.extend({
       this.get('section') ? this.set('section',false):this.set('section',true);
     },
     onAddSection:function(){
-      this.get('section') ? this.set('section',false):this.set('section',true);
+      this.TogglePopup('section')
+      //this.get('section') ? this.set('section',false):this.set('section',true);
     },
   }
 });
@@ -979,7 +996,10 @@ App.PropertyController = Ember.ObjectController.extend({
     actions:{
       toggleV:function(){this.get('isVediting')? this.set('isVediting', false): this.set('isVediting', true);},
       toggleN:function(){this.get('isNediting')? this.set('isNediting', false): this.set('isNediting', true);},
-    }
+    },
+  close:function(){
+    console.log('closing')
+  }
 });
 'use strict';
 App.PropertyFormComponent = App.BaseSectionComponent.extend({
@@ -1000,10 +1020,20 @@ App.PropertyFormComponent = App.BaseSectionComponent.extend({
 'use strict';
 App.PropertyMainComponent = App.BaseSectionComponent.extend({
   actions:{
-    ToggleEdit:function(){
-      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+    TogglePopup:function(content){
+      this.get('openPopup')? this.set('openPopup', false): this.set('openPopup', true);
+      if(content){
+        this.get(content)? this.set(content, false): this.set(content, true);
+      }
     }
   },
+  didInsertElement:function(){
+    console.log(this.toString());
+    this.SubscribePopup(this);
+  },
+  context:function(){
+    return this
+  }.property(),
 });
 'use strict';
 App.PropertyView = Ember.View.extend(DragNDrop.DragAndDroppable,{

@@ -5,10 +5,10 @@
 {{#each item in data itemController='property'}}
     {{view App.PropertyView model=item}}
 {{/each}}
-<button class="btn btn-default"{{action 'ToggleEdit'}}> New Property </button>
-{{#if isEditing}}
-  {{#view App.PopupView viewName="popup"}}
-    {{property-form store=store section=section }}
+<button class="btn btn-default"{{action 'TogglePopup'}}> New Property </button>
+{{#if openPopup}}
+  {{#view App.PopupView viewName="popup" context=context}}
+    {{property-form store=store section=section  }}
   {{/view}}
 {{/if}}
 

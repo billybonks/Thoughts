@@ -1,5 +1,5 @@
 'use strict';
-App.BaseSectionComponent = Ember.Component.extend({
+App.BaseSectionComponent = Ember.Component.extend(App.PopupMixin,{
   section:null,
   isEditing:false,
   submitAttachment:function(data){
@@ -18,5 +18,5 @@ App.BaseSectionComponent = Ember.Component.extend({
         });
       });
     });
-  }
+  },
 });

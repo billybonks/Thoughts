@@ -18,7 +18,8 @@ App.SectionFormComponent = Ember.Component.extend({
           card.save();
         });
       });
-
+      Ember.instrument('popup.close', {}, function() {
+      });
     }
   }
 });

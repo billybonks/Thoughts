@@ -5,5 +5,8 @@ App.PropertyController = Ember.ObjectController.extend({
     actions:{
       toggleV:function(){this.get('isVediting')? this.set('isVediting', false): this.set('isVediting', true);},
       toggleN:function(){this.get('isNediting')? this.set('isNediting', false): this.set('isNediting', true);},
-    }
+    },
+  close:function(){
+    console.log('closing')
+  }
 });

@@ -39,8 +39,10 @@ App.CardController = Ember.ObjectController.extend({
         })
         this.get('model').save();
       });
-
     }
+  },
+  close:function(card){
+    console.log('card closing');
   },
   IsRight:function(){
     console.log('right')
@@ -48,15 +50,15 @@ App.CardController = Ember.ObjectController.extend({
     return true;
   }.property(),
   sortSomeAttachments:function(){
-    console.log('sorting')
-    var attachments = this.get('model').get('attachments');
-    var tags = this.get('model').get('tags');
-    var tit = this.get('model').get('title');
-    return '';
-  }.observes('model.attachments.@each.type'),
-  position:function(){
-    return 'left:' + this.get('model').get('left') + 'px;top:' + this.get('model').get('top') + 'px';
-  }.property('model.left'),
+  console.log('sorting')
+  var attachments = this.get('model').get('attachments');
+  var tags = this.get('model').get('tags');
+  var tit = this.get('model').get('title');
+  return '';
+}.observes('model.attachments.@each.type'),
+                                                   position:function(){
+  return 'left:' + this.get('model').get('left') + 'px;top:' + this.get('model').get('top') + 'px';
+}.property('model.left'),
 
 
 

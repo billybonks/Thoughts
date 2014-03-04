@@ -1,5 +1,5 @@
 'use strict';
-App.CardControllsComponent = Ember.Component.extend({
+App.CardControllsComponent = Ember.Component.extend(App.PopupMixin,{
   edit:false,
   share:false,
   section:false,
@@ -14,7 +14,12 @@ App.CardControllsComponent = Ember.Component.extend({
       this.get('section') ? this.set('section',false):this.set('section',true);
     },
     onAddSection:function(){
-      this.get('section') ? this.set('section',false):this.set('section',true);
+      this.TogglePopup('section');
+      //this.get('section') ? this.set('section',false):this.set('section',true);
     },
-  }
+  },
+  didInsertElement:function(){
+    this.SubscribePopup(this,'section');
+  },
+
 });
