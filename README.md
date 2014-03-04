@@ -1,6 +1,6 @@
 Thoughts
 ========
-
+pwnt by Aidan
 MOC
 
 ﻿Settings.js -> WebserviceUrl
