@@ -106,4 +106,10 @@ Generated_Code #added for RIA/Silverlight projects
 _UpgradeReport_Files/
 Backup*/
 UpgradeLog*.XML
-APIV2/controllers/Routes/settings.js
+
+/APIV2/config/app.json
+/Client/Scripts/Settings.js
+/APIV2/controllers/Routes/secrets.js
+
+
+
