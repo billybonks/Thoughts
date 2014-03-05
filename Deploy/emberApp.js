@@ -39,25 +39,44 @@ DragNDrop.DragAndDroppable = Ember.Mixin.create({
 });
 
 App.PopupMixin = Ember.Mixin.create({
-  openPopup:false,
-  SubscribePopup:function(context,content){
-    Ember.subscribe(this.toString(), {
-      after: function(name, timestamp, payload) {
-        context.get('openPopup')? context.set('openPopup', false): context.set('openPopup', true);
-        if(content){
-          context.get(content)? context.set(content, false): context.set(content, true);
-        }
-      }
-    });
-  },
-  TogglePopup:function(content){
-    this.get('openPopup')? this.set('openPopup', false): this.set('openPopup', true);
-    if(content){
-      this.get(content)? this.set(content, false): this.set(content, true);
+  actions:{
+    close: function() {
+      return this.send('closeModal');
     }
   }
 });
-                                    /*
+
+App.PopupOpenerMixin = Ember.Mixin.create({
+  actions:{
+    openModal:function(modalName,model){
+      return true;
+    },
+    openModalSource:function(modalName,model){
+      return this.sendAction('openModal',modalName,model);
+    }
+  }
+});
+
+App.SubmitAttachmentMixin = Ember.Mixin.create({
+  submitAttachment:function(data){
+    var attachment =  {
+      data: data,
+      sectionid: this.get('model').get('id'),
+      type:this.get('model').get('type')
+    };
+    var context = this;
+    attachment = this.store.createRecord('attachment', attachment);
+    this.store.find('section',this.get('model').get('id')).then(function(section){
+      context.get('model.attachments').then(function(attachments){
+        attachment.save().then(function(attachment){
+          attachments.pushObject(attachment);
+          section.save();
+        });
+      });
+    });
+  }
+})
+/*
 App.ApplicationSerializer = DS.RESTSerializer.extend({
   serializeHasMany: function(record, json, relationship) {
     var key = relationship.key;
@@ -273,7 +292,7 @@ App.ApplicationController = Ember.Controller.extend({
    }
 });
 'use strict';
-App.CardController = Ember.ObjectController.extend({
+App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
   word:'hello',
   actions:{
     Delete:function(){
@@ -313,9 +332,6 @@ App.CardController = Ember.ObjectController.extend({
         })
         this.get('model').save();
       });
-    },
-    openModal:function(modalName){
-     return true;
     }
   },
   close:function(card){
@@ -371,7 +387,7 @@ App.CardsController = Ember.ArrayController.extend({
    }
 });
 'use strict';
-App.NewSectionController = Ember.ObjectController.extend({
+App.NewSectionController = Ember.ObjectController.extend(App.PopupMixin,{
   types:['Links','Documents','Questions','Tasks','Properties','TextArea','Card'],
   selectedType:null,
   actions:{
@@ -392,13 +408,10 @@ App.NewSectionController = Ember.ObjectController.extend({
       });
       this.send('close')
     },
-    close: function() {
-      return this.send('closeModal');
-    }
   }
 });
 'use strict';
-App.SectionController = Ember.ObjectController.extend({
+App.SectionController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
   isEditing:false,
   isLinks:Ember.computed.equal('model.type', 'Links'),
   isProperties:Ember.computed.equal('model.type', 'Properties'),
@@ -756,26 +769,9 @@ App.Tag = DS.Model.extend({
 });
 
 'use strict';
-App.BaseSectionComponent = Ember.Component.extend(App.PopupMixin,{
+App.BaseSectionComponent = Ember.Component.extend(App.PopupOpenerMixin,App.SubmitAttachmentMixin,{
   section:null,
   isEditing:false,
-  submitAttachment:function(data){
-    var attachment =  {
-      data: data,
-      sectionid: this.get('section').get('id'),
-      type:this.get('section').get('type')
-    };
-    var context = this;
-    attachment = this.store.createRecord('attachment', attachment);
-    this.store.find('section',this.get('section').get('id')).then(function(section){
-      context.get('section.attachments').then(function(attachments){
-        attachment.save().then(function(attachment){
-          attachments.pushObject(attachment);
-          section.save();
-        });
-      });
-    });
-  },
 });
 
 'use strict';
@@ -800,9 +796,6 @@ App.CardControllsComponent = Ember.Component.extend(App.PopupMixin,{
     openModal:function(modalName,model){
       return this.sendAction('openModal',modalName,model);
     }
-  },
-  didInsertElement:function(){
-    this.SubscribePopup(this,'section');
   },
 
 });
@@ -1090,7 +1083,7 @@ App.PropertyController = Ember.ObjectController.extend({
   }
 });
 'use strict';
-App.PropertyFormComponent = App.BaseSectionComponent.extend({
+App.PropertyFormController = Ember.ObjectController.extend(App.SubmitAttachmentMixin,App.PopupMixin,{
   types:['string','number'],
   actions:{
       CreateProperty:function(){
@@ -1102,6 +1095,7 @@ App.PropertyFormComponent = App.BaseSectionComponent.extend({
       this.submitAttachment(data);
       this.set('name','');
       this.set('value','');
+      this.send('close');
     }
   }
 });
@@ -1109,7 +1103,11 @@ App.PropertyFormComponent = App.BaseSectionComponent.extend({
 App.PropertyMainComponent = App.BaseSectionComponent.extend({
   didInsertElement:function(){
     console.log(this.toString());
-    this.SubscribePopup(this);
+  },
+  actions:{
+    openModal:function(modalName,model){
+      return this.sendAction('openModal',modalName,model);
+    }
   },
   context:function(){
     return this

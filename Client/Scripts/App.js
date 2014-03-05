@@ -39,25 +39,44 @@ DragNDrop.DragAndDroppable = Ember.Mixin.create({
 });
 
 App.PopupMixin = Ember.Mixin.create({
-  openPopup:false,
-  SubscribePopup:function(context,content){
-    Ember.subscribe(this.toString(), {
-      after: function(name, timestamp, payload) {
-        context.get('openPopup')? context.set('openPopup', false): context.set('openPopup', true);
-        if(content){
-          context.get(content)? context.set(content, false): context.set(content, true);
-        }
-      }
-    });
-  },
-  TogglePopup:function(content){
-    this.get('openPopup')? this.set('openPopup', false): this.set('openPopup', true);
-    if(content){
-      this.get(content)? this.set(content, false): this.set(content, true);
+  actions:{
+    close: function() {
+      return this.send('closeModal');
     }
   }
 });
-                                    /*
+
+App.PopupOpenerMixin = Ember.Mixin.create({
+  actions:{
+    openModal:function(modalName,model){
+      return true;
+    },
+    openModalSource:function(modalName,model){
+      return this.sendAction('openModal',modalName,model);
+    }
+  }
+});
+
+App.SubmitAttachmentMixin = Ember.Mixin.create({
+  submitAttachment:function(data){
+    var attachment =  {
+      data: data,
+      sectionid: this.get('model').get('id'),
+      type:this.get('model').get('type')
+    };
+    var context = this;
+    attachment = this.store.createRecord('attachment', attachment);
+    this.store.find('section',this.get('model').get('id')).then(function(section){
+      context.get('model.attachments').then(function(attachments){
+        attachment.save().then(function(attachment){
+          attachments.pushObject(attachment);
+          section.save();
+        });
+      });
+    });
+  }
+})
+/*
 App.ApplicationSerializer = DS.RESTSerializer.extend({
   serializeHasMany: function(record, json, relationship) {
     var key = relationship.key;

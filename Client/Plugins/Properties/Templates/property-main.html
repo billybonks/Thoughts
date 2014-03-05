@@ -5,7 +5,7 @@
 {{#each item in data itemController='property'}}
     {{view App.PropertyView model=item}}
 {{/each}}
-<button class="btn btn-default"{{action 'TogglePopup'}}> New Property </button>
+<button class="btn btn-default"{{action  'openModalSource' 'propertyForm' model}}> New Property </button>
 {{#if openPopup}}
   {{#view App.PopupView viewName="popup" context=context}}
     {{property-form store=store section=section  }}

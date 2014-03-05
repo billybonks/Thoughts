@@ -1,5 +1,5 @@
 'use strict';
-App.NewSectionController = Ember.ObjectController.extend({
+App.NewSectionController = Ember.ObjectController.extend(App.PopupMixin,{
   types:['Links','Documents','Questions','Tasks','Properties','TextArea','Card'],
   selectedType:null,
   actions:{
@@ -20,8 +20,5 @@ App.NewSectionController = Ember.ObjectController.extend({
       });
       this.send('close')
     },
-    close: function() {
-      return this.send('closeModal');
-    }
   }
 });

@@ -1,5 +1,5 @@
 'use strict';
-App.CardController = Ember.ObjectController.extend({
+App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
   word:'hello',
   actions:{
     Delete:function(){
@@ -39,9 +39,6 @@ App.CardController = Ember.ObjectController.extend({
         })
         this.get('model').save();
       });
-    },
-    openModal:function(modalName){
-     return true;
     }
   },
   close:function(card){

@@ -21,8 +21,5 @@ App.CardControllsComponent = Ember.Component.extend(App.PopupMixin,{
       return this.sendAction('openModal',modalName,model);
     }
   },
-  didInsertElement:function(){
-    this.SubscribePopup(this,'section');
-  },
 
 });

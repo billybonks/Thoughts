@@ -1,6 +1,3 @@
-<button type="button" class="btn btn-default btn-md" {{action  'openModal' 'modal'}}>
-  <span class="glyphicon glyphicon-plus"></span>
-</button>
 <div class="container">
   <div class="col-md-12">
     <div class="col-md-6">
@@ -35,32 +32,22 @@
      {{!#if isCollapsed}}
         <div class="panel-body">
           {{#if isLinks}}
-            {{links-main title = section.title section=section data=section.attachments card=card store=store}}
+            {{links-main openModal='openModal' title = section.title model=section data=section.attachments card=card store=store}}
           {{/if}}
           {{#if isTask}}
-            {{tasks-main title = section.title data=section.attachments section=section store=store}}
-            {{#if isEditing}}
-              {{#view App.PopupView viewName="popup"}}
-              {{tasks-form store=store section=section}}
-              {{/view}}
-            {{/if}}
+            {{tasks-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
           {{/if}}
           {{#if isDocument}}
-            {{document-main title = section.title data=section.attachments section=section store=store}}
-            {{#if isEditing}}
-              {{#view App.PopupView viewName="popup"}}
-              {{document-form store=store section=section}}
-              {{/view}}
-            {{/if}}
+            {{document-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
           {{/if}}
           {{#if isQuestions}}
-            {{question-main title = section.title data=section.attachments section=section store=store}}
+            {{question-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
           {{/if}}
           {{#if isProperties}}
-              {{property-main title = section.title data=section.attachments section=section store=store}}
+              {{property-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
           {{/if}}
           {{#if isTextArea}}
-            {{text-area title = section.title data=section.attachments section=section store=store}}
+            {{text-area openModal='openModal' title = section.title data=section.attachments model=section store=store}}
           {{/if}}
         {{#if isCard}}
           {{#each item in section.attachments}}

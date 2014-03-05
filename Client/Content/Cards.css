@@ -65,3 +65,12 @@ body {
 .flush--top {
   margin-top: 0;
 }
+
+.jumbotron{
+  height:1000px;
+  margin-bottom:0px;
+  padding-bottom:0px;
+}
+.second{
+  background:#4B66A0
+}

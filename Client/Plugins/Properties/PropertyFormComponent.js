@@ -1,5 +1,5 @@
 'use strict';
-App.PropertyFormComponent = App.BaseSectionComponent.extend({
+App.PropertyFormController = Ember.ObjectController.extend(App.SubmitAttachmentMixin,App.PopupMixin,{
   types:['string','number'],
   actions:{
       CreateProperty:function(){
@@ -11,6 +11,7 @@ App.PropertyFormComponent = App.BaseSectionComponent.extend({
       this.submitAttachment(data);
       this.set('name','');
       this.set('value','');
+      this.send('close');
     }
   }
 });
