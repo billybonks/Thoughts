@@ -212,7 +212,7 @@ App.CardRoute = Ember.Route.extend({
 window.AppSettings =
   {
     WebserviceURL: 'http://localhost:4730',
-    domain:'localhost',
+    domain:window.location.host,
     CookieName: 'App',
     OAuthRedirect: function (url) {
     $.ajax({
@@ -371,7 +371,7 @@ App.CardsController = Ember.ArrayController.extend({
    }
 });
 'use strict';
-App.NewsectionController = Ember.ObjectController.extend({
+App.NewSectionController = Ember.ObjectController.extend({
   types:['Links','Documents','Questions','Tasks','Properties','TextArea','Card'],
   selectedType:null,
   actions:{

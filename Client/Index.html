@@ -64,20 +64,20 @@
 <script type="text/javascript" src="../Scripts/views/PopupView.js"></script>
 <script type="text/javascript" src="../Scripts/views/TaggerView.js"></script>
 
+<script type="text/javascript" src="../Scripts/models/Application.js"></script>
+<script type="text/javascript" src="../Scripts/models/Card.js"></script>
+<script type="text/javascript" src="../Scripts/models/Comment.js"></script>
+<script type="text/javascript" src="../Scripts/models/Document.js"></script>
+<script type="text/javascript" src="../Scripts/models/Email.js"></script>
+<script type="text/javascript" src="../Scripts/models/Link.js"></script>
+<script type="text/javascript" src="../Scripts/models/Payload.js"></script>
+<script type="text/javascript" src="../Scripts/models/Section.js"></script>
+<script type="text/javascript" src="../Scripts/models/Settings.js"></script>
+<script type="text/javascript" src="../Scripts/models/Template.js"></script>
+<script type="text/javascript" src="../Scripts/models/User.js"></script>
+<script type="text/javascript" src="../Scripts/models/attachment.js"></script>
+<script type="text/javascript" src="../Scripts/models/tag.js"></script>
 
-    <script type="text/javascript" src="/scripts/models/Email.js"></script>
-    <script type="text/javascript" src="/scripts/models/Application.js"></script>
-    <script type="text/javascript" src="/scripts/models/Card.js"></script>
-    <script type="text/javascript" src="/scripts/models/Comment.js"></script>
-    <script type="text/javascript" src="/scripts/models/Link.js"></script>
-    <script type="text/javascript" src="/scripts/models/User.js"></script>
-    <script type="text/javascript" src="/scripts/models/Document.js"></script>
-    <script type="text/javascript" src="/scripts/models/Tag.js"></script>
-    <script type="text/javascript" src="/scripts/models/Attachment.js"></script>
-    <script type="text/javascript" src="/scripts/models/Section.js"></script>
-    <script type="text/javascript" src="/scripts/models/Payload.js"></script>
-    <script type="text/javascript" src="/scripts/models/Template.js"></script>
-    <script type="text/javascript" src="/scripts/models/Settings.js"></script>
 
 <script type="text/javascript" src="../Plugins/Links/LinkController.js"></script>
 <script type="text/javascript" src="../Plugins/Links/LinkView.js"></script>
@@ -92,20 +92,5 @@
 <script type="text/javascript" src="../Plugins/Tasks/TasksMainComponent.js"></script>
 <script type="text/javascript" src="../Plugins/TextArea/TextAreaComponent.js"></script>
 
-    <script type="text/x-handlebars" data-template-name="newsection">
-    {{#modal-dialog action="close"}}
-      <form role="form">
-        <div class="form-group">
-          <label for="link">Title</label>
-          {{input type="text" value=newTitle class="form-control"  id="title" placeholder="Enter title"}}
-          </div>
-        <div class="form-group">
-          <label for="type">Type</label>
-          {{view Ember.Select content=types selectionBinding=selectedType class="form-control"}}
-          </div>
-          <button type="submit" class="btn btn-success" {{action Submit}}>Save</button>
-      </form>
-    {{/modal-dialog}}
-    </script>
   </body>
 </html>

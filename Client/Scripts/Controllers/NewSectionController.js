@@ -1,5 +1,5 @@
 'use strict';
-App.NewsectionController = Ember.ObjectController.extend({
+App.NewSectionController = Ember.ObjectController.extend({
   types:['Links','Documents','Questions','Tasks','Properties','TextArea','Card'],
   selectedType:null,
   actions:{

@@ -21,15 +21,22 @@ module.exports = function(grunt) {
           templateBasePath :"Templates/",
           templateFileExtensions :'.html',
           templateName: function(name) {
-
+            console.log(name);
             if(name.indexOf('views/')> -1){
               return name.replace('views/','')
+            }
+            if(name.indexOf('Plugins/')> -1){
+              var path = name.split('/');
+              var name = path[path.length-1]
+              if(name.indexOf('-') > -1){
+                name = 'components/'+name
+              }
             }
             return name;
           }
         },
         files: {
-          "Templates/result.js": 'Templates/**/*.html',//["Templates/application.html", "Templates/cards.html"]
+          "Templates/result.js": ['Templates/**/*.html','Plugins/**/Templates/*.html'],//["Templates/application.html", "Templates/cards.html"]
           "../Deploy/templates.js": 'Templates/**/*.html'//["Templates/application.html", "Templates/cards.html"]
           //"path/to/another.js": ["path/to/sources/*.handlebars", "path/to/more/*.handlebars"]
         },
