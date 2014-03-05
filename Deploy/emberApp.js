@@ -293,7 +293,6 @@ App.ApplicationController = Ember.Controller.extend({
 });
 'use strict';
 App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
-  word:'hello',
   actions:{
     Delete:function(){
       this.get('store').find('card', this.get('model').get('id')).then(function(rec){
@@ -411,7 +410,7 @@ App.NewSectionController = Ember.ObjectController.extend(App.PopupMixin,{
   }
 });
 'use strict';
-App.SectionController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
+App.SectionController = Ember.ObjectController.extend({
   isEditing:false,
   isLinks:Ember.computed.equal('model.type', 'Links'),
   isProperties:Ember.computed.equal('model.type', 'Properties'),
@@ -454,6 +453,9 @@ App.SectionController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
         }.property('model.collapsed')
 
    });
+App.SectionsController = Ember.ArrayController.extend({
+    sortProperties: ['position']
+});
 'use strict';
 App.WallView = Ember.View.extend(Ember.Evented, {
     layoutName : 'canvas',
@@ -546,6 +548,10 @@ App.DraggableCardView = Ember.View.extend({
       }
     }
   }
+});
+'use strict';
+App.DraggableSection = Ember.View.extend(DragNDrop.DragAndDroppable,{
+
 });
 'use strict';
 App.DropCube = Ember.View.extend({

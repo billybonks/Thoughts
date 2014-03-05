@@ -1,0 +1,48 @@
+
+{{#each section in this itemController="section"}}
+  {{!#view App.DraggableSection}}
+    <div class="panel panel-default col-md-6" style="padding:20px;display:inline-block">
+      <div class="row borded" >
+        <div class="col-md-10">
+          {{#if isEditing}}
+          {{input type="text" value=section.title size="50" action="UpdateSection"}}
+          {{else}}
+          <h4 {{action 'ToggleEdit'}}>{{title}}</h4>
+          {{/if}}
+        </div>
+        <div class="pull-right">
+          <span  {{bind-attr class=chevron}} {{action collapse}}></span>
+          <span class="glyphicon glyphicon-remove" {{action deleteSection}}></span>
+        </div>
+      </div>
+      {{!#if isCollapsed}}
+      <div class="panel-body">
+        {{#if isLinks}}
+        {{links-main openModal='openModal' title = section.title model=section data=section.attachments card=card store=store}}
+        {{/if}}
+        {{#if isTask}}
+        {{tasks-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{/if}}
+        {{#if isDocument}}
+        {{document-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{/if}}
+        {{#if isQuestions}}
+        {{question-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{/if}}
+        {{#if isProperties}}
+        {{property-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{/if}}
+        {{#if isTextArea}}
+        {{text-area openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{/if}}
+        {{#if isCard}}
+        {{#each item in section.attachments}}
+        {{#link-to 'card' item.data.cardid}}Go to card{{/link-to}}
+        {{/each}}
+        {{!title-card title=section.title idz=id}}
+        {{/if}}
+      </div>
+      {{!/if}}
+    </div>
+  {{!/view}}
+{{/each}}

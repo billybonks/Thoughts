@@ -1,6 +1,5 @@
 'use strict';
 App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
-  word:'hello',
   actions:{
     Delete:function(){
       this.get('store').find('card', this.get('model').get('id')).then(function(rec){
