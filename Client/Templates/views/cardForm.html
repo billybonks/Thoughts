@@ -1,0 +1,18 @@
+{{#modal-dialog action="close"}}
+<form role="form">
+  <div class="form-group">
+    <label for="title">Title</label>
+    {{input type="text" value=title class="form-control"  id="title" placeholder="Enter title"}}
+  </div>
+  <div class="form-group">
+    <label for="title">Template</label>
+    {{view Ember.Select class="form-control"content=templates optionValuePath="content.id" optionLabelPath="content.title" value=selectedTemplate}}
+  </div>
+
+  <div class="form-group">
+    <label for="tags">Tags</label>
+    {{view App.TaggerView viewName="tagger"}}
+  </div>
+  <button type="submit" class="btn btn-default" {{action Submit}}>Submit</button>
+</form>
+{{/modal-dialog}}

@@ -52,7 +52,10 @@ App.PopupOpenerMixin = Ember.Mixin.create({
       return true;
     },
     openModalSource:function(modalName,model){
-      return this.sendAction('openModal',modalName,model);
+      if(this.sendAction){
+        return this.sendAction('openModal',modalName,model);
+      }
+      else this.send('openModal',modalName,model);
     }
   }
 });
@@ -380,7 +383,29 @@ App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
   */
 });
 'use strict';
-App.CardsController = Ember.ArrayController.extend({
+App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,{
+  title:null,
+  description:null,
+  store: null,
+  actions:{
+    Submit: function(){
+      var tags = this.get('tagger').getTags();
+      var card = this.store.createRecord('card', {
+        title: this.get('title'),
+        description: this.get('description'),
+        left:0,
+        top:0,
+        tagsIn : tags
+      });
+      card.save();
+      this.set('title','');
+      this.set('description','');
+      this.send('close');
+    }
+  },
+});
+'use strict';
+App.CardsController = Ember.ArrayController.extend(App.PopupOpenerMixin,{
    templates:'?',
    test:function(){
    }

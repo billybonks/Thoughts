@@ -52,7 +52,10 @@ App.PopupOpenerMixin = Ember.Mixin.create({
       return true;
     },
     openModalSource:function(modalName,model){
-      return this.sendAction('openModal',modalName,model);
+      if(this.sendAction){
+        return this.sendAction('openModal',modalName,model);
+      }
+      else this.send('openModal',modalName,model);
     }
   }
 });
