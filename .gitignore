@@ -109,7 +109,12 @@ UpgradeLog*.XML
 
 /APIV2/config/app.json
 /Client/Scripts/Settings.js
+/Client/Templates/result.js
 /APIV2/controllers/Routes/secrets.js
+/Client/plugins.json
+/Client/results.html
+/Client/index.html
+/Deploy
 
 
 
