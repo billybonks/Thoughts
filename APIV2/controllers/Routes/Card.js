@@ -33,9 +33,11 @@ module.exports = function (app) {
       for(var i = 0; i < results.length;i++){
         var result = results[i];
         card = result.card;
-        var section = sectionController.FormatObject(result.section);
-        sections.push(section.id);
-        secRet.push(section);
+        if(result.section){
+          var section = sectionController.FormatObject(result.section);
+          sections.push(section.id);
+          secRet.push(section);
+        }
         user =result.user;
       }
       card = CardController.FormatObject(user,[],sections,card);

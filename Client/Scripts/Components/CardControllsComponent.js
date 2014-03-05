@@ -1,5 +1,5 @@
 'use strict';
-App.CardControllsComponent = Ember.Component.extend(App.PopupMixin,{
+App.CardControllsComponent = Ember.Component.extend(App.PopupOpenerMixin,{
   edit:false,
   share:false,
   section:false,

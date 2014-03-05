@@ -87,8 +87,8 @@ module.exports = function(grunt) {
             external:'Scripts/External/*.js',
             controllers:'Scripts/Controllers/*.js',
             components:'Scripts/Components/*.js',
-            models:'Scripts/models/*.js',
-            views:'Scripts/views/*.js',
+            models:'Scripts/Models/*.js',
+            views:'Scripts/Views/*.js',
             templates:'/Templates/result.js'
           },
           styles: {
