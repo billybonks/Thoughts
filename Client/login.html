@@ -20,7 +20,7 @@
       <h1>With your work</h1>
       <h1>Like never before!</h1>
       <p>To learn more scroll down <span class="glyphicon glyphicon-arrow-down"></span></p>
-      <p><a class="btn btn-default btn-lg" href="http://localhost:4730/auth/facebook">Login</a></p>
+      <p><button class="btn btn-default btn-lg" onClick="redirectProvider('facebook')">Login</button></p>
     </div>
     <script type="text/javascript" src="/scripts/External/jquery.js"></script>
     <script>
@@ -29,6 +29,10 @@
 
         });
       })
+
+      function redirectProvider(provider){
+        window.location='http://'+window.location.host+':4730/auth/'+provider;
+      }
     </script>
   </body>
 </html>

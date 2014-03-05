@@ -1,6 +1,6 @@
 
 //require staements
-var Controller = require('./controller.js');
+var Controller = require('./Controller.js');
 var UserController = require('./UserController.js')();
 var Stream = require('stream');
 

@@ -1,6 +1,4 @@
 {
-  "host": "localhost",
-
     "port": 4730,
       //
       // "i18n": {
@@ -8,7 +6,6 @@
       //     "contentPath": "path:./locales"
       // },
       //
-      "facebook_token_url": "https://graph.facebook.com/oauth/access_token",
         "routes": {
           "routePath": "path:./controllers"
         },
@@ -43,10 +40,5 @@
             //     "view engine": "js",
             //     "views": "path:./.build/templates"
             // }
-            "facebook_authorization_url": "https://www.facebook.com/dialog/oauth",
-
-              "facebook_client_id": "171284626406184",
-                "facebook_client_secret": "d6265fa2fd27376c2d939ecc9fe64c04",
-                  "facebook_callback_url": "http://localhost:4730/auth/facebook/callback",
-                    "database":"http://localhost:7474/db/data/"
+          "database":"http://localhost:7474/db/data/"
 }

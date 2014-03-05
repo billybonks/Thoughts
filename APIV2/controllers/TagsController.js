@@ -1,6 +1,6 @@
 var Stream = require('stream');
 var neo4j = require('neo4j-js');
-var controller = require('./controller.js');
+var controller = require('./Controller.js');
 
 module.exports = function(){
   'use strict';

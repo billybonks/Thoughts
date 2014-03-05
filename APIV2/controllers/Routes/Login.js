@@ -3,6 +3,10 @@ var passport = require('passport');
 var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 var nconf = require('nconf');
 var facebook = require('./../Facebook')();
+var OauthVars = require('./secrets')
+var os = require("os");
+
+console.log(os.hostname());
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -12,11 +16,11 @@ module.exports = function (app) {
    * ===================================================================================================== */
   passport.use('facebook', new OAuth2Strategy(
     {
-      authorizationURL: nconf.get('facebook_authorization_url'),
-      tokenURL: nconf.get('facebook_token_url'),
-      clientID: nconf.get('facebook_client_id'),
-      clientSecret: nconf.get('facebook_client_secret'),
-      callbackURL: nconf.get('facebook_callback_url')
+      authorizationURL: OauthVars.facebook.authorization_url,
+      tokenURL:  OauthVars.facebook.token_url,
+      clientID:  OauthVars.facebook.client_id,
+      clientSecret:  OauthVars.facebook.client_secret,
+      callbackURL:  OauthVars.facebook.callback_url
     },
     function(accessToken, refreshToken, profile, done)
     {
@@ -36,7 +40,7 @@ module.exports = function (app) {
                             if (err) { console.log(err); return next(err); }
                             if (user)
                             {
-                              return res.redirect('http://'+nconf.get('domain')+'/?token='+user.session_token);
+                              return res.redirect('http://'+os.hostname()+'/?token='+user.session_token);
                             }
                           })(req, res, next);
   });

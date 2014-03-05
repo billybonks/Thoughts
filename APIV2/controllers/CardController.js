@@ -2,7 +2,7 @@
 var Stream = require('stream');
 //var TagsRoute = require('./TagsRoute.js')
 var UserController = require('./UserController.js');
-var controller = require('./controller.js');
+var controller = require('./Controller.js');
 
 
 module.exports = function(){

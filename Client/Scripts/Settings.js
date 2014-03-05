@@ -2,7 +2,7 @@
 window.AppSettings =
   {
     WebserviceURL: 'http://localhost:4730',
-    domain:'localhost',
+    domain:window.location.host,
     CookieName: 'App',
     OAuthRedirect: function (url) {
     $.ajax({

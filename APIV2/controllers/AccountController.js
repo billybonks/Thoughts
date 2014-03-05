@@ -1,7 +1,7 @@
 //require staements
 var Stream = require('stream');
 var crypto = require('crypto');
-var controller = require('./controller.js');
+var controller = require('./Controller.js');
 var db = require('./../lib/Database')
 module.exports = function(){
   'use strict';

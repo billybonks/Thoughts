@@ -1,6 +1,6 @@
 
 //require staements
-var controller = require('./controller.js');
+var controller = require('./Controller.js');
 var Stream = require('stream');
 module.exports = function(){
   'use strict';

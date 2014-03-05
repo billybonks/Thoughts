@@ -1,6 +1,6 @@
 //Require Statements
 var Stream = require('stream');
-var controller = require('./controller.js');
+var controller = require('./Controller.js');
 var TagsController = require('./TagsController.js')
 module.exports = function(){
   'use strict';

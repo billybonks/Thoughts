@@ -1,6 +1,6 @@
 
 //require staements
-var controller = require('./controller.js');
+var controller = require('./Controller.js');
 var AttachmentController = require('./AttachmentController')();
 var Stream = require('stream');
 
