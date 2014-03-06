@@ -232,11 +232,7 @@ module.exports = function(){
     var query = ['START card=node('+cardID+') ,section=node('+sectionID+')',
                  'CREATE card-[r:Is]->section',
                  'RETURN section'];
-    var queryStream = this.executeQuery(query.join('\n'),{});
-    queryStream.on('data',function(results){
-      responseStream.emit(results);
-    });
-    return responseStream;
+    return this.executeQuery(query.join('\n'),{});
   };
 
   /* ========================================================================================================

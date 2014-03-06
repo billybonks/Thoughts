@@ -163,29 +163,25 @@ module.exports = function(){
     var variableHash = {}
     var counter = 0;
     for(var key in attachment.data){
+      console.log(key+' '+attachment.data[key])
       counter++;
       if(attachment.data[key] !== null){
         var str = 'attachment.'+key+' = {'+key+'}';
+        variableHash[key] = attachment.data[key]
         if(counter < Object.keys(attachment.data).length){
           query.push(str+',')
         }
         else{
           query.push(str)
-          variableHash[key] = attachment.data[key]
+
         }
       }
     }
     query.push('RETURN attachment')
     console.log(query.join('\n'))
-    console.log(variableHash.question)
-    var resultStream = new Stream();
+    console.log(Object.keys(attachment.data));
+    return this.executeQuery(query.join('\n'),variableHash);
 
-    var queryStream = this.executeQuery(query.join('\n'),variableHash);
-    queryStream.on('data',function(results){
-      console.log(results)
-      resultStream.emit('done',results)
-    })
-    return resultStream;
   }
 
   return new Attachment();

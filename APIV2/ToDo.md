@@ -10,16 +10,8 @@
 - List section
 - Bootstrap accordian to Titled Notes
 - Success message after template created
-
-#Errors to fix##
-###Sections###
-
-- Type:Card doesnt return request
-- Type:Link returning deleted attachments
-- Type:Question answer breaks service
 - Type:Tasks fully broken
-- Type:TextArea edit on double click
-
+#Errors to fix##
 ###Webservice###
 
 - Create template of a card that has 0sections throws error im thinking add a message saying sorry you cant create a template with 0 sections unless we add some sort of savable config

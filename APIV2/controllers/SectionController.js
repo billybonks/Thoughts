@@ -30,8 +30,9 @@ module.exports = function(){
     var ret = [];
     var emitter = new Stream();
     var query = [this.BuildStartStatement(sectionIds,'section'),
-                 'Where not(has(section.isDeleted))',
                  'Optional Match (attachment)-[a:Attached]->(section)',
+                 'Where not(has(section.isDeleted))',
+                 'And not(has(attachment.isDeleted))',
                  'return section,attachment'];
     this.executeQuery(query.join('\n'),{}).on('data',function(results){
       var sections = [];

@@ -36,9 +36,7 @@
         {{text-area openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isCard}}
-        {{#each item in section.attachments}}
-        {{#link-to 'card' item.data.cardid}}Go to card{{/link-to}}
-        {{/each}}
+        {{card-section model=section}}
         {{!title-card title=section.title idz=id}}
         {{/if}}
       </div>

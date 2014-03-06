@@ -4,7 +4,7 @@
       {{textarea row="30" col="30" value=item.data.value style="width: 100%;height: 130px;"}}
       <button class="btn btn-default" {{action 'Update'}}>submit</button>
     {{else}}
-      <p {{action 'ToggleEdit'}} >{{item.data.value}}</p>
+      <p {{action 'ToggleEdit' on='doubleClick'}} >{{item.data.value}}</p>
     {{/if}}
   {{/each}}
 {{else}}

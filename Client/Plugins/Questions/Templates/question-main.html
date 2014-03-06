@@ -11,17 +11,17 @@
     </div>
     <div  {{bind-attr class="answerClass"}}>
       <div class="panel-body">
-        {{#if data.answer}}
           {{#if isEditingAnswer}}
-            {{textarea class="form-control" placeholder="enter answer" value=data.answer}}
-            <button class="btn btn-deafult" {{action 'UpdateQuestion'}}>Save</button>
+            {{textarea class="form-control" placeholder="enter answer" value=model.data.answer}}
+            <button class="btn btn-success" {{action 'UpdateQuestion'}}>Save</button>
           {{else}}
-        <p {{action 'ToggleEditAnswer'}}>{{data.answer}}</p>
+            {{#if model.data.answer}}
+            <p {{action 'ToggleEditAnswer'}}>{{model.data.answer}}</p>
+            {{else}}
+            <p {{action 'ToggleEditAnswer'}}>Double click to edit</p>
+            {{/if}}
+
           {{/if}}
-        {{else}}
-          {{textarea class="form-control" placeholder="enter answer" value=answer}}
-          <button class="btn btn-deafult" {{action 'NewAnswer'}}>Answer now</button>
-        {{/if}}
 
       </div>
     </div>

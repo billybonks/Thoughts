@@ -2,6 +2,7 @@ var fs =require('fs')
 
 module.exports = function(grunt) {
 
+  //prep
   var plugins = fs.readdirSync('Plugins')
   var ret = {plugins:[]}
 
@@ -9,8 +10,6 @@ module.exports = function(grunt) {
     ret.plugins.push({name:plugins[i]})
   }
   var result = fs.writeFileSync('plugins.json', JSON.stringify(ret))
-
-  console.log(ret)
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),
@@ -21,7 +20,6 @@ module.exports = function(grunt) {
           templateBasePath :"Templates/",
           templateFileExtensions :'.html',
           templateName: function(name) {
-            console.log(name);
             if(name.indexOf('views/')> -1){
               return name.replace('views/','')
             }
@@ -108,12 +106,16 @@ module.exports = function(grunt) {
         files : [
           {data: 'plugins.json',
            template: "Scripts/Controllers/SectionController.mustache",
-           dest: "Scripts/Controllers/SectionController.js"}
+           dest: "Scripts/Controllers/SectionController.js"},
+          {data: 'plugins.json',
+           template: "Scripts/Controllers/NewSectionController.mustache",
+           dest: "Scripts/Controllers/NewSectionController.js"}
         ]
       },
     },
     jshint: {
       files: ['Scripts/Components/*.js','Scripts/Views/*.js', 'Scripts/Controllers/*.js', 'Scripts/Models/*.js','Scripts/Router.js','Scripts/Settings.js','Plugins/**/*.js'],
+      ignores:['plugins.json'],
       options: {
         jshintrc: '.jshintrc'
       }
@@ -128,6 +130,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-html-build');
   grunt.loadNpmTasks('grunt-mustache-render');
-  grunt.registerTask('default', ['emberTemplates','concat','copy','htmlbuild','mustache_render','jshint']);
+  grunt.registerTask('default', ['emberTemplates','concat','copy','htmlbuild','mustache_render']);//,'jshint']);
 
 };

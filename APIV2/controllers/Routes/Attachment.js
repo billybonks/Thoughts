@@ -11,7 +11,8 @@ module.exports = function (app) {
     //proccsss Attachment
     var resultStream = AttachmentController.updateAttachment(req.body.attachment,req.params.id)
     resultStream.on('data',function(results){
-      res.json({attachment:results});
+      var att=results[0].attachment
+      res.json({attachment:{id :att.id,data:att.data}});
     })
   });
 
