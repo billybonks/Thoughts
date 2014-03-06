@@ -1,6 +1,8 @@
 Thoughts
 ========
-pwnt by Aidan
+pwnt by Aidan its all irrelevent anyways so pwn away
+
+
 MOC
 
 ﻿Settings.js -> WebserviceUrl
