@@ -26,13 +26,13 @@
         {{#if isDocument}}
         {{document-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
-        {{#if isQuestions}}
+        {{#if isTitled_Notes}}
         {{question-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isProperties}}
         {{property-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
-        {{#if isTextArea}}
+        {{#if isText_Area}}
         {{text-area openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isCard}}

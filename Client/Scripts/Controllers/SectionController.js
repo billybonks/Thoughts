@@ -4,9 +4,9 @@ App.SectionController = Ember.ObjectController.extend({
   isCard:Ember.computed.equal('model.type', 'Card'),
   isLinks:Ember.computed.equal('model.type', 'Links'),
   isProperties:Ember.computed.equal('model.type', 'Properties'),
-  isQuestions:Ember.computed.equal('model.type', 'Questions'),
   isTasks:Ember.computed.equal('model.type', 'Tasks'),
-  isTextArea:Ember.computed.equal('model.type', 'TextArea'),
+  isText_Area:Ember.computed.equal('model.type', 'Text_Area'),
+  isTitled_Notes:Ember.computed.equal('model.type', 'Titled_Notes'),
   isCollapsed:Ember.computed.bool('model.collapsed'),
     actions:{
       ToggleEdit:function(){
