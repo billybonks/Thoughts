@@ -1,7 +1,6 @@
-##Test##
+#Test#
 
-
-##Add##
+#Add#
 
 - tags controler
 - tags webservice methods
@@ -12,8 +11,8 @@
 - Bootstrap accordian to Titled Notes
 - Success message after template created
 
-##Errors to fix##
-#Sections#
+#Errors to fix##
+###Sections###
 
 - Type:Card doesnt return request
 - Type:Link returning deleted attachments
@@ -21,12 +20,12 @@
 - Type:Tasks fully broken
 - Type:TextArea edit on double click
 
-#Webservice#
+###Webservice###
 
 - Create template of a card that has 0sections throws error im thinking add a message saying sorry you cant create a template with 0 sections unless we add some sort of savable config
 
 
-##Enhancements##
+#Enhancements#
 
 - Add a tempaltes viewing and editng section, prob a good idea to base it of the cards work, but the model templates and the the model card are imcompatible so will see how we work witht this
 - Build Guest view
@@ -36,7 +35,7 @@
 - Support for sections to be visable on title card (through a config option like show on title card)
 - Application model, needs to foward a guest access token if user isnt logged in, as they may want to view the public cards
 
-##Rename sections##
+#Rename sections#
 
 - Question -> Titled Notes
 - TextArea -> TextArea
