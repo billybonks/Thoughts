@@ -7,18 +7,28 @@
 - Complete GetTemplateByID
 - Put GetTemplateByID
 - put settings
-
+- List section
+- Add Bootstrap accordian to Titled Notes
 
 ##Errors to fix##
+Sections
+
+- Type:Card doesnt return request
+- Type:Link returning deleted attachments
+- Type:Question answer breaks service
+- Type:Tasks fully broken
+- Type:TextArea edit on double click
+
+Rename sections
+
+Question -> Titled Notes
+TextArea -> TextArea
+
 Create template of a card that has 0sections throws error
   im thinking add a message saying sorry you cant create a template with 0 sections unless we add some sort of savable config
 
 Add success message after template created
 
-Fix popup
-  needs to be click twice once open to open
-  doesnt fade away when done
-  errors are linked :)
 
 Application model, needs to foward a guest access token if user isnt logged in, as they may want to view the public cards
 
@@ -31,8 +41,8 @@ Build Guest view
 Add sideloading of attachments since data loaded /sections
 
 Add i18n support discourse did this well http://eviltrout.com/2013/11/24/i18n-in-ember.html
+
+Support for section configurations
+
+Support for sections to be visable on title card (through a config option like show on title card)
 ##Build Extensions##
-
-move templates to relative plugins folder and add build task
-
-port is still hardcoded, maybe add this stuff to grunt build
