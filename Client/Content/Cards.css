@@ -74,3 +74,9 @@ body {
 .second{
   background:#4B66A0
 }
+
+.image-view{
+  width:100px;
+  height:100px;
+  display: inline-block;
+}

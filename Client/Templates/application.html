@@ -27,7 +27,7 @@
       <li><a href="#">Welcome {{model.name}}</a></li>
       <li><button class="btn btn-danger btn-nav "{{action "ClearToken" on="click"}}>Logout</button></li>
       {{else}}
-      <li><button class="btn btn-info btn-nav"{{action "LoginPopup" on="click"}}>Login</button></li>
+      <li><button class="btn btn-info btn-nav"{{action "openModalSource" 'login'}}>Login</button></li>
       {{/if}}
     </ul>
   </div><!-- /.navbar-collapse -->
@@ -63,10 +63,7 @@
 
 
   <div class="col-md-8" style="margin-top:15px">
-    <button class="btn btn-social facebook" {{action "LoginFacebook" on="click"}}>With Facebook</button>
-    <button class="btn btn-social google" {{action "LoginGoogle" on="click"}}>With Google</button>
-    <button class="btn btn-social github" {{action "LoginGithub" on="click"}}>With GitHub</button>
-    <button class="btn btn-social twitter" {{action "Loginwitter" on="click"}}>With Twitter</button>
+
   </div>
 </div>
 

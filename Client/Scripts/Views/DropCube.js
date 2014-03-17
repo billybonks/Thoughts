@@ -17,4 +17,4 @@ App.DropCube = Ember.View.extend({
     event.preventDefault();
     return false;
   }
-})
+});

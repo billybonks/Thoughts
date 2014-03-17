@@ -93,7 +93,7 @@ module.exports = function(){
   SectionController.prototype.CreateSection = function(title,type,position,cardId){
     var responseStream = new Stream();
     var query = 'CREATE (n:Section {data}) RETURN n';
-    var variableHash = {data:{title:title,type:type,position:position}};
+    var variableHash = {data:{title:title,type:type,position:position,displayOnCard:false,collapsed:false}};
     var queryStream = this.executeQuery(query,variableHash);
     var context = this;
     queryStream.once('data',function(results){
@@ -176,9 +176,11 @@ module.exports = function(){
       'START section=node('+sectionID+')',
       'Set section.title = {title},',
       'section.position  = {position},',
+      'section.displayOnCard = {displayOnCard},',
       'section.collapsed = {collapsed}',
       'RETURN section'
     ];
+    console.log(section.displayOnCard)
     var resultStream = new Stream();
     var queryStream = this.executeQuery(query.join('\n'),section);
     queryStream.on('data',function(results){

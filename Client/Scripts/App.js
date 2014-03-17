@@ -7,9 +7,6 @@ App = Ember.Application.create({
       window.location = 'http://'+AppSettings.domain+'/'
     }
     token = $.cookie(AppSettings.CookieName);
-    if(!token){
-      window.location = 'http://'+AppSettings.domain+'/login.html'
-    }
 
     App.ApplicationAdapter = DS.RESTAdapter.extend({
       //  namespace: 'api',
@@ -70,12 +67,9 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
     var context = this;
     attachment = this.store.createRecord('attachment', attachment);
     this.store.find('section',this.get('model').get('id')).then(function(section){
-      context.get('model.attachments').then(function(attachments){
-        attachment.save().then(function(attachment){
-          attachments.pushObject(attachment);
-          section.save();
-        });
-      });
+      var attachments =section.get('attachments')
+      attachments.pushObject(attachment);
+      attachment.save();//.then(context.sendAction('modelSateChange',attachment.currentState));
     });
   }
 })

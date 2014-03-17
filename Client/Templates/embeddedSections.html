@@ -1,0 +1,31 @@
+{{#each section in this itemController="section"}}
+  {{#if section.displayOnCard}}
+    <div class="row borded" style="margin-top:10px" >
+      {{#if isLinks}}
+      {{links-main modelSateChange = 'modelSateChange' openModal='openModal' title = section.title model=section data=section.attachments card=card store=store}}
+      {{/if}}
+      {{#if isTask}}
+      {{tasks-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+      {{/if}}
+      {{#if isDocument}}
+      {{document-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+      {{/if}}
+      {{#if isTitled_Notes}}
+      {{question-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+      {{/if}}
+      {{#if isProperties}}
+      {{property-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+      {{/if}}
+      {{#if isText_Area}}
+      {{text-area modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+      {{/if}}
+      {{#if isImage}}
+      {{photos-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+      {{/if}}
+      {{#if isCard}}
+      {{card-section modelSateChange = 'modelSateChange'  model=section}}
+      {{!title-card title=section.title idz=id}}
+      {{/if}}
+    </div>
+  {{/if}}
+{{/each}}

@@ -1,4 +1,5 @@
 var AttachmentController = require('./../AttachmentController')();
+var UserController = require('./../UserController')();
 var Proessor = require('./../../lib/AttachmentProccessor')();
 module.exports = function (app) {
   'use strict';
@@ -23,23 +24,26 @@ module.exports = function (app) {
     //proccsss Attachment
 
     var methodName = 'Process'+body.type
-    console.log(methodName)
-    if(Proessor[methodName]){
-      var processResultStream = Proessor[methodName](body.data);
-      processResultStream.on('data',function(results){
-        console.log('p results = '+results)
-        body.data = results;
+    UserController.GetUser(req.headers.authorization).on('data',function(results){
+      if(Proessor[methodName]){
+        var processResultStream = Proessor[methodName](body.data,results[0].user.id);
+        processResultStream.on('data',function(results){
+          console.log('p results asdasd= ');
+          console.log('p results = '+results);
+          body.data = results;
+          resultStream = AttachmentController.createAttachment(body.data,req.headers.authorization,[],body.sectionid)
+          resultStream.on('data',function(results){
+            res.json(results);
+          })
+        })
+      }else{
         resultStream = AttachmentController.createAttachment(body.data,req.headers.authorization,[],body.sectionid)
         resultStream.on('data',function(results){
           res.json(results);
         })
-      })
-    }else{
-      resultStream = AttachmentController.createAttachment(body.data,req.headers.authorization,[],body.sectionid)
-      resultStream.on('data',function(results){
-        res.json(results);
-      })
-    }
+      }
+    })
+
   })
 
 

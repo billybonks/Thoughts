@@ -13,34 +13,53 @@
         <div class="pull-right">
           <span  {{bind-attr class=chevron}} {{action collapse}}></span>
           <span class="glyphicon glyphicon-remove" {{action deleteSection}}></span>
+          <span class="glyphicon glyphicon-cog"  {{action  'openModalSource' 'sectionSettings' section}}></span>
         </div>
       </div>
+      <!--div class="alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Alls good here!</strong>
+      </div>
+      <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Busy saving your info!</strong>
+      </div>
+      <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Oops something went wrong!</strong>
+      </div-->
+
       {{!#if isCollapsed}}
+
       <div class="panel-body">
         {{#if isLinks}}
-        {{links-main openModal='openModal' title = section.title model=section data=section.attachments card=card store=store}}
+        {{links-main modelSateChange = 'modelSateChange' openModal='openModal' title = section.title model=section data=section.attachments card=card store=store}}
         {{/if}}
         {{#if isTask}}
-        {{tasks-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{tasks-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isDocument}}
-        {{document-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{document-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isTitled_Notes}}
-        {{question-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{question-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isProperties}}
-        {{property-main openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{property-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isText_Area}}
-        {{text-area openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{text-area modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
+        {{/if}}
+        {{#if isImage}}
+        {{photos-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isCard}}
-        {{card-section model=section}}
+        {{card-section modelSateChange = 'modelSateChange'  model=section}}
         {{!title-card title=section.title idz=id}}
         {{/if}}
       </div>
       {{!/if}}
     </div>
+  {{!/view}}
   {{!/view}}
 {{/each}}

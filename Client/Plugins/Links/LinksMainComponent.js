@@ -11,18 +11,21 @@ App.LinksMainComponent = App.BaseSectionComponent.extend({
       //title to be set server side
 
       var href = this.get('newLink');
+      var data;
       if(this.urlIsWellFormed(href)){
-        var data =
+        data =
           {
-            link:href
+            link : href
           }
-        this.submitAttachment(data);
-        this.set('newLink','');
+
       }else{
-        //TODO : Implement form validation erros
-        console.log('error')
+        data =
+          {
+            title : href
+          }
       }
-      //protocol index 2 //domain index 3
+      this.submitAttachment(data);
+      this.set('newLink','');
     }
   },
   urlIsWellFormed:function(url){

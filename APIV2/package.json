@@ -25,7 +25,8 @@
         "request":"2.27.0",
         "passport-oauth":"1.0.0",
         "passport":"0.1.17",
-        "neo4j-js":"0.0.6"
+        "neo4j-js":"0.0.6",
+        "node-uuid":"1.4.1"
     },
     "devDependencies": {
         "mocha": "~1.17.0",

@@ -115,6 +115,7 @@ UpgradeLog*.XML
 /Client/plugins.json
 /Client/results.html
 /Client/index.html
+/Client/data
 /Client/.jshintignore
 /Deploy
 

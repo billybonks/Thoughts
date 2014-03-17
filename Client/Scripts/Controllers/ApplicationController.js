@@ -1,5 +1,5 @@
 'use strict';
-App.ApplicationController = Ember.Controller.extend({
+App.ApplicationController = Ember.Controller.extend(App.PopupOpenerMixin,{
     currentDrag: null,
     menuOpen:false,
     actions: {

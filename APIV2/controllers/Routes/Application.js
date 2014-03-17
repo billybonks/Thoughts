@@ -21,7 +21,7 @@ module.exports = function (app) {
       response.on('data',function(templates){
         UserController.GetUser(req.headers.authorization).on('data',function(results){
           if(!results[0]){
-            res.json({application:{id:0,name:'guest',token:-1}});
+            res.json({application:{id:0,name:'guest',token:null}});
           }else{
             var user = UserController.FormatObject(results[0].user);
             res.json({application:application,user:user,templates:templates});
