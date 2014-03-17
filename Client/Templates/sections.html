@@ -1,5 +1,4 @@
-
-{{#each section in this itemController="section"}}
+{{#each section in this.sections itemController="section"}}
   {{!#view App.DraggableSection}}
     <div class="panel panel-default col-md-6" style="padding:20px;display:inline-block">
       <div class="row borded" >
@@ -13,7 +12,7 @@
         <div class="pull-right">
           <span  {{bind-attr class=chevron}} {{action collapse}}></span>
           <span class="glyphicon glyphicon-remove" {{action deleteSection}}></span>
-          <span class="glyphicon glyphicon-cog"  {{action  'openModalSource' 'sectionSettings' section}}></span>
+          <span class="glyphicon glyphicon-cog"  {{action  'openModalSource' 'sectionSettings' section section.card}}></span>
         </div>
       </div>
       <!--div class="alert alert-success alert-dismissable">
@@ -54,7 +53,7 @@
         {{photos-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
         {{/if}}
         {{#if isCard}}
-        {{card-section modelSateChange = 'modelSateChange'  model=section}}
+        {{card-section modelSateChange = 'modelSateChange'  model=section store=store}}
         {{!title-card title=section.title idz=id}}
         {{/if}}
       </div>

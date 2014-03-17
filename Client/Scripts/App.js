@@ -45,14 +45,14 @@ App.PopupMixin = Ember.Mixin.create({
 
 App.PopupOpenerMixin = Ember.Mixin.create({
   actions:{
-    openModal:function(modalName,model){
+    openModal:function(modalName,model,secondaryModel){
       return true;
     },
-    openModalSource:function(modalName,model){
+    openModalSource:function(modalName,model,secondaryModel){
       if(this.sendAction){
-        return this.sendAction('openModal',modalName,model);
+        return this.sendAction('openModal',modalName,model,secondaryModel);
       }
-      else this.send('openModal',modalName,model);
+      else this.send('openModal',modalName,model,secondaryModel);
     }
   }
 });

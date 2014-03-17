@@ -39,6 +39,9 @@ App.SectionController = Ember.ObjectController.extend({
     }else{
       return 'glyphicon glyphicon-chevron-down';
     }
-  }.property('model.collapsed')
+  }.property('model.collapsed'),
+  card2:function(){
+    return this.get('card');
+  }.property('this')
 
 });

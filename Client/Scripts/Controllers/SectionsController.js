@@ -1,3 +1,4 @@
-App.SectionsController = Ember.ArrayController.extend({
-    sortProperties: ['position']
+App.SectionsController = Ember.ObjectController.extend({
+    sortProperties: ['position'],
+    sortAscending: false
 });

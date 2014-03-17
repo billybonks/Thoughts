@@ -21,8 +21,10 @@ App.Router.map(function () {
 
 App.ApplicationRoute = Ember.Route.extend({
   actions: {
-    openModal: function(modalName, model) {
-      this.controllerFor(modalName).set('model', model);
+    openModal: function(modalName, model,secondaryModel) {
+      var controller = this.controllerFor(modalName)
+      controller.set('model', model);
+      controller.set('secondaryModel', secondaryModel);
       return this.render(modalName, {
         into: 'application',
         outlet: 'modal'

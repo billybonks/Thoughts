@@ -199,7 +199,8 @@ module.exports = function(){
       type:section.data.type,
       position:section.data.position,
       title : section.data.title,
-      attachments:[]
+      attachments:[],
+      card:18
     };
     for(var aID in attachments){
       section.attachments.push(aID);
