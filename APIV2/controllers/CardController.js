@@ -135,27 +135,21 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   Card.prototype.CreateCard=function (token,data,tags){
-    /// console.log(data)
+    console.log(data)
     var newCard = 'CREATE (n:Card {data}) RETURN n';
     var newCardHash = {data:data};
     var user = this.user;
     var responseStream = new Stream();
     var tagger = this.tags;
     delete newCardHash.data.user;
+    var context = this;
     var queryStream = this.executeQuery(newCard,newCardHash);
     queryStream.on('data', function (results) {
       var cardId = results[0].n.id;
       var response = user.CreatedEntity(token,cardId);
       response.on('data', function (results) {
         var user = results.user;
-        var card = {
-          id:results.entity.id,
-          title:results.entity.data.title,
-          top:results.entity.data.top,
-          left:results.entity.data.left,
-          user:results.user.id
-          //tags
-        };
+        var card =context.FormatObject(user,[],[],results.entity);
         if(tags.length > 1){
           var resultStream = tagger.TagEntity(cardId,tags);
           resultStream.on('data',function(results){
@@ -241,6 +235,8 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   Card.prototype.FormatObject=function(user,tags,sections,card){
+    console.log(card.data)
+    console.log('Formatting')
     var ret = {
       id:card.id,
       title:card.data.title,
@@ -249,7 +245,8 @@ module.exports = function(){
       top:card.data.top,
       user:user.id,
       tags:[],
-      sections:[]
+      sections:[],
+      onMainDisplay: card.data.onMainDisplay
     };
     for(var id in tags){
       //ret.card.tags.push(id);

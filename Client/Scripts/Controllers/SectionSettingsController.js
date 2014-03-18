@@ -16,6 +16,7 @@ App.SectionSettingsController = Ember.ObjectController.extend(App.PopupMixin,{
         this.set('model.displayOnCard',false);
       }
       this.get('model').save();
+      this.send('close')
     }
   }
 });

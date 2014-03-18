@@ -1,4 +1,4 @@
-{{#each item in model.attachments}}
-{{#link-to 'card' item.data.cardid}}Go to {{card.title}}{{/link-to}}
-{{/each}}
+{{#link-to 'card' card.id}}Go to {{card.title}}{{/link-to}}
+{{render 'embeddedSections' card.sections}}
+
 

@@ -3,7 +3,7 @@ App.SectionController = Ember.ObjectController.extend({
   isEditing:false,
   isCard:Ember.computed.equal('model.type', 'Card'),
   isImage:Ember.computed.equal('model.type', 'Image'),
-  isLinks:Ember.computed.equal('model.type', 'Links'),
+  isList:Ember.computed.equal('model.type', 'List'),
   isProperties:Ember.computed.equal('model.type', 'Properties'),
   isTasks:Ember.computed.equal('model.type', 'Tasks'),
   isText_Area:Ember.computed.equal('model.type', 'Text_Area'),

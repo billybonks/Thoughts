@@ -8,5 +8,5 @@ App.Card = DS.Model.extend({
   sections: DS.hasMany('section',{async:true}),
   tags:DS.hasMany('tag',{async:true}),
   tagsIn:DS.attr(),
- // template:DS.attr()
+  onMainDisplay:DS.attr('boolean')
 });

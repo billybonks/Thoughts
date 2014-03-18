@@ -31,7 +31,7 @@
       {{!#if isCollapsed}}
 
       <div class="panel-body">
-        {{#if isLinks}}
+        {{#if isList}}
         {{links-main modelSateChange = 'modelSateChange' openModal='openModal' title = section.title model=section data=section.attachments card=card store=store}}
         {{/if}}
         {{#if isTask}}

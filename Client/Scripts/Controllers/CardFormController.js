@@ -11,7 +11,8 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,{
         description: this.get('description'),
         left:0,
         top:0,
-        tagsIn : []//tags
+        tagsIn : [],//tags
+        onMainDisplay:true
       });
       card.save();
       this.set('title','');

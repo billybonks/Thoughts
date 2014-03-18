@@ -1,4 +1,5 @@
 {{#each item in model itemController="card"}}
+{{#if item.onMainDisplay}}
 <div class="col-md-4">
   <div class="controlls">
     <div class="row">
@@ -27,7 +28,7 @@
       </div>
     </div>
   </div>
-
-        {{title-card model=item tags=tags idz=id isEditing=isEditing store=store}}
-  </div>
+  {{title-card model=item tags=tags idz=id isEditing=isEditing store=store}}
+</div>
+{{/if}}
 {{/each}}

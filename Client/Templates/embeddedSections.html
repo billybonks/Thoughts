@@ -1,7 +1,7 @@
 {{#each section in this itemController="section"}}
   {{#if section.displayOnCard}}
     <div class="row borded" style="margin-top:10px" >
-      {{#if isLinks}}
+      {{#if isList}}
       {{links-main modelSateChange = 'modelSateChange' openModal='openModal' title = section.title model=section data=section.attachments card=card store=store}}
       {{/if}}
       {{#if isTask}}

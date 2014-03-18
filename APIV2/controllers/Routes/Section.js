@@ -15,9 +15,8 @@ module.exports = function (app) {
       var ret = [];
       var attachments = [];
       for(var section in results){
-        ret.push(SectionsController.FormatObject(results[section],results[section].attachments));
+        ret.push(SectionsController.FormatObject(results[section],results[section].attachments,results[section].card));
         for(var att in results[section].attachments){
-          console.log(att)
           attachments.push(results[section].attachments[att])
         }
       }

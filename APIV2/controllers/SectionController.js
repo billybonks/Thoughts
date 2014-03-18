@@ -22,7 +22,6 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   SectionController.prototype.GetSections=function(sectionIds){
-    console.log(sectionIds);
     var context = this;
     var counter =0;
     var count = 0;
@@ -30,10 +29,11 @@ module.exports = function(){
     var ret = [];
     var emitter = new Stream();
     var query = [this.BuildStartStatement(sectionIds,'section'),
+                 'Match (card:Card)-[h:Has]->(section)',
                  'Optional Match (attachment)-[a:Attached]->(section)',
                  'Where not(has(section.isDeleted))',
                  'And not(has(attachment.isDeleted))',
-                 'return section,attachment'];
+                 'return section,attachment,card'];
     this.executeQuery(query.join('\n'),{}).on('data',function(results){
       var sections = [];
       var sectionIds=[]
@@ -54,8 +54,10 @@ module.exports = function(){
             sections[sectionId].attachments[attachmentId] = { id : attachmentId, data : results[i].attachment.data};
           }
         }
-      }
-      console.log(sections);
+        if(results[i].card){
+          sections[sectionId].card = results[i].card.id;
+        }
+      };
       emitter.emit('data',sections);
     });
     return emitter;
@@ -193,14 +195,16 @@ module.exports = function(){
    * Helper Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  SectionController.prototype.FormatObject = function(section,attachments){
+  SectionController.prototype.FormatObject = function(section,attachments,card){
+    console.log(card)
     section = {
       id: section.id,
       type:section.data.type,
       position:section.data.position,
       title : section.data.title,
       attachments:[],
-      card:18
+      displayOnCard:section.data.displayOnCard,
+      card:card
     };
     for(var aID in attachments){
       section.attachments.push(aID);
