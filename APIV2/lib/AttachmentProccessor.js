@@ -24,7 +24,7 @@ module.exports = function(){
    * Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  AttachmentProcessor.prototype.ProcessLinks = function(data,userId){
+  AttachmentProcessor.prototype.ProcessList = function(data,userId){
     console.log(data);
     var href = data.link;
     var responseStream = new Stream();

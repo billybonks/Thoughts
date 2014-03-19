@@ -23,7 +23,7 @@
       {{photos-main modelSateChange = 'modelSateChange'  openModal='openModal' title = section.title data=section.attachments model=section store=store}}
       {{/if}}
       {{#if isCard}}
-      {{card-section modelSateChange = 'modelSateChange'  model=section}}
+      {{card-section modelSateChange = 'modelSateChange'  model=section store=store}}
       {{!title-card title=section.title idz=id}}
       {{/if}}
     </div>

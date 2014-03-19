@@ -1,18 +1,17 @@
 
 <div class="panel panel-default" style="padding:20px">
-  <div class="row borded" >
-    <div class="col-md-8">
-      {{#if isEditing}}
-      {{input type="text" class="form-control" value=model.title action="Save"}}
-      {{else}}
-      <h4>{{#link-to 'card' model.id}}{{model.title}}{{/link-to}}</h4>
-      {{/if}}
-    </div>
-    <div class="col-md-4">
-      <h4 style="float:right;">{{model.user.name}}</h4>
-    </div>
+  <div class="col-md-8">
+    {{#if isEditing}}
+    {{input type="text" class="form-control" value=model.title action="Save"}}
+    {{else}}
+    <h4>{{#link-to 'card' model.id}}{{model.title}}{{/link-to}}</h4>
+    {{/if}}
   </div>
-  <div class="panel-body"  >
+
+  <div class="col-md-4">
+    <h4 style="float:right;">{{model.user.name}}</h4>
+  </div>
+  <div class="panel-body">
     {{render 'embeddedSections' model.sections}}
   </div>
   <div class="panel-footer" style="background-color: white;">
@@ -20,7 +19,7 @@
     <span class="label label-success">{{title}}</span>
     {{/each}}
     {{#if isEditing}}
-      <button class="btn btn-default" {{action 'Save'}}>save </button>
+    <button class="btn btn-default" {{action 'Save'}}>save </button>
     {{/if}}
   </div>
 </div>

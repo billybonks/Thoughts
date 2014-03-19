@@ -1,34 +1,30 @@
 {{#each item in model itemController="card"}}
 {{#if item.onMainDisplay}}
-<div class="col-md-4">
-  <div class="controlls">
+<div class="col-md-4" >
+  <div class="col-md-1" style="padding-right:0px">
     <div class="row">
-      <div class="col-md-1">
-        <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
-          <span class="glyphicon glyphicon-remove"></span>
-        </button>
-      </div>
+      <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
+        <span class="glyphicon glyphicon-remove"></span>
+      </button>
     </div>
     <div class="row">
-      <div class="col-md-1">
-        <button type="button" class="btn btn-default btn-xs">
-          <span class="glyphicon glyphicon-share-alt"></span>
-        </button>
-      </div>
+      <button type="button" class="btn btn-default btn-xs">
+        <span class="glyphicon glyphicon-share-alt"></span>
+      </button>
     </div>
     <div class="row">
-      <div class="col-md-1">
-        <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
-          {{#if editing}}
-          <span class="glyphicon glyphicon-check"></span>
-          {{else}}
-          <span class="glyphicon glyphicon-edit"></span>
-          {{/if}}
-        </button>
-      </div>
+      <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
+        {{#if editing}}
+        <span class="glyphicon glyphicon-check"></span>
+        {{else}}
+        <span class="glyphicon glyphicon-edit"></span>
+        {{/if}}
+      </button>
     </div>
   </div>
-  {{title-card model=item tags=tags idz=id isEditing=isEditing store=store}}
+  <div class='col-md-11' style="padding-left:0px">
+    {{title-card model=item tags=tags idz=id isEditing=isEditing store=store}}
+  </div>
 </div>
 {{/if}}
 {{/each}}
