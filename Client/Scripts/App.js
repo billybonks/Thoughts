@@ -7,7 +7,9 @@ App = Ember.Application.create({
       window.location = 'http://'+AppSettings.domain+'/'
     }
     token = $.cookie(AppSettings.CookieName);
-
+    if (!token) {
+      $.cookie(AppSettings.CookieName, 'Guest');
+    }
     App.ApplicationAdapter = DS.RESTAdapter.extend({
       //  namespace: 'api',
       host: AppSettings.WebserviceURL,

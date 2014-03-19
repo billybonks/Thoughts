@@ -40,7 +40,7 @@ module.exports = function (app) {
                             if (err) { console.log(err); return next(err); }
                             if (user)
                             {
-                              return res.redirect('http://'+os.hostname()+'/?token='+user.session_token);
+                              return res.redirect('http://'+nconf.get('clientHostName')+'/?token='+user.session_token);
                             }
                           })(req, res, next);
   });
