@@ -1,6 +1,5 @@
 'use strict';
 App.TextAreaComponent = App.BaseSectionComponent.extend({
-  text:null,
   newText:null,
   hasText: Ember.computed.gt('data.length',0),
   isEditing:false,
@@ -16,7 +15,7 @@ App.TextAreaComponent = App.BaseSectionComponent.extend({
       this.submitAttachment(data);
       this.set('text',this.get('newText'));
     },
-  Update:function(){
+    Update:function(){
       var data = {
         value:this.get('text'),
       }
@@ -24,4 +23,11 @@ App.TextAreaComponent = App.BaseSectionComponent.extend({
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     }
   },
+  text:function(){
+    var converter = new Markdown.Converter();
+    if(this.get('data').objectAt(0).get('data.value')){
+      return converter.makeHtml(this.get('data').objectAt(0).get('data.value'));
+    }
+    return '';
+  }.property('data.@each.data.value')
 })
