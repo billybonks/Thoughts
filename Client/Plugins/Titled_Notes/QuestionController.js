@@ -20,5 +20,12 @@ App.QuestionController = Ember.ObjectController.extend({
        return 'panel-collapse collapse in'
      }
      return 'panel-collapse collapse out'
-   }.property('displayAnswer')
+   }.property('displayAnswer'),
+   text:function(){
+    var converter = new Markdown.Converter();
+    if(this.get('model.data.answer')){
+      return converter.makeHtml(this.get('model.data.answer'));
+    }
+    return '';//model.data.answer
+  }.property('model.data.answer')
 });

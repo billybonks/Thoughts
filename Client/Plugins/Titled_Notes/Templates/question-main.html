@@ -16,7 +16,7 @@
             <button class="btn btn-success" {{action 'UpdateQuestion'}}>Save</button>
           {{else}}
             {{#if model.data.answer}}
-            <p {{action 'ToggleEditAnswer' on='doubleClick'}}>{{model.data.answer}}</p>
+        <div {{action 'ToggleEditAnswer' on='doubleClick'}}>{{{text}}}</div>
             {{else}}
             <p {{action 'ToggleEditAnswer' on='doubleClick'}}>Double click to edit</p>
             {{/if}}
