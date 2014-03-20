@@ -16,10 +16,7 @@ App.TextAreaComponent = App.BaseSectionComponent.extend({
       this.set('text',this.get('newText'));
     },
     Update:function(){
-      var data = {
-        value:this.get('text'),
-      }
-      //updateAttachment
+      this.get('data').objectAt(0).save();
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     }
   },
