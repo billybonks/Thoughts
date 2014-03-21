@@ -35,7 +35,7 @@ module.exports = function(){
                  'And not(has(attachment.isDeleted))',
                  'return section,attachment,card'];
     this.executeQuery(query.join('\n'),{}).on('data',function(results){
-      var sections = [];
+      var sections = {};
       var sectionIds=[]
       count=results.length;
       for(var i = 0;i<count;i++){

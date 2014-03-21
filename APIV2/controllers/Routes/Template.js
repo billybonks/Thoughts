@@ -42,14 +42,17 @@ module.exports = function (app) {
       responseStream = CardController.CreateCard(req.headers.authorization,template,[]);
       responseStream.on('data',function(card){
         var counter = 0;
+        console.log(results);
         for(var i =0;i<results.length;i++){
-          var resultStream = SectionController.DuplicateAndLink(results[i],card.id,req.headers.authorization);
-          resultStream.on('data',function(section){
-            counter++;
-            if(counter === results.length){
-              res.json({});
-            }
-          });
+          if(results[i]){
+            var resultStream = SectionController.DuplicateAndLink(results[i],card.id,req.headers.authorization);
+            resultStream.on('data',function(section){
+              counter++;
+              if(counter === results.length){
+                res.json({});
+              }
+            });
+          }
         }
       });
 

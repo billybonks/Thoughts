@@ -1,7 +1,10 @@
 
 {{!side-bar store=store templates=templates w=word}}
+{{#each t in templates}}
+  {{title}}
+{{/each}}
 <div class="row" style="margin-top:30px">
-  <button type="button" class="btn btn-default btn-sm"  style="width:100px" {{action  'openModalSource' 'cardForm' model}}>
+  <button type="button" class="btn btn-default btn-sm"  style="width:100px" {{action  'openModalSource' 'cardForm' model templates}}>
     <span class="glyphicon glyphicon-plus"></span> Card
   </button>
 </div>

@@ -3,6 +3,7 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,{
   title:null,
   description:null,
   store: null,
+  options:['QQ','ll'],
   actions:{
     Submit: function(){
    //   var tags = this.get('tagger').getTags();
@@ -12,7 +13,8 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,{
         left:0,
         top:0,
         tagsIn : [],//tags
-        onMainDisplay:true
+        onMainDisplay:true,
+        template:this.get('selectedTemplate')
       });
       card.save();
       this.set('title','');

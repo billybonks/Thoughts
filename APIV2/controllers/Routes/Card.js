@@ -54,7 +54,7 @@ module.exports = function (app) {
     delete card.tags;
     delete card.tagsIn;
     var response;
-    if(card.template){
+    if(card.template !== -1){
       response = CardController.CreateCardFromTemplate(req.headers.authorization,card,tagsIn,card.template);
     }else{
       response = CardController.CreateCard(req.headers.authorization,card,tagsIn);
