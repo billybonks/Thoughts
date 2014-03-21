@@ -6,7 +6,11 @@
    <div class="panel panel-default">
     <div class="panel-heading" {{action 'ToggleAnswer'}}>
       <h4 class="panel-title" {{action 'ToggleAnswer'}}>
-          {{data.question}}
+        {{#if isEditingAnswer}}
+          {{input type="text" class="form-control" placeholder="" value=data.question action="UpdateQuestion"}}
+        {{else}}
+        <p {{action 'ToggleEditAnswer' on='doubleClick'}}>{{data.question}}</p>
+        {{/if}}
       </h4>
     </div>
     <div  {{bind-attr class="answerClass"}}>
