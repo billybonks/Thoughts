@@ -1,7 +1,10 @@
 'use strict';
 var express = require('express'),
     allowCrossDomain = require('./lib/AllowCrossDomain'),
+    requestid = require('./lib/RequestId'),
     kraken = require('kraken-js'),
+    secrets = require('./controllers/Routes/secrets.js'),
+    ana = require('./lib/RequestAnalytics')(secrets.loggly),
     app = {};
 
 
@@ -13,6 +16,8 @@ app.configure = function configure(nconf, next) {
 
 
 app.requestStart = function requestStart(server) {
+  server.use(requestid());
+  server.use(ana.requestStart());
   server.use(express.bodyParser());
   server.use(express.methodOverride());
   server.use(allowCrossDomain());
@@ -20,16 +25,16 @@ app.requestStart = function requestStart(server) {
 
 
 app.requestBeforeRoute = function requestBeforeRoute(server) {
-  server.use(express.bodyParser());
-  server.use(express.methodOverride());
-  server.use(allowCrossDomain());
+
 };
 
 
 app.requestAfterRoute = function requestAfterRoute(server) {
-  server.use(express.bodyParser());
-  server.use(express.methodOverride());
-  server.use(allowCrossDomain());
+  server.use(ana.requestEnd());
+  server.use(ana.logErrors());
+  server.use(function(req, res, next) {
+    res.json(res.status,res.returnData)
+  });
 };
 
 

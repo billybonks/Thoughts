@@ -30,7 +30,6 @@ module.exports = function(){
           data: results[i].n.data,
           id:  results[i].n.id
         }
-        console.log(attachment);
         ret.push(attachment);
       }
       resultStream.emit('data',ret)
@@ -67,7 +66,6 @@ module.exports = function(){
     var resultStream  = new Stream();
     var attachmentStream = this.storeAttachment('Attachment',data);
     attachmentStream.once('StoreAttachment.done',function(results){
-      console.log('token ** ' +token);
       var attachmentId = results[0].n.id;
       attachment = results[0].n;
 
@@ -92,14 +90,11 @@ module.exports = function(){
     var createAttachmentReturn = new Stream();
     var attachmentStream = this.createAttachmentBase(data,token,tags)
     attachmentStream.on('data',function(results){
-      console.log('attachments')
-      console.log(results)
       var linkStream = context.linkSection.call(context,sectionId,results.id)
       linkStream.on('data',function(results){
         var attachment = {attachment:{id:results[0].attachment.id,
                                       data:results[0].attachment.data,
                                       section:sectionId}};
-        console.log(results);
         createAttachmentReturn.emit('data',attachment);
       })
     });
@@ -111,7 +106,6 @@ module.exports = function(){
     var query = ['START link=node('+id+')',
                  'SET link.isDeleted = true',
                  'RETURN link'];
-    console.log(query.join('\n'));
     var queryStream = this.executeQuery(query.join('\n'),{});
     queryStream.on('data',function(results){
       responseStream.emit('data',results)
@@ -125,7 +119,6 @@ module.exports = function(){
       'CREATE attachment-[r:Attached]->section',
       'RETURN attachment'
     ];
-    console.log('query')
     var queryStream = this.executeQuery(query.join('\n'),{});
     return queryStream;
   }
@@ -150,7 +143,6 @@ module.exports = function(){
     var emitter = this;
     var resultStream =new  Stream();
     queryStream.once('data',function(results){
-      console.log('attachmentSTored')
       resultStream.emit('StoreAttachment.done',results)
     })
     return resultStream;
@@ -163,7 +155,6 @@ module.exports = function(){
     var variableHash = {}
     var counter = 0;
     for(var key in attachment.data){
-      console.log(key+' '+attachment.data[key])
       counter++;
       if(attachment.data[key] !== null){
         var str = 'attachment.'+key+' = {'+key+'}';
@@ -178,8 +169,6 @@ module.exports = function(){
       }
     }
     query.push('RETURN attachment')
-    console.log(query.join('\n'))
-    console.log(Object.keys(attachment.data));
     return this.executeQuery(query.join('\n'),variableHash);
 
   }

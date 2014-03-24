@@ -6,11 +6,11 @@ module.exports = function (app) {
    * Settings Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  app.get('/settings/:id',function(req,res){
+  app.get('/settings/:id',function(req,res,next){
     SettingsController.GetSettings(req.headers['authorization']).on('data',function(settings){
-      console.log('about to respond')
-      res.json({settings:settings})
-      console.log('responded')
+      res.status = 200;
+      res.returnData ={settings:settings}
+      next();
     })
   });
 

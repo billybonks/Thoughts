@@ -102,6 +102,9 @@ module.exports = function(){
     queryStream.on('data',function(results){
       responseStream.emit('data',results);
     });
+    queryStream.on('error',function(error){
+      responseStream.emit('error',error);
+    })
     return responseStream;
   };
 
@@ -135,7 +138,6 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   Card.prototype.CreateCard=function (token,data,tags){
-    console.log(data)
     var newCard = 'CREATE (n:Card {data}) RETURN n';
     var newCardHash = {data:data};
     var user = this.user;
@@ -150,28 +152,36 @@ module.exports = function(){
       response.on('data', function (results) {
         var user = results.user;
         var card =context.FormatObject(user,[],[],results.entity);
-        if(tags.length > 1){
-          var resultStream = tagger.TagEntity(cardId,tags);
-          resultStream.on('data',function(results){
-            responseStream.emit('data',results);
-          });
-        }else{
-          responseStream.emit('data',card);
-        }
+        responseStream.emit('data',card);
       });
+    }).on('error',function(error){
+      responseStream.emit('error',card);
     });
     return responseStream;
   };
 
   Card.prototype.CreateCardFromTemplate = function(token,data,tags,templateId){
-    var responseStream = this.GetCard(token,templateId);
+    var responseStream = this.GetCard(token,templateId)
     var DuplicateCard = this.DuplicateCard;
     var context = this;
+    var returnStream = new Stream();
     responseStream.on('data',function(results){
       delete results.card.id;
       delete results.card.isTemplate;
-      var responseStream = DuplicateCard.call(context,data,results.card.sections,results.card.tags,token);
+      responseStream = DuplicateCard.call(context,data,results.card.sections,results.card.tags,token);
+      responseStream
+      .on('data',function(){
+
+      })
+      .on('error',function(){
+        returnStream.emit('error',error)
+      });
     });
+    responseStream.on('error',function(error){
+      error.function = 'GetCard'
+      returnStream.emit('error',error);
+    });
+    return returnStream;
   };
 
 
@@ -195,7 +205,6 @@ module.exports = function(){
           resultStream.on('data',function(section){
             counter++;
             if(counter === results.length){
-              console.log(card);
               resultStream.emit('data',{});
             }
           });
@@ -235,8 +244,6 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   Card.prototype.FormatObject=function(user,tags,sections,card){
-    console.log(card.data)
-    console.log('Formatting')
     var ret = {
       id:card.id,
       title:card.data.title,

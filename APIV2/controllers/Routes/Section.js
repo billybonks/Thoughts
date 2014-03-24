@@ -8,7 +8,7 @@ module.exports = function (app) {
    * Section Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  app.get('/sections',function(req,res){
+  app.get('/sections',function(req,res,next){
     var resultStream = SectionsController.GetSections(req.query.ids);
 
     resultStream.once('data',function(results){
@@ -20,18 +20,22 @@ module.exports = function (app) {
           attachments.push(results[section].attachments[att])
         }
       }
-      res.json({sections:ret});
+      res.status = 200;
+      res.returnData ={sections:ret}
+      next();
     });
   });
 
-  app.delete('/sections/:id',function(req,res){
+  app.delete('/sections/:id',function(req,res,next){
     var resultStream = SectionsController.DeleteSection(req.params.id);
     resultStream.on('data',function(results){
-      res.json(results);
+      res.status = 200;
+      res.returnData ={}
+      next();
     });
   });
 
-  app.post('/sections',function(req,res){
+  app.post('/sections',function(req,res,next){
     var body = req.body.section;
     if(body.type == 'Card'){
       var card = {
@@ -41,51 +45,44 @@ module.exports = function (app) {
       var responseStream = CardsController.CreateCard(req.headers.authorization,card,[])
       responseStream.on('data',function(results){
         var data = {cardid : results.id}
-
-        //console.log(results)
         var resultStream = SectionsController.CreateSection(body.title,body.type,body.position,body.card)
         resultStream.on('data',function(results){
           var ret = results;
-          console.log('card created');
-          console.log(ret);
           //{ id: '9071', type: 'Card', position: 27, card: '9008' }
           resultStream =  AttachmentController.createAttachment(data,req.headers.authorization,[],results.id)
           resultStream.on('data',function(att){
             resultStream = CardsController.LinkCardToSection(ret.id,data.cardid).on('data',function(results){
-              console.log(att);
               ret.attachments = [att.attachment.id];
-              console.log('asdf')
-              console.log(ret);
-              res.json({section:ret});
+              res.status = 200;
+              res.returnData ={section:ret}
+              next();
             })
           })
-          //function(data,token,tags,sectionId){
         });
       })
     }else{
-      console.log('new Section Plain')
       var resultStream = SectionsController.CreateSection(body.title,body.type,body.position,body.card)
       resultStream.on('data',function(results){
-        console.log('returning')
         var response = CardsController.GetCard(req.headers.authorization,results.card);
         response.on('data',function(card){
-          res.json({card:card.card,section:results})
-          // res.json({section:results})
+          res.status = 200;
+          res.returnData ={card:card.card,section:results}
+          next();
         })
-        // res.json({section:results});
       })
     }
   });
 
 
 
-  app.put('/sections/:id',function(req,res){
+  app.put('/sections/:id',function(req,res,next){
     //req.params.id
-    console.log(req.body.section)
     var resultStream = SectionsController.UpdateSection(req.body.section,req.params.id);
     /* = SectionRoute.DeleteSection();*/
     resultStream.on('data',function(results){
-      res.json(results)
+      res.status = 200;
+      res.returnData =results
+      next();
     })
   });
 

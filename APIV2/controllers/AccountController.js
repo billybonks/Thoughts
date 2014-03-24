@@ -27,8 +27,6 @@ module.exports = function(){
       var CreateUser = this.CreateUser;
       var CreateSession =this.CreateSession;
       var CreateOAuthAccount = this.CreateOAuthAccount;
-      console.log('áaaaaaaaaaaaaaaa')
-      console.log(this);
       var user = this.FBUserToDBUser(body);
       var resultStream = this.GetUser(user);
       var account = this.GetLinkedAccountNodeData(body, accessToken);
@@ -48,7 +46,6 @@ module.exports = function(){
         }else{
 
           if(!results.data.session_token){
-            console.log(results);
             resultStream = CreateSession.call(cc,results);
             resultStream.on('data',function(results){
               done(null, results.data, 'info');
@@ -70,14 +67,11 @@ module.exports = function(){
     var resultStream = new Stream();
     var md5sum = crypto.createHash('md5');
     var user = userRec.data;
-    console.log(userRec.id);
     if(!user.session_token){
       md5sum.update(userRec.id);
       var session = md5sum.digest('hex');
       var query = 'START n=node('+userRec.id+') SET n.session_token = {session} RETURN n';
       var variableHash = {session:session};
-      console.log('wwwwwwwwwwwwwww');
-      console.log(this);
       var queryStream = this.executeQuery(query,variableHash);
       queryStream.on('data', function (results) {
         resultStream.emit('data', results[0].n);
@@ -89,7 +83,6 @@ module.exports = function(){
   };
 
   AccountRouteBase.prototype.CreateUser = function(user){
-    console.log(user);
     var newUser = 'CREATE (n:Person {data}) RETURN n';
     var newUserHash = {data:user};
     var queryStream = this.executeQuery(newUser,newUserHash);

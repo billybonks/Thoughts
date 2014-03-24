@@ -6,6 +6,9 @@ var Tagger = function (element, options) {
     this.source = options.source;
     this.displayPath = options.displayPath || '';
     this.processReturn = options.processReturn || function (object) { return object };
+    this.context = options.context || this;
+    this.tagAdded = options.tagAdded || function(){},
+    this.tagRemoved = options.tagRemoved || function(){},
     //  this.getTags = this.getTags;
     options.source = $.proxy(this.sourceWrapper, this);
     options.updater = options.updater || $.proxy(this.updater, this);
@@ -47,7 +50,7 @@ Tagger.prototype = {
            $(this).parent().remove();
        });
        $tag.insertBefore(this.$element)
-       return "";
+       return itemObj;
    }
 
   , keydown: function (e) {
@@ -59,14 +62,17 @@ Tagger.prototype = {
                   break;
               }
               value = value.replace(' ', '');
-              this.updater(value);
+              var item = this.updater(value);
               this.$element.val('');
               e.stopImmediatePropagation();
+              this.tagAdded.call(this.context,item);
               break;
           case 8://Backspace
+              var data = this.$element.siblings().last().data().itemObj;
               if (value === '') {
                   this.$element.siblings().last().remove();
               }
+              this.tagRemoved.call(this.context,data)
               break;
       }
   }

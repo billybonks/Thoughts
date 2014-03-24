@@ -8,10 +8,9 @@ module.exports = function (app) {
    * Template Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  app.get('/templates/:id',function(req,res){
+  app.get('/templates/:id',function(req,res,next){
     var template = req.body.template;
     template.isTempalte = true;
-    console.log(template);
     // var response = CardsRoute.CreateCard(req.headers['authorization'],,req.body.template.tagsIn)
   });
 
@@ -22,12 +21,14 @@ module.exports = function (app) {
       for(var i = 0; i< results.length;i++){
         ret.push(GetObject(results[i].template));
       }
-      res.json({templates:ret});
+      res.status = 200;
+      res.returnData ={templates:ret}
+      next();
     });
 
   });
 
-  app.post('/templates',function(req,res){
+  app.post('/templates',function(req,res,next){
     var template = req.body.template;
     template.isTemplate = true;
     var sections = template.sectionsIn;
@@ -38,18 +39,18 @@ module.exports = function (app) {
 
     var responseStream = SectionController.GetSections(sections);
     responseStream.on('data',function(results){
-      console.log(results);
       responseStream = CardController.CreateCard(req.headers.authorization,template,[]);
       responseStream.on('data',function(card){
         var counter = 0;
-        console.log(results);
         for(var i =0;i<results.length;i++){
           if(results[i]){
             var resultStream = SectionController.DuplicateAndLink(results[i],card.id,req.headers.authorization);
             resultStream.on('data',function(section){
               counter++;
               if(counter === results.length){
-                res.json({});
+                res.status = 200;
+                res.returnData ={}
+                next();
               }
             });
           }
@@ -60,7 +61,6 @@ module.exports = function (app) {
   });
 
 
-  app.put('/templates/:id',function(req,res){
+  app.put('/templates/:id',function(req,res,next){
 
   });
-};

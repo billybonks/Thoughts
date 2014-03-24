@@ -38,6 +38,10 @@ App.ApplicationRoute = Ember.Route.extend({
         outlet: 'modal',
         parentView: 'application'
       });
+    },
+    error:function(reason){
+      this.get('controller').get('errors').pushObject('something bad happend')
+      console.log('ERRRRRRORRRRR');
     }
   },
   model: function () {

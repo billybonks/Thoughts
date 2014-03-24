@@ -51,7 +51,6 @@ module.exports = function(){
     var query = ['START n=node('+id+')',
                  'SET n.isDeleted = true',
                  'RETURN n'];
-    console.log(query.join('\n'));
     return this.executeQuery(query.join('\n'),{});
   };
 
@@ -61,10 +60,8 @@ module.exports = function(){
       console.log(query);
       console.log(variableHash);
       graph.query(query,variableHash, function (err, results) {
-
         if(err){
-          console.log(err);
-          queryStream.emit('error',err);
+          queryStream.emit('error',{type:'queryError',innerException:err});
         }
         else{
           queryStream.emit('data',results);

@@ -45,6 +45,18 @@ App.PopupMixin = Ember.Mixin.create({
   }
 });
 
+App.OnErrorMixin = Ember.Mixin.create({
+  OnError:function(context,model){
+    var context = context;
+    var model = model
+    function onError(reason){
+          context.send('error',reason);
+          model.rollback();
+     }
+    return onError;
+  }
+});
+
 App.PopupOpenerMixin = Ember.Mixin.create({
   actions:{
     openModal:function(modalName,model,secondaryModel){
