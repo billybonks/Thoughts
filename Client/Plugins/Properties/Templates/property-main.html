@@ -3,7 +3,9 @@
   <div class="col-md-6"><b>Value</b></div>
 </div>
 {{#each item in data itemController='property'}}
+  {{#unless item.isDeleted}}
     {{view App.PropertyView model=item}}
+  {{/unless}}
 {{/each}}
 <button class="btn btn-default"{{action  'openModalSource' 'propertyForm' model}}> New Property </button>
 {{#if openPopup}}
