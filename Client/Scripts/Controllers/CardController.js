@@ -40,6 +40,8 @@ App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
       });
     }
   },
+  display:function(){
+  }
   close:function(card){
     console.log('card closing');
   },

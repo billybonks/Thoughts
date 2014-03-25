@@ -10,4 +10,5 @@ App.Card = DS.Model.extend({
   tagsIn:DS.attr(),
   onMainDisplay:DS.attr('boolean'),
   template: DS.attr(),
+  isTemplate:DS.attr('boolean')
 });
