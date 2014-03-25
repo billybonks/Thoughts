@@ -27,7 +27,8 @@
         "passport":"0.1.17",
         "neo4j-js":"0.0.8",
         "node-uuid":"1.4.1",
-        "loggly":"1.0.4"
+        "loggly":"1.0.4",
+        "github":"0.1.14"
     },
     "devDependencies": {
         "mocha": "~1.17.0",

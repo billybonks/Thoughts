@@ -3,6 +3,7 @@ var passport = require('passport');
 var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 var nconf = require('nconf');
 var facebook = require('./../Facebook')();
+var github = require('./../Github')();
 var OauthVars = require('./secrets')
 var os = require("os");
 
@@ -27,6 +28,20 @@ module.exports = function (app) {
       facebook.OnAccessToken(accessToken, refreshToken, profile, done);
     }
   ));
+
+  passport.use('github', new OAuth2Strategy(
+    {
+      authorizationURL: OauthVars.github.authorization_url,
+      tokenURL:  OauthVars.github.token_url,
+      clientID:  OauthVars.github.client_id,
+      clientSecret:  OauthVars.github.client_secret,
+      callbackURL:  OauthVars.github.callback_url
+    },
+    function(accessToken, refreshToken, profile, done)
+    {
+      github.OnAccessToken(accessToken, refreshToken, profile, done);
+    }
+  ));
   /* ========================================================================================================
    *
    * Facebook Methods - Keep in alphabetical order
@@ -36,6 +51,19 @@ module.exports = function (app) {
 
   app.get('/auth/facebook/callback', function(req, res, next) {
     passport.authenticate('facebook',
+                          function(err, user, info) {
+                            if (err) { console.log(err); return next(err); }
+                            if (user)
+                            {
+                              return res.redirect('http://'+nconf.get('clientHostName')+'/?token='+user.session_token);
+                            }
+                          })(req, res, next);
+  });
+
+  app.get('/auth/github', passport.authenticate('github',{ scope: ['user:email'] }));
+
+  app.get('/auth/github/callback', function(req, res, next) {
+    passport.authenticate('github',
                           function(err, user, info) {
                             if (err) { console.log(err); return next(err); }
                             if (user)

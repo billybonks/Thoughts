@@ -7,6 +7,7 @@ App.LoginController = Ember.ObjectController.extend(App.PopupMixin,{
     LoginGoogle:function(){
     },
     LoginGithub:function(){
+      this.send('Login','github')
     },
     Logintwitter:function(){
     },
