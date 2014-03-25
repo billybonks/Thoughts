@@ -8,7 +8,7 @@ module.exports = function (app) {
    *
    * ===================================================================================================== */
 
-  app.get('/users/:id',function (req,res){
+  app.get('/users/:id',function (req,res,next){
     var id = req.params.id;
     User.GetUserById(id).on('data',function(results){
       res.status = 200;

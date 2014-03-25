@@ -18,23 +18,7 @@ module.exports = function (config) {
   Analytics.prototype.requestStart = function(){
     var client = this.client;
     function Log(req, res, next) {
-      var timeStamp = Date.now();
-      var logEntry= {
-        id:req.id,
-        type:'requestStart',
-        path:req.path,
-        requesterIp: req.ip,
-        timeStamp:timeStamp,
-        level:'TRACE',
-        metod:req.method
-      }
-      client.log(logEntry,['TRACE'],function(error,result){
-        console.log('rquest Start log Sent')
-        if(error)
-          console.log(error);
-        if(result)
-          console.log(result);
-      });
+      req.startTimeStamp = Date.now();
       next();
     };
     return Log;
@@ -64,24 +48,25 @@ module.exports = function (config) {
   Analytics.prototype.requestEnd = function(){
     var client = this.client;
     function Log(req, res, next) {
-      console.log('logged');
-      var timeStamp = Date.now();
-      var logEntry= {
-        id:req.id,
-        type:'requestEnd',
-        path:req.path,
-        requesterIp: req.ip,
-        timeStamp:timeStamp,
-        level:'TRACE',
-        metod:req.method
+      if(req.method !=='OPTIONS'){
+        var timeStamp = Date.now();
+        var logEntry= {
+          id:req.id,
+          type:'requestEnd',
+          path:req.path,
+          requesterIp: req.ip,
+          requestTime:timeStamp-req.startTimeStamp,
+          level:'TRACE',
+          metod:req.method
+        }
+        client.log(logEntry,['TRACE'],function(error,result){
+          console.log('rquest end log Sent')
+          if(error)
+            console.log(error);
+          if(result)
+            console.log(result);
+        });
       }
-      client.log(logEntry,['TRACE'],function(error,result){
-        console.log('rquest end log Sent')
-        if(error)
-          console.log(error);
-        if(result)
-          console.log(result);
-      });
       next();
     };
     return Log;

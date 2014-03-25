@@ -15,13 +15,15 @@ App.LinksMainComponent = App.BaseSectionComponent.extend({
       if(this.urlIsWellFormed(href)){
         data =
           {
-            link : href
+            link : href,
+            type:'List'
           }
 
       }else{
         data =
           {
-            title : href
+            title : href,
+            type:'List'
           }
       }
       this.submitAttachment(data);

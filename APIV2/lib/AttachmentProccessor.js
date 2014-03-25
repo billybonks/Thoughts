@@ -1,3 +1,4 @@
+
 var Stream = require('stream');
 var cheerio = require('cheerio')
 var request = require('request')
@@ -17,15 +18,37 @@ module.exports = function(){
   function AttachmentProcessor(){
 
   }
+  AttachmentProcessor.prototype.ProccessAttatchment=function(attachment,userId){
+
+    var methodName = 'Process'+attachment.type
+    var returnStream = new Stream();
+    console.log(methodName);
+    if(this[methodName]){
+      console.log('exists')
+      this[methodName](attachment,userId)
+      .on('data',function(results){
+        returnStream.emit('data',results);
+      })
+      .on('error',function(error){
+      returnStream.emit('error',{'function':'ProcessAttachment'+methodName,type:'attachmentProccessError',innerException:error});
+      })
+    }else{
+      setTimeout(function() {
+        console.log(attachment)
+        returnStream.emit('data',attachment);
+      }, 100,returnStream);
+    }
+    return returnStream;
+  }
 
 
   /* ========================================================================================================
    *
-   * Methods - Keep in alphabetical order
+   * Generated Methods
    *
    * ===================================================================================================== */
   AttachmentProcessor.prototype.ProcessList = function(data,userId){
-    console.log(data);
+
     var href = data.link;
     var responseStream = new Stream();
     if(typeof href  == 'undefined'){
@@ -51,7 +74,8 @@ module.exports = function(){
   }
 
 
-  AttachmentProcessor.prototype.ProcessPhotos = function(data,userId){
+  AttachmentProcessor.prototype.ProcessImage = function(data,userId){
+    console.log('saving image')
     var resultStream = new Stream();
     var regex = /^data:.+\/(.+);base64,(.*)$/;
     var matches = data.image.match(regex);
@@ -62,6 +86,7 @@ module.exports = function(){
     var path = '/data/users/'+userId+'/images';
     mkpath.sync('../Client'+path);
     fs.writeFile('../Client'+path+'/'+name, buffer,function(err, written,buffer) {
+      console.log('saved')
       data = {
         image:path+'/'+name
       }
@@ -73,7 +98,6 @@ module.exports = function(){
   }
 
   AttachmentProcessor.prototype.ProcessCard=function(data,userId){
-    console.log('p card')
     data.left = 0
     data.top = 0
     var auth = data.auth;

@@ -11,13 +11,9 @@ App.PhotosMainComponent = App.BaseSectionComponent.extend({
       if(files[i].type.indexOf('image') >-1){
         reader.addEventListener('load',function(data){
           context.submitAttachment({
-            image:data.target.result
+            image:data.target.result,
+            type:'Image'
           });
-
-          console.log(data.target.result.split(','));
-          photoBin = reader.result;
-          console.log(reader);
-          console.log(reader.result)
         });
         reader.readAsDataURL(files[i]);
       }else{

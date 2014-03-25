@@ -51,8 +51,10 @@ module.exports = function (app) {
           //{ id: '9071', type: 'Card', position: 27, card: '9008' }
           resultStream =  AttachmentController.createAttachment(data,req.headers.authorization,[],results.id)
           resultStream.on('data',function(att){
+            console.log('atttttttttttt')
+            console.log(att);
             resultStream = CardsController.LinkCardToSection(ret.id,data.cardid).on('data',function(results){
-              ret.attachments = [att.attachment.id];
+              ret.attachments = [att[0].attachment.id];
               res.status = 200;
               res.returnData ={section:ret}
               next();

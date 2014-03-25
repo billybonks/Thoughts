@@ -70,7 +70,6 @@ module.exports = function (app) {
       next();
     });
     response.on('error',function(error){
-      console.log('erroering')
       res.error = error;
       res.status = 500;
       next();

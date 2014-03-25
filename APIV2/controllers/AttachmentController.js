@@ -20,21 +20,7 @@ module.exports = function(){
    * ===================================================================================================== */
 
   Attachment.prototype.getAttachments = function(ids){
-
-    var nodeStream = this.GetNodes(ids);
-    var resultStream = new Stream()
-    nodeStream.once('data',function(results){
-      var ret = []
-      for(var i = 0;i < results.length;i++){
-        var attachment = {
-          data: results[i].n.data,
-          id:  results[i].n.id
-        }
-        ret.push(attachment);
-      }
-      resultStream.emit('data',ret)
-    });
-    return resultStream;
+    return this.GetNodes(ids);
   }
 
 
@@ -64,13 +50,12 @@ module.exports = function(){
     var context = this;
     var tagger = this.tags;
     var resultStream  = new Stream();
-    var attachmentStream = this.storeAttachment('Attachment',data);
-    attachmentStream.once('StoreAttachment.done',function(results){
+    this.storeAttachment('Attachment',data)
+    .once('data',function(results){
       var attachmentId = results[0].n.id;
       attachment = results[0].n;
-
-      var relationShipStream = context.linkOwner.call(context,attachmentId,token);
-      relationShipStream.on('data',function(results){
+      context.linkOwner.call(context,attachmentId,token)
+      .on('data',function(results){
         if(tags.length === 0){
           resultStream.emit('data',attachment);
         }else{
@@ -79,8 +64,15 @@ module.exports = function(){
             resultStream.emit('data',attachment);
           });
         }
-      });
-    });
+      })
+      .on('error',function(error){
+        error.function = 'linkOwner'
+        resultStream.emit('error',error);
+      })
+    })
+    .on('error',function(error){
+      resultStream.emit('error',error);
+    })
     return resultStream;
   }
 
@@ -88,16 +80,20 @@ module.exports = function(){
     var resultStream = new Stream();
     var context = this;
     var createAttachmentReturn = new Stream();
-    var attachmentStream = this.createAttachmentBase(data,token,tags)
-    attachmentStream.on('data',function(results){
+    this.createAttachmentBase(data,token,tags)
+    .on('data',function(results){
       var linkStream = context.linkSection.call(context,sectionId,results.id)
-      linkStream.on('data',function(results){
-        var attachment = {attachment:{id:results[0].attachment.id,
-                                      data:results[0].attachment.data,
-                                      section:sectionId}};
-        createAttachmentReturn.emit('data',attachment);
+      .on('data',function(results){
+        createAttachmentReturn.emit('data',results);
       })
-    });
+      .on('error',function(error){
+        error.function = 'linkSection'
+        createAttachmentReturn.emit('error',error);
+      })
+      })
+    .on('error',function(error){
+      createAttachmentReturn.emit('error',error)
+    })
     return createAttachmentReturn;
   }
 
@@ -142,8 +138,12 @@ module.exports = function(){
     var queryStream = this.executeQuery(query,variableHash);
     var emitter = this;
     var resultStream =new  Stream();
-    queryStream.once('data',function(results){
-      resultStream.emit('StoreAttachment.done',results)
+    queryStream.on('data',function(results){
+      resultStream.emit('data',results)
+    })
+    .on('error',function(error){
+      error.function = 'StoreAttachment'
+      resultStream.emit('error',error);
     })
     return resultStream;
   }
@@ -168,9 +168,17 @@ module.exports = function(){
         }
       }
     }
-    query.push('RETURN attachment')
+    query.push('RETURN attachment');
     return this.executeQuery(query.join('\n'),variableHash);
 
+  }
+
+  Attachment.prototype.FormatObject= function(dbAtt,sectionId){
+    return {
+      id:dbAtt.id,
+      data:dbAtt.data,
+      section:sectionId
+    }
   }
 
   return new Attachment();

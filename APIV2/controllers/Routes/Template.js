@@ -64,3 +64,4 @@ module.exports = function (app) {
   app.put('/templates/:id',function(req,res,next){
 
   });
+};

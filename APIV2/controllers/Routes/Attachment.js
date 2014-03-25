@@ -25,25 +25,26 @@ module.exports = function (app) {
     //proccsss Attachment
     var methodName = 'Process'+body.type
     UserController.GetUser(req.headers.authorization).on('data',function(results){
-      if(Proessor[methodName]){
-        var processResultStream = Proessor[methodName](body.data,results[0].user.id);
-        processResultStream.on('data',function(results){
-          body.data = results;
-          resultStream = AttachmentController.createAttachment(body.data,req.headers.authorization,[],body.sectionid)
-          resultStream.on('data',function(results){
-            res.status = 200;
-            res.returnData =results
-            next();
-          })
-        })
-      }else{
-        resultStream = AttachmentController.createAttachment(body.data,req.headers.authorization,[],body.sectionid)
-        resultStream.on('data',function(results){
+      Proessor.ProccessAttatchment(body.data,results[0].user.id)
+      .on('data',function(results){
+        resultStream = AttachmentController.createAttachment(results,req.headers.authorization,[],body.sectionid)
+        .on('data',function(results){
+          var attachment = AttachmentController.FormatObject(results[0].attachment,body.sectionid)
           res.status = 200;
-          res.returnData =results
+          res.returnData ={attachment:attachment}
           next();
-        });
-      }
+        })
+        .on('error',function(error){
+          res.status = 500;
+          res.returnData ={error:error}
+          next();
+        })
+      })
+      .on('error',function(error){
+        res.status = 500;
+        res.returnData ={error:error}
+        next();
+      })
     });
   });
 
@@ -52,8 +53,12 @@ module.exports = function (app) {
   app.get('/attachments',function(req,res,next){
     var resultStream = AttachmentController.getAttachments(req.query.ids)
     resultStream.on('data',function(results){
+      var ret = []
+      for(var i = 0;i < results.length;i++){
+        ret.push(AttachmentController.FormatObject( results[i].n));
+      }
       res.status = 200;
-      res.returnData ={attachments:results}
+      res.returnData ={attachments:ret}
       next();
     })
 

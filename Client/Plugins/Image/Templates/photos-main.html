@@ -1,4 +1,8 @@
 {{view App.PhotoDropView controller=this}}
 {{#each item in data}}
-  {{view App.ImageView item=item}}
+  {{#unless item.isSaving}}
+    {{#unless item.isDeleted}}
+      {{view App.ImageView item=item}}
+    {{/unless}}
+  {{/unless}}
 {{/each}}

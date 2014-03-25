@@ -8,7 +8,13 @@ App.DropCube = Ember.View.extend({
   dragOver: DragNDrop.cancel,
   drop: function(event) {
     if(event.originalEvent.dataTransfer.getData('Type') === 'Attachment'){
-     this.store.find('attachment',event.originalEvent.dataTransfer.getData('id')).then(function(obj){
+      var context = this
+      this.store.find('attachment',event.originalEvent.dataTransfer.getData('id')).then(function(obj){
+        context.store.find('section',24743).then(function(section){
+          section.get('attachments').forEach(function(attq){
+            console.log(attq);
+          })
+        })
         obj.deleteRecord();
         obj.save();
       })
