@@ -15,48 +15,39 @@ module.exports = function(){
   }
   AccountRouteBase.prototype = new controller();
 
-  AccountRouteBase.prototype.OnAccessToken2 = function(accessToken, refreshToken, profile, done){
-    fbgraph.setAccessToken(accessToken);
-    fbgraph.setContext(this);
-
-    fbgraph.get('/me', function (error, body) {
-      if (error){
-        done(error);
-      }
-      var cc = this;
-      var CreateUser = this.CreateUser;
-      var CreateSession =this.CreateSession;
-      var CreateOAuthAccount = this.CreateOAuthAccount;
-      var user = this.FBUserToDBUser(body);
-      var resultStream = this.GetUser(user);
-      var account = this.GetLinkedAccountNodeData(body, accessToken);
-      resultStream.on('data', function (results) {
+  AccountRouteBase.prototype.OnAccessToken = function(accessToken, refreshToken, profile, done){
+    var context = this;
+    var GetUser = this.GetUser;
+    this.GetOAuthUser(accessToken).on('data',function(results){
+      var user = results.user;
+      var accountNode = results.account;
+      context.GetUser.call(context,user)
+      .on('data',function(results){
         if(results === null){
-          resultStream = CreateUser.call(cc,user);
-          resultStream.on('data',function(dbUser){
-            resultStream = CreateOAuthAccount.call(cc,'Facebook',account,dbUser.id);
-            //link Account
-            resultStream.on('data',function(results){
-              resultStream = CreateSession.call(cc,dbUser);
-              resultStream.on('data',function(results){
+          context.CreateUser.call(context,user)
+          .on('data',function(dbUser){
+            context.CreateOAuthAccount.call(context,'Facebook',accountNode,dbUser.id)
+            .on('data',function(results){
+              context.CreateSession.call(context,dbUser)
+              .on('data',function(results){
                 done(null, results.data, 'info');
               });
             });
           });
         }else{
-
           if(!results.data.session_token){
-            resultStream = CreateSession.call(cc,results);
-            resultStream.on('data',function(results){
+            context.CreateSession.call(context,results)
+            .on('data',function(results){
               done(null, results.data, 'info');
             });
           }else{
             done(null, results.data, 'info');
           }
         }
-      });
+      })
     });
   };
+
 
   /* ========================================================================================================
    *
