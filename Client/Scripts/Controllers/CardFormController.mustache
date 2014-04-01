@@ -27,23 +27,24 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
           template:context.get('selectedTemplate'),
           type : context.get('selectedType'),
         });
-
+        var errorHandler = context.OnError(context,card);
         card.get('tags').then(function(cTags){
-          result.forEach(function(tag){
-            console.log(tag.get('title'));
-          })
+          cTags.pushObjects(result);
           card.get('parents').then(function(parents){
           if(secondaryModel != null){
             parents.pushObject(secondaryModel);
             card.set('onMainDisplay',false);
+            secondaryModel.get('children').then(function(children){
+              card.save().then(function(card){
+                children.pushObject(card);
+              })
+              .catch(errorHandler);
+              context.cleanUp.call(context);
+            })
+          }else{
+            card.save().catch(errorHandler);
+            context.cleanUp.call(context);
           }
-          cTags.pushObjects(result);
-          var errorHandler = context.OnError(context,card);
-          card.save().catch(errorHandler);
-          context.set('title','');
-          context.set('description','');
-          context.set('tags',[]);
-          context.send('close');
           })
         });
       });
@@ -55,4 +56,10 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
       delete this.tags[item];
     },
   },
+  cleanUp:function(){
+    this.set('title','');
+    this.set('description','');
+    this.set('tags',[]);
+    this.send('close');
+  }
 });
