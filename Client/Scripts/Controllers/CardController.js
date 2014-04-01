@@ -1,5 +1,11 @@
 'use strict';
 App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
+    isImage:Ember.computed.equal('model.type', 'Image'),
+    isList:Ember.computed.equal('model.type', 'List'),
+    isProperties:Ember.computed.equal('model.type', 'Properties'),
+    isTasks:Ember.computed.equal('model.type', 'Tasks'),
+    isText_Area:Ember.computed.equal('model.type', 'Text_Area'),
+    isTitled_Notes:Ember.computed.equal('model.type', 'Titled_Notes'),
   actions:{
     Delete:function(){
       this.get('store').find('card', this.get('model').get('id')).then(function(rec){
@@ -41,7 +47,18 @@ App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
     }
   },
   display:function(){
-  }
+    if(this.get('parentController.templates')){
+      if(this.get('model.isTemplate')){
+        return true;
+      }
+    }else{
+      if(this.get('model.isTemplate')){
+        return false;
+      }else{
+        return true;
+      }
+    }
+  }.property('parentController.templates'),
   close:function(card){
     console.log('card closing');
   },
@@ -51,7 +68,6 @@ App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
     return true;
   }.property(),
   sortSomeAttachments:function(){
-  console.log('sorting')
   var attachments = this.get('model').get('attachments');
   var tags = this.get('model').get('tags');
   var tit = this.get('model').get('title');

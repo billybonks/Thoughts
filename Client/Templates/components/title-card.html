@@ -1,25 +1,74 @@
 
-<div class="panel panel-default" style="padding:20px">
-  <div class="col-md-8">
-    {{#if isEditing}}
-    {{input type="text" class="form-control" value=model.title action="Save"}}
-    {{else}}
-    <h4>{{#link-to 'card' model.id}}{{model.title}}{{/link-to}}</h4>
-    {{/if}}
+<div class="" style="padding-right:0px;float: left;margin-right: 10px;padding-right:0px">
+  <div class="row">
+    <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
+      <span class="glyphicon glyphicon-remove"></span>
+    </button>
   </div>
+  <div class="row">
+    <button type="button" class="btn btn-default btn-xs">
+      <span class="glyphicon glyphicon-share-alt"></span>
+    </button>
+  </div>
+  <div class="row">
+    <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
+      {{#if editing}}
+      <span class="glyphicon glyphicon-check"></span>
+      {{else}}
+      <span class="glyphicon glyphicon-edit"></span>
+      {{/if}}
+    </button>
+  </div>
+  <div class="row">
+    <button type="button" class="btn btn-default btn-xs" {{action  'openModalSource' 'cardForm' templateArr model}}>
+      <span class="glyphicon glyphicon-plus"></span>
+    </button>
+  </div>
+</div>
+<div class='col-md-11' style="padding-left:0px">
+  <div class="panel panel-default" style="padding:20px">
+    <div class="col-md-8">
+      {{#if isEditing}}
+      {{input type="text" class="form-control" value=model.title action="Save"}}
+      {{else}}
+      <h4>{{#link-to 'card' model.id}}{{model.title}}{{/link-to}}</h4>
+      {{/if}}
+    </div>
 
-  <div class="col-md-4">
-    <h4 style="float:right;">{{model.user.name}}</h4>
-  </div>
-  <div class="panel-body">
-    {{render 'embeddedSections' model.sections}}
-  </div>
-  <div class="panel-footer" style="background-color: white;">
-    {{#each tags}}
-    <span class="label label-success">{{title}}</span>
-    {{/each}}
-    {{#if isEditing}}
-    <button class="btn btn-default" {{action 'Save'}}>save </button>
-    {{/if}}
+    <div class="col-md-4">
+      <h4 style="float:right;">{{model.user.name}}</h4>
+    </div>
+    <div class="panel-body">
+      {{#if isList}}
+      {{links-main modelSateChange = 'modelSateChange' openModal='openModal' title = model.title model=model data=model.attachments card=card store=store}}
+      {{/if}}
+      {{#if isTask}}
+      {{tasks-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
+      {{/if}}
+      {{#if isDocument}}
+      {{document-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
+      {{/if}}
+      {{#if isTitled_Notes}}
+      {{question-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
+      {{/if}}
+      {{#if isProperties}}
+      {{property-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
+      {{/if}}
+      {{#if isText_Area}}
+      {{text-area modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
+      {{/if}}
+      {{#if isImage}}
+      {{photos-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
+      {{/if}}
+      {{!render 'embeddedSections' model.sections}}
+    </div>
+    <div class="panel-footer" style="background-color: white;">
+      {{#each tags}}
+      <span class="label label-success">{{title}}</span>
+      {{/each}}
+      {{#if isEditing}}
+      <button class="btn btn-default" {{action 'Save'}}>save </button>
+      {{/if}}
+    </div>
   </div>
 </div>

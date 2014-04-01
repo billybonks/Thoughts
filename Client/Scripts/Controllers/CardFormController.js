@@ -4,42 +4,55 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
   description:null,
   store: null,
   tags:{},
+  selectedTemplate:-1,
+  types:['Image','List','Properties','Tasks','Text_Area','Titled_Notes',],
+  selectedType:null,
+  secondaryModel:null,
   actions:{
     Submit: function(){
-      //   var tags = this.get('tagger').getTags();
-      var card = this.store.createRecord('card', {
-        title: this.get('title'),
-        description: this.get('description'),
-        left:0,
-        top:0,
-        tagsIn : [],//tags
-        onMainDisplay:true,
-        template:this.get('selectedTemplate')
-      });
-      var tags = this.get('tags');
+      var qTags=[];
       var context = this;
-      card.get('tags').then(function(result){
-        for(var tag in tags){
-          var t = context.store.createRecord('tag',{
-            id:tags[tag],
-            title:tags[tag]
-          });
-          result.pushObject(t);
-        }
-        var errorHandler = context.OnError(context,card);
-        card.save().catch(errorHandler);
+      for(var key in this.get('tags')){
+        qTags.push(this.get('tags')[key])
+      }
+      var secondaryModel = this.get('secondaryModel')
+      this.store.find('tag',{names:qTags}).then(function(result){
+        var card = context.store.createRecord('card', {
+          title: context.get('title'),
+          description: context.get('description'),
+          left:0,
+          top:0,
+          tagsIn : [],//tags
+          onMainDisplay:true,
+          template:context.get('selectedTemplate'),
+          type : context.get('selectedType'),
+        });
+
+        card.get('tags').then(function(cTags){
+          result.forEach(function(tag){
+            console.log(tag.get('title'));
+          })
+          card.get('parents').then(function(parents){
+          if(secondaryModel != null){
+            parents.pushObject(secondaryModel);
+            card.set('onMainDisplay',false);
+          }
+          cTags.pushObjects(result);
+          var errorHandler = context.OnError(context,card);
+          card.save().catch(errorHandler);
+          context.set('title','');
+          context.set('description','');
+          context.set('tags',[]);
+          context.send('close');
+          })
+        });
       });
-      this.set('title','');
-      this.set('description','');
-      this.send('close');
     },
     tagAdded:function(item){
       this.tags[item] = item;
-      console.log(this.tags);
     },
     tagRemoved:function(item){
       delete this.tags[item];
-      console.log(this.tags);
     },
   },
 });

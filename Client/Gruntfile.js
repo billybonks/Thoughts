@@ -105,11 +105,17 @@ module.exports = function(grunt) {
         },
         files : [
           {data: 'plugins.json',
-           template: "Scripts/Controllers/SectionController.mustache",
-           dest: "Scripts/Controllers/SectionController.js"},
+           template: "Scripts/Controllers/ChildController.mustache",
+           dest: "Scripts/Controllers/ChildController.js"},
           {data: 'plugins.json',
-           template: "Scripts/Controllers/NewSectionController.mustache",
-           dest: "Scripts/Controllers/NewSectionController.js"}
+           template: "Scripts/Controllers/CardFormController.mustache",
+           dest: "Scripts/Controllers/CardFormController.js"},
+          {data: 'plugins.json',
+           template: "Scripts/Controllers/CardController.mustache",
+           dest: "Scripts/Controllers/CardController.js"},
+          {data: 'plugins.json',
+           template: "Scripts/Components/TitleCardComponent.mustache",
+           dest: "Scripts/Components/TitleCardComponent.js"}
         ]
       },
     },

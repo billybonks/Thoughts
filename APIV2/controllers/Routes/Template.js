@@ -31,6 +31,7 @@ module.exports = function (app) {
   app.post('/templates',function(req,res,next){
     var template = req.body.template;
     template.isTemplate = true;
+    template.onMainDisplay = true;
     var sections = template.sectionsIn;
     var tags = template.tags;
     delete template.sections;
@@ -41,10 +42,12 @@ module.exports = function (app) {
     responseStream.on('data',function(results){
       responseStream = CardController.CreateCard(req.headers.authorization,template,[]);
       responseStream.on('data',function(card){
+        console.log('Card Created Sections')
+        console.log(results)
         var counter = 0;
-        for(var i =0;i<results.length;i++){
-          if(results[i]){
-            var resultStream = SectionController.DuplicateAndLink(results[i],card.id,req.headers.authorization);
+        for(var key in results){
+          if(results[key]){
+            var resultStream = SectionController.DuplicateAndLink(results[key],card.id,req.headers.authorization);
             resultStream.on('data',function(section){
               counter++;
               if(counter === results.length){

@@ -1,19 +1,16 @@
+
 <div class="container">
   <div class="col-md-12">
     <div class="col-md-6">
-      <div class="col-md-8">
-      <h3>{{model.title}}</h3> by {{model.user.name}} <br />
-      {{#each model.tags}}
-        <span class="label label-success">{{title}}</span>
-      {{/each}}
-        <button class="btn btn-default" {{action SaveAsTemplate}}>Save as tempalte</button>
-        {{view App.DropCube store=store}}
-      </div>
-
-      <div class="col-md-3">
-        {{card-controlls card=model store=store openModal='openModal'}}
-      </div>
+      {{title-card model=model tags=model.tags openModal='openModal' templateArr=templateArr isEditing=isEditing store=store}}
+      <button class="btn btn-default" {{action SaveAsTemplate}}>Save as tempalte</button>
+      {{view App.DropCube store=store}}
     </div>
-    {{render 'sections' this}}
+    {{!render 'children' this}}
+    {{#each child in model.children}}
+    <div class="col-md-6">
+      {{title-card model=child tags=child.tags openModal='openModal' templateArr=templateArr isEditing=isEditing store=store}}
+    </div>
+    {{/each}}
   </div>
 </div>

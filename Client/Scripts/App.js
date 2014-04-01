@@ -50,9 +50,9 @@ App.OnErrorMixin = Ember.Mixin.create({
     var context = context;
     var model = model
     function onError(reason){
-          context.send('error',reason);
-          model.rollback();
-     }
+      context.send('error',reason);
+      model.rollback();
+    }
     return onError;
   }
 });
@@ -80,10 +80,11 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
     };
     var context = this;
     attachment = this.store.createRecord('attachment', attachment);
-    this.store.find('section',this.get('model').get('id')).then(function(section){
-      var attachments =section.get('attachments')
-      attachments.pushObject(attachment);
-      attachment.save();//.then(context.sendAction('modelSateChange',attachment.currentState));
+    this.store.find('card',this.get('model').get('id')).then(function(card){
+      var attachments =card.get('attachments').then(function(attachments){
+        attachments.pushObject(attachment);
+        attachment.save();//.then(context.sendAction('modelSateChange',attachment.currentState));
+      });
     });
   }
 })

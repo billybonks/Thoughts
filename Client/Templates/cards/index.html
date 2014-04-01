@@ -1,7 +1,6 @@
-
 <div class="row" style="margin-top:30px">
   <div class="col-md-1">
-    <button type="button" class="btn btn-default btn-sm"  style="width:100px" {{action  'openModalSource' 'cardForm' model templates}}>
+    <button type="button" class="btn btn-default btn-sm"  style="width:100px" {{action  'openModalSource' 'cardForm' templateArr}}>
       <span class="glyphicon glyphicon-plus"></span> Card
     </button>
   </div>
@@ -11,36 +10,13 @@
 </div>
 <div >
   {{#each item in model itemController="card"}}
-  wadafuck
-  {{cards}}
-  {{templates}}
-  {{#if item.onMainDisplay}}
-  <div class="col-md-4" >
-    <div class="col-md-1" style="padding-right:0px">
-      <div class="row">
-        <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
-          <span class="glyphicon glyphicon-remove"></span>
-        </button>
-      </div>
-      <div class="row">
-        <button type="button" class="btn btn-default btn-xs">
-          <span class="glyphicon glyphicon-share-alt"></span>
-        </button>
-      </div>
-      <div class="row">
-        <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
-          {{#if editing}}
-          <span class="glyphicon glyphicon-check"></span>
-          {{else}}
-          <span class="glyphicon glyphicon-edit"></span>
-          {{/if}}
-        </button>
-      </div>
-    </div>
-    <div class='col-md-11' style="padding-left:0px">
-      {{title-card model=item tags=tags idz=id isEditing=isEditing store=store}}
-    </div>
-  </div>
+    {{#if display}}
+      {{#if item.onMainDisplay}}
+
+        <div class='col-md-4'>
+            {{title-card model=item tags=tags openModal='openModal' templateArr=templateArr store=store}}
+        </div>
+      {{/if}}
+    {{/if}}
+  {{/each}}
 </div>
-{{/if}}
-{{/each}}

@@ -6,9 +6,12 @@
   </div>
   <div class="form-group">
     <label for="title">Template</label>
-    {{view Ember.Select class="form-control" content=secondaryModel optionValuePath="content.id" optionLabelPath="content.title" value=selectedTemplate}}
+    {{view Ember.Select class="form-control" content=model optionValuePath="content.id" optionLabelPath="content.title" value=selectedTemplate}}
   </div>
-
+  <div class="form-group">
+    <label for="type">Type</label>
+    {{view Ember.Select content=types selectionBinding=selectedType class="form-control"}}
+  </div>
   <div class="form-group">
     <label for="tags">Tags</label>
     {{view App.TaggerView viewName="tagger"}}

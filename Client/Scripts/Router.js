@@ -65,6 +65,13 @@ App.CardsRoute = Ember.Route.extend({
   model: function () {
     return this.store.find('card');
   },
+
+});
+
+App.CardsIndexRoute = Ember.Route.extend({
+  model: function () {
+    return this.modelFor('cards');
+  },
   setupController: function(controller, model) {
 
     var ret =this.store.all('template').map(function(item, index, enumerable){
@@ -81,14 +88,8 @@ App.CardsRoute = Ember.Route.extend({
       // a must be equal to b
       return 0;
     })
-    console.log(ret)
-    controller.set('templates',ret);
-  }
-});
-
-App.CardsIndexRoute = Ember.Route.extend({
-  model: function () {
-    return this.modelFor('cards');
+    controller.set('content',model);
+    controller.set('templateArr',ret);
   }
 });
 
@@ -143,7 +144,25 @@ App.CardRoute = Ember.Route.extend({
         outlet: 'modal',
         parentView: 'application'
       });
-    }
+    },
+  },
+  setupController: function(controller, model) {
+    var ret =this.store.all('template').map(function(item, index, enumerable){
+      return {id:item.get('id'),title:item.get('title')}
+    });
+    ret.push({title:'None',id:-1})
+    ret.sort(function compare(a, b) {
+      if (a.id<b.id){
+        return -1;
+      }
+      if (a.id>b.id){
+        return 1;
+      }
+      // a must be equal to b
+      return 0;
+    })
+    controller.set('content',model);
+    controller.set('templateArr',ret);
   }
 });
 

@@ -19,32 +19,39 @@ module.exports = function (app) {
   });
 
   app.get('/cards',function (req,res,next){
-    var response = CardController.GetAllCards(req.headers.authorization);
-    response.on('data',function(results){
-      res.status = 200;
-      res.returnData ={cards:results}
-      next();
-    });
+    var ids = req.query.ids;
+    if(ids){
+      var count = ids.length;
+      var counter = 0;
+      var returnArray = []
+      for(var i = 0;i <ids.length;i++){
+        CardController.GetCard(req.headers.authorization,ids[i])
+        .on('data',function(results){
+          counter++;
+          returnArray.push(CardController.FormatNeo4jObject(results));
+          if(counter == count){
+            res.status = 200;
+            res.returnData ={cards:returnArray}
+            next();
+          }
+        });
+      }
+    }else{
+      CardController.GetAllCards(req.headers.authorization)
+      .on('data',function(results){
+        res.status = 200;
+        res.returnData ={cards:results}
+        next();
+      });
+    }
   });
 
   app.get('/cards/:id',function (req,res,next){
+
+    console.log('getting someeeeeeeeeeeeeeeeeee')
     var response = CardController.GetCard(req.headers.authorization,req.params.id);
     response.on('data',function(results){
-      var card;
-      var sections = [];
-      var secRet = [];
-      var user;
-      for(var i = 0; i < results.length;i++){
-        var result = results[i];
-        card = result.card;
-        if(result.section){
-          var section = sectionController.FormatObject(result.section);
-          sections.push(section.id);
-          secRet.push(section);
-        }
-        user =result.user;
-      }
-      card = CardController.FormatObject(user,[],sections,card);
+      var card = CardController.FormatNeo4jObject(results);
       res.status = 200;
       res.returnData ={card:card}
       next();
@@ -53,16 +60,25 @@ module.exports = function (app) {
 
   app.post('/cards',function (req,res,next){
     var card = req.body.card;
-    var tagsIn = card.tagsIn;
+    var tags = card.tags;
+    var parents = card.parents;
+    var children = card.children
+    card.isTemplate = false;
+    console.log(card);
     delete card.attachments;
     delete card.tags;
-    delete card.tagsIn;
+    delete card.parents;
+    delete card.children;
     var response;
-    if(card.template !== -1){
-      console.log(card.template);
-      response = CardController.CreateCardFromTemplate(req.headers.authorization,card,tagsIn,card.template);
+    if(parents.length !== 0){
+      response = CardController.CreateSubCard(req.headers.authorization,card,tags,card.template,parents[0]);
     }else{
-      response = CardController.CreateCard(req.headers.authorization,card,tagsIn);
+      if(card.template !== -1){
+        console.log(card.template);
+        response = CardController.CreateCardFromTemplate(req.headers.authorization,card,tags,card.template);
+      }else{
+        response = CardController.CreateCard(req.headers.authorization,card,tags);
+      }
     }
     response.on('data',function(results){
       res.status = 200;

@@ -1,4 +1,4 @@
-//var Tag = require('./../Tag.js')();
+var TagController = require('./../TagsController.js')();
 
 module.exports = function (app) {
   'use strict';
@@ -27,6 +27,36 @@ module.exports = function (app) {
     });
 
   });*/
+
+  app.get('/tags',function(req,res,next){
+
+    if(req.query.names || req.query.ids){
+      if(req.query.names){
+        TagController.FindOrCreate(req.query.names)
+        .on('data',function(result){
+          var returnArr = [];
+          for(var key in result){
+            returnArr.push(result[key]);
+          }
+          res.status = 200;
+          res.returnData ={tags:returnArr}
+          next();
+        })
+      }else{
+        TagController.GetTags.call(TagController,req.query.ids)
+        .on('data',function(results){
+          res.status = 200;
+          res.returnData ={tags:results}
+          next();
+        })
+      }
+    }else{
+      res.status = 200;
+      res.returnData ={tags:[]}
+      next();
+    }
+  });
+
   app.post('/tags',function(req,res){
     res.json(req.body);
   });

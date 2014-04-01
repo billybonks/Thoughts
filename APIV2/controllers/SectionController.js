@@ -44,7 +44,7 @@ module.exports = function(){
           sections[results[i].section.id] = {
             id : results[i].section.id,
             data : results[i].section.data,
-            attachments:[]
+            attachments:{}
           };
           sectionIds.push(results[i].section.id);
         }
@@ -73,7 +73,7 @@ module.exports = function(){
     var emitter = new Stream();
     var queryStream = this.executeQuery(query.join('\n'),{});
     queryStream.on('data',function(results){
-      var ret = [];
+      var ret = {};
       for(var i =0; i< results.length;i++){
         //section
         if(results[i].attachment){
@@ -132,31 +132,27 @@ module.exports = function(){
 
   SectionController.prototype.DuplicateAndLink = function(section,cardId,token){
     var returnStream = new Stream();
-    console.log('lllllllllllllllllll');
-    console.log(section);
-    var resultStream = AttachmentController.getAttachments(section.attachments);
+    var att = []
     var CreateSection = this.CreateSection
     var context = this;
     var attRoute = AttachmentController
-    resultStream.on('data',function(attachments){
-      resultStream = CreateSection.call(context,section.title,section.type,section.position,cardId);
-      resultStream.on('data',function(section){
-        var counter = 0;
-        var attachmentIds = []
-        for(var i = 0;i<attachments.length;i++){
-          resultStream = attRoute.createAttachment.call(attRoute,attachments[i].data,token,[],section.id)
-          resultStream.on('data',function(result){
-            counter++;
-            attachmentIds.push(result.id)
-            if(counter === attachments.length){
-              returnStream.emit('data',{})
-              console.log(section.id)
-            }
-          })
-        }
-      })
-
-
+    CreateSection.call(context,section.title,section.type,section.position,cardId)
+    .on('data',function(results){
+      var counter = 0;
+      var attachmentIds = []
+      console.log()
+      for(var key in section.attachments){
+        console.log('creating att '+key)
+        attRoute.createAttachment.call(attRoute,section.attachments[key].data,token,[],results.id)
+        .on('data',function(result){
+          counter++;
+          attachmentIds.push(result.id)
+          if(counter === section.attachments.length){
+            returnStream.emit('data',{})
+            console.log(section.id)
+          }
+        })
+      }
     })
     return returnStream;
   }

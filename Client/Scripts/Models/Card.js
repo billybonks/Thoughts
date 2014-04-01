@@ -7,8 +7,20 @@ App.Card = DS.Model.extend({
   attachments: DS.hasMany('attachment',{async:true}),
   sections: DS.hasMany('section',{async:true}),
   tags:DS.hasMany('tag',{async:true}),
-  tagsIn:DS.attr(),
   onMainDisplay:DS.attr('boolean'),
   template: DS.attr(),
-  isTemplate:DS.attr('boolean')
+  isTemplate:DS.attr('boolean'),
+  parents:DS.hasMany('card', {
+    inverse: 'children',
+    async:true
+  }),
+  children:DS.hasMany('card', {
+    inverse: 'parents',
+    async:true
+  }),
+  type: DS.attr('string')
 });
+
+/*
+
+*/

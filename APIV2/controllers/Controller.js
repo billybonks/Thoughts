@@ -29,6 +29,8 @@ module.exports = function(){
   };
 
   Controller.prototype.GetNodes=function(ids){
+    console.log('NODEER');
+    console.log(ids);
     var emitter = new Stream();
     var query = 'START n=node(';
     for(var c =0; c <ids.length;c++){
@@ -61,7 +63,9 @@ module.exports = function(){
       console.log(variableHash);
       graph.query(query,variableHash, function (err, results) {
         if(err){
+          console.log(err);
           queryStream.emit('error',{type:'queryError',innerException:err});
+
         }
         else{
           queryStream.emit('data',results);

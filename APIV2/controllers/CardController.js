@@ -1,10 +1,9 @@
 //var UserRoute = require('./UserRoute.js')
 var Stream = require('stream');
-//var TagsRoute = require('./TagsRoute.js')
+var TagsController = require('./TagsController.js')();
 var UserController = require('./UserController.js');
 var controller = require('./Controller.js');
-
-
+var AttachmentController = require('./AttachmentController.js')();
 module.exports = function(){
   'use strict';
   /* ========================================================================================================
@@ -14,8 +13,7 @@ module.exports = function(){
    * ===================================================================================================== */
   function Card(){
     this.user = new UserController();
-    //this.tags = new TagsRoute();
-    //this.sections = new SectionsRoute();;
+
     this.counter = 0;
   }
 
@@ -33,7 +31,6 @@ module.exports = function(){
       'MATCH (user:Person)-[Created]->(card:Card)',
       'WHERE user.session_token = {token}',
       'AND not(has(card.isDeleted))',
-      'AND not(has(card.isTemplate))',
       'AND not(card-[:Is]->())',
       'RETURN card'
     ];
@@ -53,28 +50,8 @@ module.exports = function(){
         var id = results[c].card.id;
         var resultStream = context.GetCard.call(context,token,id);
         resultStream.on('data',function(results){
-          var sections = [];
-          var sectionIds = [];
-          var result,card,user,section,tag;
-          for(var i = 0;i<results.length;i++){
 
-            result = results[i];
-            card = result.card;
-            user = result.user;
-            section = result.section;
-            tag = result.tag;
-            if(section){
-              sections[section.id] = section;
-              sectionIds.push(section.id);
-            }
-            /* if(tag){
-              var id = tag.id;
-              var tag = Object.clone(tag.data);
-              tag['id'] = id;
-              tags[tag.id] = tag;
-            }*/
-          }
-          ret.push(context.FormatObject(user,tag,sectionIds,card));
+          ret.push(context.FormatNeo4jObject(results));
           counter++;
           if(cardsCount ==counter){
             responseStream.emit('data',ret);
@@ -90,19 +67,22 @@ module.exports = function(){
     var query=[
       'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card)',
-      'OPTIONAL MATCH  (section)<-[h:Has]-(card),',
-      '(tag)-[Tagged]->(card)',
+      'OPTIONAL MATCH  (tag)-[t:Tagged]->(card)',
+      'OPTIONAL MATCH  (attachment)-[a:Attached]->(card)',
+      'OPTIONAL MATCH  (child)<-[h:Has]-(card)',
       'WHERE user.session_token = {token}',
-      'AND not(has(section.isDeleted))',
-      'RETURN card,user,section,tag'//user,card,attachment'
+      'AND not(has(child.isDeleted))',
+      'RETURN card,user,child,tag,attachment'//user,card,attachment'
     ];
     var variableHash = {token:token};
     var queryStream = this.executeQuery(query.join('\n'),variableHash);
     var responseStream = new Stream();
     queryStream.on('data',function(results){
+      console.log(results);
       responseStream.emit('data',results);
     });
     queryStream.on('error',function(error){
+      console.log(error)
       responseStream.emit('error',error);
     })
     return responseStream;
@@ -142,20 +122,30 @@ module.exports = function(){
     var newCardHash = {data:data};
     var user = this.user;
     var responseStream = new Stream();
-    var tagger = this.tags;
+    var tagger = TagsController;
     delete newCardHash.data.user;
     var context = this;
     var queryStream = this.executeQuery(newCard,newCardHash);
     queryStream.on('data', function (results) {
       var cardId = results[0].n.id;
+
       var response = user.CreatedEntity(token,cardId);
       response.on('data', function (results) {
         var user = results.user;
-        var card =context.FormatObject(user,[],[],results.entity);
-        responseStream.emit('data',card);
+        console.log('tagging '+cardId);
+        console.log('with '+tags);
+        tagger.TagEntity(tags,cardId)
+        .on('data',function(taggingResults){
+
+          var card =context.FormatObject(user,tags,[],results.entity);
+          responseStream.emit('data',card);
+        })
+        .on('error',function(error){
+          responseStream.emit('error',error);
+        })
       });
     }).on('error',function(error){
-      responseStream.emit('error',card);
+      responseStream.emit('error',error);
     });
     return responseStream;
   };
@@ -181,6 +171,29 @@ module.exports = function(){
       error.function = 'GetCard'
       returnStream.emit('error',error);
     });
+    return returnStream;
+  };
+
+  Card.prototype.CreateSubCard = function(token,data,tags,templateId,parentId){
+    var response;
+    var returnStream = new Stream();
+    var context = this;
+    if(templateId !== -1){
+      response = this.CreateCardFromTemplate(token,data,tags,templateId);
+    }else{
+      response = this.CreateCard(token,data,tags);
+    }
+    response.on('data',function(results){
+      console.log(parentId+'Has '+results.id)
+      var query = ['Start child=node('+results.id+') , parent=node('+parentId+')',
+                   'CREATE parent-[r:Has]->child',
+                   'return child']
+      context.executeQuery(query.join('\n'),{})
+      .on('data',function(data){
+        results.parents = [parentId];
+        returnStream.emit('data',results);
+      })
+    })
     return returnStream;
   };
 
@@ -243,7 +256,40 @@ module.exports = function(){
    * Helper Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  Card.prototype.FormatObject=function(user,tags,sections,card){
+  Card.prototype.FormatNeo4jObject=function(results){
+    var card;
+    var children = {};
+    var user;
+    var tags = {};
+    var attachments ={}
+    for(var i = 0; i < results.length;i++){
+
+      var result = results[i];
+      card = result.card;
+      console.log('cjiiiiiiiiiiiild')
+      if(result.child){
+        var parents ={}
+        parents[card.id]= card;
+        var child = this.FormatObject({id:null},[],[],result.child,parents);
+        children[child.id]=child;
+      }
+      if(result.tag){
+        var tag = TagsController.FormatObject(result.tag);
+        tags[tag.id]=tag;
+      }
+      if(result.attachment){
+        var attachment = AttachmentController.FormatObject(result.attachment);
+        attachments[attachment.id]=attachment;
+      }
+      user =result.user;
+    }
+    console.log(tags)
+    card = this.FormatObject(user,tags,children,card,attachments);
+    return card;
+  };
+
+  Card.prototype.FormatObject=function(user,tags,children,card,attachments,parents){
+    console.log(card);
     var ret = {
       id:card.id,
       title:card.data.title,
@@ -252,14 +298,24 @@ module.exports = function(){
       top:card.data.top,
       user:user.id,
       tags:[],
-      sections:[],
-      onMainDisplay: card.data.onMainDisplay
+      children:[],
+      onMainDisplay: card.data.onMainDisplay,
+      isTemplate:card.data.isTemplate,
+      type:card.data.type,
+      attachments:[],
+      parents:[]
     };
-    for(var id in tags){
-      //ret.card.tags.push(id);
+    for(var id in parents){
+      ret.parents.push(id);
     }
-    for(id in sections){
-      ret.sections.push(sections[id]);
+    for(var id in tags){
+      ret.tags.push(id);
+    }
+    for(id in children){
+      ret.children.push(id);
+    }
+    for(id in attachments){
+      ret.attachments.push(id);
     }
     return ret;
   };
