@@ -1,0 +1,31 @@
+'use strict';
+App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
+  {{#plugins}}
+    is{{name}}:Ember.computed.equal('model.type', '{{name}}'),
+  {{/plugins}}
+  actions:{
+    Delete:function(){
+      this.get('store').find('card', this.get('model').get('id')).then(function(rec){
+        rec.deleteRecord();
+        rec.save();
+      });
+    },
+    ToggleEdit:function(){
+      console.log('editing')
+      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+    },
+    onShare:function(){
+      this.get('section') ? this.set('section',false):this.set('section',true);
+    },
+    onAddSection:function(){
+      this.get('section') ? this.set('section',false):this.set('section',true);
+    },
+    Save:function(){
+      console.log(this.get('model.title'));
+      this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+      this.get('store').find('Card',this.get('model.id')).then(function(card){
+        card.save();
+      });
+    }
+  }
+});
