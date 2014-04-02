@@ -1,4 +1,4 @@
-App.SectionSettingsController = Ember.ObjectController.extend(App.PopupMixin,{
+App.CardSettingsController = Ember.ObjectController.extend(App.PopupMixin,{
   options:['Yes','No'],
   positions:function(){
     var l = this.get('secondaryModel.sections.length');

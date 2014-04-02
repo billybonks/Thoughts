@@ -6,6 +6,7 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
     isTasks:Ember.computed.equal('model.type', 'Tasks'),
     isText_Area:Ember.computed.equal('model.type', 'Text_Area'),
     isTitled_Notes:Ember.computed.equal('model.type', 'Titled_Notes'),
+  showControlls:false,
   actions:{
     Delete:function(){
       this.get('store').find('card', this.get('model').get('id')).then(function(rec){
@@ -30,5 +31,11 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
         card.save();
       });
     }
+  },
+  mouseLeave: function(ctx){
+    this.set('showControlls',false);
+  },
+  mouseEnter: function(ctx){
+    this.set('showControlls',true)
   }
 });

@@ -9,7 +9,7 @@
     {{!render 'children' this}}
     {{#each child in model.children}}
     <div class="col-md-6">
-      {{title-card model=child tags=child.tags openModal='openModal' templateArr=templateArr isEditing=isEditing store=store}}
+      {{title-card model=child tags=child.tags openModal='openModal' templateArr=templateArr isEditing=isEditing store=store parent=model}}
     </div>
     {{/each}}
   </div>

@@ -16,6 +16,9 @@ App = Ember.Application.create({
       headers: { 'Authorization': token },
       // defaultSerializer: 'App/appacitiveREST'
     });
+  },
+  customEvents: {
+    "mouseover": "mouseOver"
   }
 });
 

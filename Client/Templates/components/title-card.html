@@ -1,3 +1,4 @@
+{{#if showControlls}}
 <div class="" style="padding-right:0px;float: left;margin-right: 10px;padding-right:0px">
   <div class="row">
     <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
@@ -23,7 +24,15 @@
       <span class="glyphicon glyphicon-plus"></span>
     </button>
   </div>
+  {{#unless isMain}}
+  <div class="row">
+    <button type="button" class="btn btn-default btn-xs" {{action  'openModalSource' 'cardSettings' model parent}}>
+      <span class="glyphicon glyphicon-cog"></span>
+    </button>
+  </div>
+  {{/unless}}
 </div>
+{{/if}}
 <div class='col-md-11' style="padding-left:0px">
   <div class="panel panel-default" style="padding:20px">
     <div class="col-md-8">
