@@ -36,16 +36,27 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
             card.set('onMainDisplay',false);
             secondaryModel.get('children').then(function(children){
               card.save().then(function(card){
-                children.pushObject(card);
+                var configuration = context.store.createRecord('configuration',{
+                  position: children.get('length')+1,
+                  embedded: false,
+                  'for':secondaryModel,
+                  configures:card
+                })
+                configuration.save().then(function(configuration){
+                  card.get('configurations').then(function(configurations){
+                    configurations.pushObject(configuration);
+                  })
+                  children.pushObject(card);
+                  context.cleanUp.call(context);
+                })
               })
               .catch(errorHandler);
-              context.cleanUp.call(context);
             })
           }else{
             card.save().catch(errorHandler);
             context.cleanUp.call(context);
           }
-          })
+         })
         });
       });
     },

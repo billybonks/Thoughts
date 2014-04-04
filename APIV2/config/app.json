@@ -6,6 +6,7 @@
       //     "contentPath": "path:./locales"
       // },
       //
+      "clientHostName":"billybonks",
         "routes": {
           "routePath": "path:./controllers"
         },

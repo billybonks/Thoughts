@@ -26,9 +26,9 @@ module.exports = function (app) {
       var returnArray = []
       for(var i = 0;i <ids.length;i++){
         CardController.GetCard(req.headers.authorization,ids[i])
-        .on('data',function(results){
+        .on('data',function(card){
           counter++;
-          returnArray.push(CardController.FormatNeo4jObject(results));
+          returnArray.push(card);
           if(counter == count){
             res.status = 200;
             res.returnData ={cards:returnArray}
@@ -50,8 +50,7 @@ module.exports = function (app) {
 
     console.log('getting someeeeeeeeeeeeeeeeeee')
     var response = CardController.GetCard(req.headers.authorization,req.params.id);
-    response.on('data',function(results){
-      var card = CardController.FormatNeo4jObject(results);
+    response.on('data',function(card){
       res.status = 200;
       res.returnData ={card:card}
       next();

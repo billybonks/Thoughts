@@ -4,6 +4,7 @@ var TagsController = require('./TagsController.js')();
 var UserController = require('./UserController.js');
 var controller = require('./Controller.js');
 var AttachmentController = require('./AttachmentController.js')();
+var ConfigurationController = require('./ConfigurationController.js')();
 module.exports = function(){
   'use strict';
   /* ========================================================================================================
@@ -32,6 +33,7 @@ module.exports = function(){
       'WHERE user.session_token = {token}',
       'AND not(has(card.isDeleted))',
       'AND not(card-[:Is]->())',
+      'AND card.onMainDisplay = true',
       'RETURN card'
     ];
     var context = this;
@@ -49,21 +51,20 @@ module.exports = function(){
       for(var c=0;c<cardsCount;c++){
         var id = results[c].card.id;
         var resultStream = context.GetCard.call(context,token,id);
-        resultStream.on('data',function(results){
-
-          ret.push(context.FormatNeo4jObject(results));
+        resultStream.on('data',function(card){
+          ret.push(card);
           counter++;
           if(cardsCount ==counter){
             responseStream.emit('data',ret);
           }
         });
-
       }
     });
     return responseStream;
   };
 
   Card.prototype.GetCard=function (token,id){
+    var context = this;
     var query=[
       'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card)',
@@ -78,8 +79,14 @@ module.exports = function(){
     var queryStream = this.executeQuery(query.join('\n'),variableHash);
     var responseStream = new Stream();
     queryStream.on('data',function(results){
+      console.log('init results')
       console.log(results);
-      responseStream.emit('data',results);
+      var card = context.FormatNeo4jObject(results);
+      ConfigurationController.GetCardConfigurations(card.id)
+      .on('data',function(data){
+        card.configurations = data;
+        responseStream.emit('data',card)
+      })
     });
     queryStream.on('error',function(error){
       console.log(error)
@@ -132,8 +139,6 @@ module.exports = function(){
       var response = user.CreatedEntity(token,cardId);
       response.on('data', function (results) {
         var user = results.user;
-        console.log('tagging '+cardId);
-        console.log('with '+tags);
         tagger.TagEntity(tags,cardId)
         .on('data',function(taggingResults){
 
@@ -184,7 +189,6 @@ module.exports = function(){
       response = this.CreateCard(token,data,tags);
     }
     response.on('data',function(results){
-      console.log(parentId+'Has '+results.id)
       var query = ['Start child=node('+results.id+') , parent=node('+parentId+')',
                    'CREATE parent-[r:Has]->child',
                    'return child']
@@ -262,11 +266,11 @@ module.exports = function(){
     var user;
     var tags = {};
     var attachments ={}
+    var configurations ={}
     for(var i = 0; i < results.length;i++){
 
       var result = results[i];
       card = result.card;
-      console.log('cjiiiiiiiiiiiild')
       if(result.child){
         var parents ={}
         parents[card.id]= card;
@@ -281,15 +285,25 @@ module.exports = function(){
         var attachment = AttachmentController.FormatObject(result.attachment);
         attachments[attachment.id]=attachment;
       }
+      if(result.configuration){
+        var configuration = ConfigurationController.FormatObject(result.configuration);
+        configurations[configuration.id]=configuration;
+        console.log('config target start');
+        console.log(result.for)
+        console.log('config target end');
+      }
+      if(result.for){
+        console.log('config target start');
+        console.log(result.for)
+        console.log('config target end');
+      }
       user =result.user;
     }
-    console.log(tags)
-    card = this.FormatObject(user,tags,children,card,attachments);
+    card = this.FormatObject(user,tags,children,card,attachments,[]);//configurations);
     return card;
   };
 
-  Card.prototype.FormatObject=function(user,tags,children,card,attachments,parents){
-    console.log(card);
+  Card.prototype.FormatObject=function(user,tags,children,card,attachments,parents,configurations){
     var ret = {
       id:card.id,
       title:card.data.title,
@@ -303,6 +317,7 @@ module.exports = function(){
       isTemplate:card.data.isTemplate,
       type:card.data.type,
       attachments:[],
+      configurations:[],
       parents:[]
     };
     for(var id in parents){
@@ -316,6 +331,9 @@ module.exports = function(){
     }
     for(id in attachments){
       ret.attachments.push(id);
+    }
+    for(id in configurations){
+      //ret.configurations.push(id);
     }
     return ret;
   };
