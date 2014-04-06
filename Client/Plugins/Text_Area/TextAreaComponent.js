@@ -1,5 +1,5 @@
 'use strict';
-App.TextAreaComponent = App.BaseSectionComponent.extend({
+App.TextAreaMainComponent = App.BaseSectionComponent.extend({
   newText:null,
   hasText: Ember.computed.gt('data.length',0),
   isEditing:false,
@@ -19,6 +19,18 @@ App.TextAreaComponent = App.BaseSectionComponent.extend({
       this.get('data').objectAt(0).save();
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     }
+  },
+  willInsertElement:function(event){
+    console.log('will');
+    /*  this.get('model.attachments').forEach(function(att){
+      console.log(att.value)
+    })*/
+      },
+  didInsertElement:function(event){
+    console.log('will');
+    /*  this.get('model.attachments').forEach(function(att){
+      console.log(att.value)
+    })*/
   },
   text:function(){
     var converter = new Markdown.Converter();

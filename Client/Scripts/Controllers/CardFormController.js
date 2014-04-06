@@ -39,7 +39,7 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
                 var configuration = context.store.createRecord('configuration',{
                   position: children.get('length')+1,
                   embedded: false,
-                  'for':secondaryModel,
+                  'for':secondaryModel.get('id'),
                   configures:card
                 })
                 configuration.save().then(function(configuration){
@@ -72,5 +72,6 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
     this.set('description','');
     this.set('tags',[]);
     this.send('close');
+    this.destroy();
   }
 });

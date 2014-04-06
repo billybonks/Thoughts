@@ -84,7 +84,10 @@ module.exports = function(){
       var card = context.FormatNeo4jObject(results);
       ConfigurationController.GetCardConfigurations(card.id)
       .on('data',function(data){
-        card.configurations = data;
+        card.configurations =[]
+        for(var i = 0;i<data.length;i++){
+           card.configurations.push(data[i].id)
+        }
         responseStream.emit('data',card)
       })
     });

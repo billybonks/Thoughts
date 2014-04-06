@@ -1,12 +1,6 @@
 'use strict';
 App.ChildController = Ember.ObjectController.extend({
   isEditing:false,
-  isImage:Ember.computed.equal('model.type', 'Image'),
-  isList:Ember.computed.equal('model.type', 'List'),
-  isProperties:Ember.computed.equal('model.type', 'Properties'),
-  isTasks:Ember.computed.equal('model.type', 'Tasks'),
-  isText_Area:Ember.computed.equal('model.type', 'Text_Area'),
-  isTitled_Notes:Ember.computed.equal('model.type', 'Titled_Notes'),
   isCollapsed:Ember.computed.bool('model.collapsed'),
   actions:{
     ToggleEdit:function(){

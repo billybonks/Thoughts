@@ -10,13 +10,16 @@ module.exports = function (app) {
     var ids = [req.params.id]
     ConfigurationController.GetConfiguration(ids)
     .on('data',function(data){
+      console.log(data);
       res.status = 200;
       res.returnData ={configuration:data}
       next();
     })
+
   });
 
-  app.get('/configurations',function(req,res){
+  app.get('/configurations',function(req,res,next){
+    console.log('getting IDS')
     ConfigurationController.GetConfiguration(req.query.ids)
     .on('data',function(data){
       res.status = 200;
@@ -32,15 +35,23 @@ module.exports = function (app) {
     var target = config.configures;
     delete  config.for;
     delete config.configures;
-    console.log('CONFIGINGINGINGIGNGNINING')
     ConfigurationController.CreateCardConfiguartion(target,f,config)
     .on('data',function(data){
-
+      res.status = 200;
+      next();
     })
   });
 
 
   app.put('/configurations/:id',function(req,res,next){
-
+    var config = req.body.configuration;
+    delete config.for;
+    delete config.configures
+    ConfigurationController.UpdateConfiguration(req.params.id,config)
+    .on('data',function(data){
+      res.status = 200;
+    //  res.returnData = {configuration:data}
+      next();
+    })
   });
 };

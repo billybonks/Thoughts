@@ -1,5 +1,5 @@
 {{#if hasText}}
-  {{#each item in data}}
+  {{#each item in model.attachments}}
     {{#if isEditing}}
       {{textarea row="30" col="30" value=item.data.value style="width: 100%;height: 130px;"}}
       <button class="btn btn-default" {{action 'Update'}}>submit</button>

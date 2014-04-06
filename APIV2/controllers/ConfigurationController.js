@@ -15,15 +15,31 @@ module.exports = function(){
   ConfigurationController.prototype = new controller();
 
   ConfigurationController.prototype.GetConfiguration=function(ids){
-    var returnSream = new Stream();
+    var returnStream = new Stream();
+    var ret = [];
     var context = this;
-    this.GetNodes(ids).on('data',function(results){
-      var ret = []
-      for(var i =0;i<results.length;i++){
-        ret.push(context.FormatObject(results[i].n));
-      }
-      returnSream.emit('data',ret);
-    })
+    var counter = 0;
+    for(var i = 0; i<ids.length;i++){
+      var query = ['Start configuration=node('+ids[i]+')',
+                   'Match configuration-[c:Configured]->card',
+                   'Match configuration-[f:For]->target',
+                   'Return card,configuration,target'
+                  ];
+      console.log('executer')
+      this.executeQuery(query.join('\n'),{})
+      .on('data',function(results){
+        console.log('Got REzzz')
+        for(var i = 0;i<results.length;i++){
+          ret.push(context.FormatNeo4jObject(results[i]))
+        }
+        counter++;
+        console.log(counter+'=='+ids.length)
+        if(counter === ids.length){
+          returnStream.emit('data',ret);
+        }
+      })
+    }
+    return returnStream;
   }
 
   ConfigurationController.prototype.GetCardConfigurations=function(cardId){
@@ -68,6 +84,15 @@ module.exports = function(){
         })
       })
     })
+  }
+
+  ConfigurationController.prototype.UpdateConfiguration=function(id,data){
+  var query = ['START configuration=node('+id+')',
+               'SET configuration.embedded = {embedded},',
+               'configuration.position = {position}',
+               'RETURN configuration'];
+    var variableHash = data;
+    return this.executeQuery(query.join('\n'),variableHash)
   }
 
   ConfigurationController.prototype.CreateConfiguartionNode=function(configuration){

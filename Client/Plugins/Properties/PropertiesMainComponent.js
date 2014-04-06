@@ -1,5 +1,5 @@
 'use strict';
-App.PropertyMainComponent = App.BaseSectionComponent.extend({
+App.PropertiesMainComponent = App.BaseSectionComponent.extend({
   didInsertElement:function(){
     console.log(this.toString());
   },

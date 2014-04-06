@@ -1,5 +1,5 @@
 'use strict';
-App.PhotosMainComponent = App.BaseSectionComponent.extend({
+App.ImageMainComponent = App.BaseSectionComponent.extend({
   actions:{
 
   },

@@ -46,32 +46,16 @@
       <h4 style="float:right;">{{model.user.name}}</h4>
     </div>
     <div class="panel-body">
-      {{#if isList}}
-      {{links-main modelSateChange = 'modelSateChange' openModal='openModal' title = model.title model=model data=model.attachments card=card store=store}}
-      {{/if}}
-      {{#if isTask}}
-      {{tasks-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
-      {{/if}}
-      {{#if isDocument}}
-      {{document-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
-      {{/if}}
-      {{#if isTitled_Notes}}
-      {{question-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
-      {{/if}}
-      {{#if isProperties}}
-      {{property-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
-      {{/if}}
-      {{#if isText_Area}}
-      {{text-area modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
-      {{/if}}
-      {{#if isImage}}
-      {{photos-main modelSateChange = 'modelSateChange'  openModal='openModal' title = model.title data=model.attachments model=model store=store}}
-      {{/if}}
+      {{render-plugin model=model store=store openModal=openModal}}
       {{#if isMain}}
         <button class="btn btn-default" {{action SaveAsTemplate}}>Save as tempalte</button>
         {{view App.DropCube store=store}}
       {{/if}}
-      {{!render 'embeddedSections' model.sections}}
+      {{#unless isMain}}
+        {{#each child in model.children}}
+            {{render-plugin model=child parent=model store=store openModal=openModal}}
+        {{/each}}
+      {{/unless}}
     </div>
     <div class="panel-footer" style="background-color: white;">
       {{#each tags}}

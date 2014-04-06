@@ -1,0 +1,43 @@
+{{#if parent}}
+  {{#if isEmbedded}}
+    {{#if isImage}}
+      {{image-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isList}}
+      {{list-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isProperties}}
+      {{properties-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isTasks}}
+      {{tasks-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isText_Area}}
+      {{text_area-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isTitled_Notes}}
+      {{titled_notes-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+  {{/if}}
+  {{else}}
+    {{#if isImage}}
+      {{image-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isList}}
+      {{list-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isProperties}}
+      {{properties-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isTasks}}
+      {{tasks-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isText_Area}}
+      {{text_area-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+    {{#if isTitled_Notes}}
+      {{titled_notes-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store}}
+    {{/if}}
+{{/if}}
+
+

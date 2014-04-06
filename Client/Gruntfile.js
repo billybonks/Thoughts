@@ -4,15 +4,33 @@ module.exports = function(grunt) {
 
   //prep
   var plugins = fs.readdirSync('Plugins')
-  var ret = {plugins:[]}
+  var ret = {plugins:[],barsStart:'{{',barsEnd:'}}'}
 
   for(var i = 0; i<plugins.length;i++){
-    ret.plugins.push({name:plugins[i]})
+    ret.plugins.push({name:plugins[i],nameLower:plugins[i].toLowerCase()})
   }
   var result = fs.writeFileSync('plugins.json', JSON.stringify(ret))
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),
+    mustache_render: {
+      options: {
+        // Task global options go here
+      },
+      your_target: {
+        options: {
+          // Target specific options go here
+        },
+        files : [
+          {data: 'plugins.json',
+           template: "Scripts/Components/RenderPluginComponent.mustache",
+           dest: "Scripts/Components/RenderPluginComponent.js"},
+          {data: 'plugins.json',
+           template: "Templates/Components/render-plugin.mustache",
+           dest: "Templates/Components/render-plugin.html"}
+        ]
+      },
+    },
     emberTemplates: {
       watch: {
         options: {
@@ -95,30 +113,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    mustache_render: {
-      options: {
-        // Task global options go here
-      },
-      your_target: {
-        options: {
-          // Target specific options go here
-        },
-        files : [
-          {data: 'plugins.json',
-           template: "Scripts/Controllers/ChildController.mustache",
-           dest: "Scripts/Controllers/ChildController.js"},
-          {data: 'plugins.json',
-           template: "Scripts/Controllers/CardFormController.mustache",
-           dest: "Scripts/Controllers/CardFormController.js"},
-          {data: 'plugins.json',
-           template: "Scripts/Controllers/CardController.mustache",
-           dest: "Scripts/Controllers/CardController.js"},
-          {data: 'plugins.json',
-           template: "Scripts/Components/TitleCardComponent.mustache",
-           dest: "Scripts/Components/TitleCardComponent.js"}
-        ]
-      },
-    },
     jshint: {
       files: ['Scripts/Components/*.js','Scripts/Views/*.js', 'Scripts/Controllers/*.js', 'Scripts/Models/*.js','Scripts/Router.js','Scripts/Settings.js','Plugins/**/*.js'],
       ignores:['plugins.json'],
@@ -136,6 +130,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-html-build');
   grunt.loadNpmTasks('grunt-mustache-render');
-  grunt.registerTask('default', ['emberTemplates','concat','copy','htmlbuild','mustache_render']);//,'jshint']);
+  grunt.registerTask('default', ['mustache_render','emberTemplates','concat','copy','htmlbuild']);//,'jshint']);
 
 };

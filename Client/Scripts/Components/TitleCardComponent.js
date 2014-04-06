@@ -1,11 +1,5 @@
 'use strict';
 App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
-    isImage:Ember.computed.equal('model.type', 'Image'),
-    isList:Ember.computed.equal('model.type', 'List'),
-    isProperties:Ember.computed.equal('model.type', 'Properties'),
-    isTasks:Ember.computed.equal('model.type', 'Tasks'),
-    isText_Area:Ember.computed.equal('model.type', 'Text_Area'),
-    isTitled_Notes:Ember.computed.equal('model.type', 'Titled_Notes'),
   showControlls:false,
   actions:{
     Delete:function(){
@@ -32,6 +26,9 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
       });
     }
   },
+  cool: function(){
+    return text;
+  }.property('model'),
   mouseLeave: function(ctx){
     this.set('showControlls',false);
   },

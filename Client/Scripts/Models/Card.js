@@ -17,7 +17,7 @@ App.Card = DS.Model.extend({
     inverse: 'parents',
     async:true
   }),
-  configuration: DS.hasMany('configuration',{async:true}),
+  configurations: DS.hasMany('configuration',{async:true}),
   type: DS.attr('string'),
 });
 

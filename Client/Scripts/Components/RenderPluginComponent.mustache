@@ -1,0 +1,29 @@
+'use strict';
+App.RenderPluginComponent = Ember.Component.extend(App.PopupMixin,{
+  {{#plugins}}
+  is{{name}}:Ember.computed.equal('model.type', '{{name}}'),
+  {{/plugins}}
+  configuration:function(){
+     var parentId = parseInt(this.get('parent.id'));
+     var configs = this.get('model.configurations');
+     return configs.find(function(item, index, enumerable){
+       var f = item.get('for')
+       if(f === parentId){
+         return true;
+       }
+     },configs)
+  }.property('model.configurations.@each.for'),
+  isEmbedded:function(){
+    var configuration = this.get('configuration')
+    if(configuration){
+      console.log(configuration)
+      return configuration.get('embedded');
+    }else{
+      return false;
+    }
+  }.property('configuration')
+});
+
+/*
+
+*/

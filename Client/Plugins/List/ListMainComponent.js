@@ -1,5 +1,5 @@
 'use strict';
-App.LinksMainComponent = App.BaseSectionComponent.extend({
+App.ListMainComponent = App.BaseSectionComponent.extend({
   isEditing:false,
   title:'Links',
   actions:{

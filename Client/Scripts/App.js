@@ -71,7 +71,7 @@ App.PopupOpenerMixin = Ember.Mixin.create({
       }
       else this.send('openModal',modalName,model,secondaryModel);
     }
-  }
+  },
 });
 
 App.SubmitAttachmentMixin = Ember.Mixin.create({
@@ -91,6 +91,7 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
     });
   }
 })
+
 /*
 App.ApplicationSerializer = DS.RESTSerializer.extend({
   serializeHasMany: function(record, json, relationship) {

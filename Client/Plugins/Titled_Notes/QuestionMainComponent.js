@@ -1,5 +1,5 @@
 'use strict';
-App.QuestionMainComponent = App.BaseSectionComponent.extend({
+App.TitledNotesMainComponent = App.BaseSectionComponent.extend({
   layoutName:'cardview',
   title:'Questions',
   actions:{
