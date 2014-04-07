@@ -26,6 +26,9 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
       });
     }
   },
+  openPluginModal:function(modalName,model,secondaryModel){
+    return this.sendAction('openModal',modalName,model,secondaryModel);
+  },
   cool: function(){
     return text;
   }.property('model'),
@@ -35,9 +38,7 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
   mouseEnter: function(ctx){
     this.set('showControlls',true)
   },
-    didInsertElement:function(){
-      console.log('title controller')
-      console.log(this.get('targetObject').get('openModal'));
-      console.log(this.get('targetObject').openModalSource);
-    }
+  cardFormPackage:function(){
+    return {model:this.get('model'),isMain:this.get('isMain')}
+  }.property('model')
 });

@@ -27,7 +27,10 @@ module.exports = function(grunt) {
            dest: "Scripts/Components/RenderPluginComponent.js"},
           {data: 'plugins.json',
            template: "Templates/Components/render-plugin.mustache",
-           dest: "Templates/Components/render-plugin.html"}
+           dest: "Templates/Components/render-plugin.html"},
+          {data: 'plugins.json',
+           template: "Scripts/Controllers/CardFormController.mustache",
+           dest: "Scripts/Controllers/CardFormController.js"}
         ]
       },
     },

@@ -1,5 +1,5 @@
 'use strict';
-App.RenderPluginComponent = Ember.Component.extend(App.PopupOpenerMixin,{
+App.RenderPluginComponent = Ember.Component.extend({
   isImage:Ember.computed.equal('model.type', 'Image'),
   isList:Ember.computed.equal('model.type', 'List'),
   isProperties:Ember.computed.equal('model.type', 'Properties'),
@@ -16,6 +16,11 @@ App.RenderPluginComponent = Ember.Component.extend(App.PopupOpenerMixin,{
        }
      },configs)
   }.property('model.configurations.@each.for'),
+  actions:{
+  },
+  openModal:function(modalName,model,secondaryModel){
+    return this.get('targetObject').openPluginModal(modalName,model,secondaryModel);
+  },
   isEmbedded:function(){
     var configuration = this.get('configuration')
     if(configuration){

@@ -1,5 +1,5 @@
 'use strict';
-App.BaseSectionComponent = Ember.Component.extend(App.PopupOpenerMixin,App.SubmitAttachmentMixin,{
+App.BaseSectionComponent = Ember.Component.extend(App.SubmitAttachmentMixin,{
   section:null,
   isEditing:false,
 });

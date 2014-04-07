@@ -1,11 +1,11 @@
 'use strict';
-App.PropertiesMainComponent = App.BaseSectionComponent.extend(App.PluginPopupOpenerMixin,{
+App.PropertiesMainComponent = App.BaseSectionComponent.extend({
   didInsertElement:function(){
     console.log(this.toString());
   },
   actions:{
-    openModal:function(modalName,model){
-      return this.sendAction('openModal',modalName,model);
+    openModal:function(modalName,model,secondaryModel){
+      return this.get('targetObject').openModal(modalName,model,secondaryModel);
     }
   },
   context:function(){

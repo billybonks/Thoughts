@@ -2,14 +2,14 @@
   {{barsStart}}#if isEmbedded{{barsEnd}}
     {{#plugins}}
     {{barsStart}}#if is{{name}}{{barsEnd}}
-      {{barsStart}}{{nameLower}}-main modelSateChange = 'modelSateChange' openModal='openModal' model=model data=model.attachments store=store{{barsEnd}}
+      {{barsStart}}{{nameLower}}-main modelSateChange = 'modelSateChange' model=model data=model.attachments store=store{{barsEnd}}
     {{barsStart}}/if{{barsEnd}}
     {{/plugins}}
   {{barsStart}}/if{{barsEnd}}
   {{barsStart}}else{{barsEnd}}
   {{#plugins}}
     {{barsStart}}#if is{{name}}{{barsEnd}}
-      {{barsStart}}{{nameLower}}-main modelSateChange = 'modelSateChange' openModal=openModal model=model data=model.attachments store=store{{barsEnd}}
+      {{barsStart}}{{nameLower}}-main modelSateChange = 'modelSateChange' model=model data=model.attachments store=store{{barsEnd}}
     {{barsStart}}/if{{barsEnd}}
   {{/plugins}}
 {{barsStart}}/if{{barsEnd}}

@@ -7,7 +7,7 @@
     {{view App.PropertyView model=item}}
   {{/unless}}
 {{/each}}
-<button class="btn btn-default"{{action  'openModalPlugin' 'propertyForm' model}}> New Property </button>
+<button class="btn btn-default"{{action  'openModal' 'propertyForm' model}}> New Property </button>
 {{#if openPopup}}
   {{#view App.PopupView viewName="popup" context=context}}
     {{property-form store=store section=section  }}
