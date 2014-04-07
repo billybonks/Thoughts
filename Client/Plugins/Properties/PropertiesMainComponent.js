@@ -1,5 +1,5 @@
 'use strict';
-App.PropertiesMainComponent = App.BaseSectionComponent.extend({
+App.PropertiesMainComponent = App.BaseSectionComponent.extend(App.PluginPopupOpenerMixin,{
   didInsertElement:function(){
     console.log(this.toString());
   },

@@ -84,6 +84,7 @@ module.exports = function(){
         })
       })
     })
+    return responseStream;
   }
 
   ConfigurationController.prototype.UpdateConfiguration=function(id,data){

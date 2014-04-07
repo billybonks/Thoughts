@@ -1,5 +1,5 @@
 'use strict';
-App.RenderPluginComponent = Ember.Component.extend(App.PopupMixin,{
+App.RenderPluginComponent = Ember.Component.extend(App.PopupOpenerMixin,{
   isImage:Ember.computed.equal('model.type', 'Image'),
   isList:Ember.computed.equal('model.type', 'List'),
   isProperties:Ember.computed.equal('model.type', 'Properties'),

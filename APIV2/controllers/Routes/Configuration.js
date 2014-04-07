@@ -29,7 +29,6 @@ module.exports = function (app) {
   });
 
   app.post('/configurations',function(req,res,next){
-    console.log('CONFIGINGINGINGIGNGNINING')
     var config = req.body.configuration;
     var f = config.for;
     var target = config.configures;
@@ -37,7 +36,13 @@ module.exports = function (app) {
     delete config.configures;
     ConfigurationController.CreateCardConfiguartion(target,f,config)
     .on('data',function(data){
+      console.log('wrtrrrrrrrrrrrrffffffffffff')
+      config.id = data[0].config.id
+      config.for = f;
+      config.configures = target;
+      console.log(data[0].config.id)
       res.status = 200;
+      res.returnData ={configuration:config}
       next();
     })
   });

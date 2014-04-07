@@ -72,6 +72,20 @@ App.PopupOpenerMixin = Ember.Mixin.create({
       else this.send('openModal',modalName,model,secondaryModel);
     }
   },
+  openModalFunction:function(modalName,model,secondaryModel){
+    if(this.sendAction){
+      return this.sendAction('openModalSource',modalName,model,secondaryModel);
+    }
+    else this.send('openModalSource',modalName,model,secondaryModel);
+  }
+});
+
+App.PluginPopupOpenerMixin = Ember.Mixin.create({
+  actions:{
+    openModalPlugin:function(modalName,model,secondaryModel){
+      this.get('targetObject').openModalFunction.call(this.get('targetObject'),modalName,model,secondaryModel)
+    }
+  }
 });
 
 App.SubmitAttachmentMixin = Ember.Mixin.create({

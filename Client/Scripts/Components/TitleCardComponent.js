@@ -34,5 +34,10 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
   },
   mouseEnter: function(ctx){
     this.set('showControlls',true)
-  }
+  },
+    didInsertElement:function(){
+      console.log('title controller')
+      console.log(this.get('targetObject').get('openModal'));
+      console.log(this.get('targetObject').openModalSource);
+    }
 });
