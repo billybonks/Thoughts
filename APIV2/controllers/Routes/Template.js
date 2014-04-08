@@ -1,5 +1,4 @@
 var TemplateController = require('./../TemplateController')();//TemplateRoute
-var SectionController = require('./../SectionController')();//TemplateRoute
 var CardController = require('./../CardController')();//TemplateRoute
 module.exports = function (app) {
   'use strict';
@@ -29,38 +28,14 @@ module.exports = function (app) {
   });
 
   app.post('/templates',function(req,res,next){
-    var template = req.body.template;
+    var template = req.body.template.basedOff;
+    console.log(template)
     template.isTemplate = true;
     template.onMainDisplay = true;
-    var sections = template.sectionsIn;
-    var tags = template.tags;
-    delete template.sections;
-    delete template.sectionsIn;
-    delete template.tags;
-
-    var responseStream = SectionController.GetSections(sections);
-    responseStream.on('data',function(results){
-      responseStream = CardController.CreateCard(req.headers.authorization,template,[]);
-      responseStream.on('data',function(card){
-        console.log('Card Created Sections')
-        console.log(results)
-        var counter = 0;
-        for(var key in results){
-          if(results[key]){
-            var resultStream = SectionController.DuplicateAndLink(results[key],card.id,req.headers.authorization);
-            resultStream.on('data',function(section){
-              counter++;
-              if(counter === results.length){
-                res.status = 200;
-                res.returnData ={}
-                next();
-              }
-            });
-          }
-        }
-      });
-
-    });
+    CardController.GetCard()
+    /*responseStream = CardController.CreateCard(req.headers.authorization,template,[])
+    .on('data',function(card){
+    });*/
   });
 
 

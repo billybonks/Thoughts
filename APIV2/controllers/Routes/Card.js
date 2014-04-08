@@ -1,5 +1,4 @@
 var CardController= require('./../CardController')();
-var sectionController = require('./../SectionController')();
 
 module.exports = function (app) {
   'use strict';
@@ -25,7 +24,7 @@ module.exports = function (app) {
       var counter = 0;
       var returnArray = []
       for(var i = 0;i <ids.length;i++){
-        CardController.GetCard(req.headers.authorization,ids[i])
+        CardController.GetCard(ids[i])
         .on('data',function(card){
           counter++;
           returnArray.push(card);
@@ -49,7 +48,7 @@ module.exports = function (app) {
   app.get('/cards/:id',function (req,res,next){
 
     console.log('getting someeeeeeeeeeeeeeeeeee')
-    var response = CardController.GetCard(req.headers.authorization,req.params.id);
+    var response = CardController.GetCard(req.params.id);
     response.on('data',function(card){
       res.status = 200;
       res.returnData ={card:card}

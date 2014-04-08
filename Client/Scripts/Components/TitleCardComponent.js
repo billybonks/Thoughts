@@ -24,7 +24,14 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
       this.get('store').find('Card',this.get('model.id')).then(function(card){
         card.save();
       });
-    }
+    },
+    SaveAsTemplate:function(){
+      var template = {
+        basedOff:this.get('model').get('id'),
+      }
+      template = this.store.createRecord('template', template);
+      template.save();
+    },
   },
   openPluginModal:function(modalName,model,secondaryModel){
     return this.sendAction('openModal',modalName,model,secondaryModel);

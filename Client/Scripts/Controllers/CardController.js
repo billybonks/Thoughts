@@ -13,18 +13,6 @@ App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
     },
     Share:function(){
     },
-    SaveAsTemplate:function(){
-      var template = {
-        title:this.get('model').get('title'),
-        sectionsIn: this.get('model').get('sections').getEach('id')
-      }
-      template = this.store.createRecord('template', template);
-      var otherSections =this.get('model').get('sections')
-      template.get('sections').then(function(sections){
-        sections.pushObjects(otherSections);
-        template.save();
-      })
-    },
     CreateSection: function(){
       console.log(this.get('model').get('id'))
       var section = this.store.createRecord('section', {

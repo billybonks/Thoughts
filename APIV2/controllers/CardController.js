@@ -50,7 +50,7 @@ module.exports = function(){
       var ret = [];
       for(var c=0;c<cardsCount;c++){
         var id = results[c].card.id;
-        var resultStream = context.GetCard.call(context,token,id);
+        var resultStream = context.GetCard.call(context,id);
         resultStream.on('data',function(card){
           ret.push(card);
           counter++;
@@ -63,7 +63,7 @@ module.exports = function(){
     return responseStream;
   };
 
-  Card.prototype.GetCard=function (token,id){
+  Card.prototype.GetCard=function (id){
     var context = this;
     var query=[
       'Start card=node('+id+')',
@@ -71,8 +71,7 @@ module.exports = function(){
       'OPTIONAL MATCH  (tag)-[t:Tagged]->(card)',
       'OPTIONAL MATCH  (attachment)-[a:Attached]->(card)',
       'OPTIONAL MATCH  (child)<-[h:Has]-(card)',
-      'WHERE user.session_token = {token}',
-      'AND not(has(child.isDeleted))',
+      'WHERE not(has(child.isDeleted))',
       'RETURN card,user,child,tag,attachment'//user,card,attachment'
     ];
     var variableHash = {token:token};
