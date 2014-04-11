@@ -79,19 +79,36 @@ module.exports = function (app) {
     delete card.parents;
     delete card.children;
     var response;
-    if(parents.length !== 0){
-      response = CardController.CreateSubCard(req.headers.authorization,card,tags,card.template,parents[0]);
-    }else{
-      if(!isNaN(card.type)){
-        response = CardController.DuplicateCard(card.type,req.headers.authorization,true,null,{isTemplate:false,onMainDisplay:true,title:card.title});
-      }else{
-        response = CardController.CreateCard(req.headers.authorization,card,tags);
+    if(!isNaN(card.type)){
+      var template = card.type;
+      delete card.type;
+      var props = {isTemplate:false,onMainDisplay:true,title:card.title}
+      if(parents.length !== 0){
+        props.onMainDisplay = false;
       }
+      response = CardController.DuplicateCard(template,req.headers.authorization,true,null,props);
+    }else{
+      response = CardController.CreateCard(req.headers.authorization,card,tags);
     }
     response.on('data',function(results){
-      res.status = 200;
-      res.returnData ={card:results}
-      next();
+      var card = results;
+      if(parents.length !== 0){
+        CardController.LinkChild(results.id,parents[0]).on('data',function(){
+          TagsController.TagEntity(tags,card.id).on('data',function(){
+            for(var id in tags){
+              card.tags.push(tags[id]);
+            }
+            card.parents = parents;
+            res.status = 200;
+            res.returnData ={card:card}
+            next();
+          });
+        });
+      }else{
+        res.status = 200;
+        res.returnData ={card:card}
+        next();
+      }
     });
     response.on('error',function(error){
       res.error = error;

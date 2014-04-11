@@ -19,6 +19,7 @@ module.exports = function(){
   Template.prototype.GetTemplates = function(auth){
     var query = ['match (template:Card)',
                  'where template.isTemplate = true',
+                 'AND not(has(template.isDeleted))',
                  'return template'];
     return this.executeQuery(query.join('\n'),{});
   };

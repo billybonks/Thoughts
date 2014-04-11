@@ -73,6 +73,17 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
       }
     });
   },
+  SetTags:function(card,qTags){
+  var context  = this;
+  return new Promise(function(resolve,reject){
+    context.store.find('tag',{names:qTags}).then(function(result){
+        card.get('tags').then(function(tags){
+          tags.pushObjects(result);
+          resolve();
+        })
+    });
+  });
+  },
   GetNewCard:function(onMainDisplay,parent,qTags){
     var context = this;
     return new Promise(function(resolve, reject) {
@@ -85,15 +96,10 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
       });
       cardPackage.parent = parent;
       cardPackage.card = card;
-      resolve(cardPackage);
-      /*card.get('tags').then(function(tags){
-        context.store.find('tag',{ids:[10,48]}).then(function(result){
-          tags.pushObjects(result);
-          //tags.pushObject(result);
-
-        });
-      });*/
-    });//{names:qTags}
+      context.SetTags.call(context,card,qTags).then(function(){
+       resolve(cardPackage);
+      });
+    });
   },
   CleanUp:function(){
     this.set('title','');

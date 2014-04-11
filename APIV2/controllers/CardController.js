@@ -177,25 +177,17 @@ module.exports = function(){
     return returnStream;
   };
 
-  Card.prototype.CreateSubCard = function(token,data,tags,templateId,parentId){
+  Card.prototype.LinkChild = function(childId,parentId){
     var response;
     var returnStream = new Stream();
     var context = this;
-    if(templateId !== -1){
-      response = this.CreateCardFromTemplate(token,data,tags,templateId);
-    }else{
-      response = this.CreateCard(token,data,tags);
-    }
-    response.on('data',function(results){
-      var query = ['Start child=node('+results.id+') , parent=node('+parentId+')',
+      var query = ['Start child=node('+childId+') , parent=node('+parentId+')',
                    'CREATE parent-[r:Has]->child',
                    'return child']
       context.executeQuery(query.join('\n'),{})
       .on('data',function(data){
-        results.parents = [parentId];
-        returnStream.emit('data',results);
-      })
-    })
+        returnStream.emit('data',data);
+      });
     return returnStream;
   };
 
@@ -240,11 +232,12 @@ module.exports = function(){
       delete card.parents;
       delete card.tags;
 
+      var newAttachments = {};
+      var newChildren = {};
+      var newConfiguration = {};
+
       for(var property in variablesToReplace){
-        console.log(property);
         if(card.hasOwnProperty(property)){
-          console.log(property);
-          console.log(variablesToReplace[property]);
           card[property] = variablesToReplace[property];
         }
       }
@@ -265,18 +258,18 @@ module.exports = function(){
           }
           tempResponse.on('CardCreated',function(CCret){
             var counter = 0;
-            var size = 0;
-            for (var key in attachments) {
-              if (attachments.hasOwnProperty(key)) size++;
-            }
-            if(size === 0){
+            if(attLength === 0){
               tempResponse.emit('attachments',root);
             }
             if(duplicateAttatchments){
               for(var id in attachments){
                 AttachmentController.createAttachment(attachments[id].data,token,[],root.id).on('data',function(results){
                   counter++;
-                  if(counter == size){
+                  console.log(results);
+                  var attachment = AttachmentController.FormatObject(results[0].attachment,root.id)
+
+                  newAttachments[attachment.id] = attachment;
+                  if(counter == attLength){
                     tempResponse.emit('attachments',root)
                   }
                 });
@@ -297,6 +290,7 @@ module.exports = function(){
                 delete configurations[config].id;
                 ConfigurationController.CreateCardConfiguartion(root.id,parentId,configurations[config])
                 .on('data',function(results){
+                  newConfiguration[results.id] = results
                   tempResponse.emit('configuration',results)
                 })
                 // }
@@ -311,11 +305,28 @@ module.exports = function(){
               resultStream.emit('data',root);
             }
             for(var child in children){
-              context.DuplicateCard.call(context,child,token,true,root.id,{isTemplate:false,onMainDisplay:false}).on('data',function(data){
+              context.DuplicateCard.call(context,child,token,true,root.id,{isTemplate:false,onMainDisplay:false}).on('data',function(results){
                 counter++;
-                console.log(counter +'=='+ childLength)
+                newChildren[results.id] = results;
+
                 if(counter == childLength){
-                  resultStream.emit('data',root);
+                  var card = {id:root.id};
+                  delete root.id;
+
+                  card.data = root;
+                  if(parentId == null){
+                    parentId = {};
+                  }else{
+                    parentId[parentId] = {};
+                  }
+                  console.log(token);
+                  context.user.GetUser(token).on('data',function(results){
+                    console.log('user')
+                    console.log(results);
+                    card = context.FormatObject(context.user.FormatObject(results[0].user),tags,newChildren,card,newAttachments,parentId,newConfiguration);
+                    console.log(card);
+                    resultStream.emit('data',card);
+                  })
                 }
               });
             }
