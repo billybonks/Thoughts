@@ -2,7 +2,7 @@
 App.ApplicationController = Ember.Controller.extend(App.PopupOpenerMixin,{
     currentDrag: null,
     menuOpen:false,
-    errors:Ember.A([]),
+    notifications:Ember.A([]),
     actions: {
         ClearToken: function () {
             $.cookie(AppSettings.CookieName, '', { expires: -1 });

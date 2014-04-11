@@ -1,6 +1,7 @@
 'use strict';
 App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
   showControlls:false,
+  test:false,
   actions:{
     Delete:function(){
       this.get('store').find('card', this.get('model').get('id')).then(function(rec){
@@ -30,7 +31,13 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
         basedOff:this.get('model').get('id'),
       }
       template = this.store.createRecord('template', template);
-      template.save();
+      var context = this;
+      var promise = template.save();
+      promise.then(function(template){
+        context.sendAction('CreateNotification','Template saved','success')
+      },function(error){
+        context.sendAction('CreateNotification','Template couldnt be saved','danger')
+      });
     },
   },
   openPluginModal:function(modalName,model,secondaryModel){
@@ -46,6 +53,10 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
     this.set('showControlls',true)
   },
   cardFormPackage:function(){
-    return {model:this.get('model'),isMain:this.get('isMain')}
+    var cardPackage = {}
+    cardPackage.parent = this.get('model');
+    cardPackage.embedded = this.get('isMain') ? false : true;
+    cardPackage.onMainDisplay = false;
+    return cardPackage;
   }.property('model')
 });

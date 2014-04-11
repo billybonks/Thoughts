@@ -36,8 +36,8 @@
     <h2 id="Timer" style="margin:0px"></h2>
   </div>
 </div>
-{{#each error in errors}}
-<div class="alert alert-info"><b>OOPS,</b>{{error}}</div>
+{{#each notification in notifications}}
+<div {{bind-attr class="notification.level"}}>{{notification.message}}</div>
 {{/each}}
 {{!#view App.DropDelete}}
 {{outlet}}

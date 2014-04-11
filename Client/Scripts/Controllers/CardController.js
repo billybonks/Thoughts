@@ -1,6 +1,9 @@
 'use strict';
 App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
   actions:{
+    CreateNotification:function(message,level){
+      this.send('notification',message,level);
+    },
     Delete:function(){
       this.get('store').find('card', this.get('model').get('id')).then(function(rec){
         rec.deleteRecord();
@@ -55,7 +58,7 @@ App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin,{
   var tit = this.get('model').get('title');
   return '';
 }.observes('model.attachments.@each.type'),
-                                                   position:function(){
+ position:function(){
   return 'left:' + this.get('model').get('left') + 'px;top:' + this.get('model').get('top') + 'px';
 }.property('model.left'),
 

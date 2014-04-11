@@ -54,7 +54,9 @@ App.OnErrorMixin = Ember.Mixin.create({
     var model = model
     function onError(reason){
       context.send('error',reason);
-      model.rollback();
+      if(model){
+        model.rollback();
+      }
     }
     return onError;
   }

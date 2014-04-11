@@ -14,10 +14,11 @@ module.exports = function(){
 
   Template.prototype = new controller();
 
+
   //todo: return user and section
   Template.prototype.GetTemplates = function(auth){
     var query = ['match (template:Card)',
-                 'where has(template.isTemplate)',
+                 'where template.isTemplate = true',
                  'return template'];
     return this.executeQuery(query.join('\n'),{});
   };

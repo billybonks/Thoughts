@@ -176,8 +176,7 @@ module.exports = function(){
   Attachment.prototype.FormatObject= function(dbAtt,sectionId){
     return {
       id:dbAtt.id,
-      data:dbAtt.data,
-      section:sectionId
+      data:dbAtt.data
     }
   }
 

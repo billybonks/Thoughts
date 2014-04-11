@@ -28,6 +28,15 @@ module.exports = function (app) {
 
   });*/
 
+  app.get('/tags/:id',function(req,res,next){
+    TagController.GetTags([req.params.id])
+    .on('data',function(data){
+      res.status = 200;
+      res.returnData ={tags:data[0]}
+      next()
+    })
+  });
+
   app.get('/tags',function(req,res,next){
 
     if(req.query.names || req.query.ids){

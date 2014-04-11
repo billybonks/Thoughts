@@ -13,7 +13,7 @@ module.exports = function (app) {
     // var response = CardsRoute.CreateCard(req.headers['authorization'],,req.body.template.tagsIn)
   });
 
-  app.get('/templates',function(req,res){
+  app.get('/templates',function(req,res,next){
     var GetObject = TemplateController.GetObject;
     TemplateController.GetTemplates(req.headers.authorization).on('data',function(results){
       var ret = [];
@@ -28,14 +28,33 @@ module.exports = function (app) {
   });
 
   app.post('/templates',function(req,res,next){
-    var template = req.body.template.basedOff;
-    console.log(template)
-    template.isTemplate = true;
-    template.onMainDisplay = true;
-    CardController.GetCard()
-    /*responseStream = CardController.CreateCard(req.headers.authorization,template,[])
-    .on('data',function(card){
-    });*/
+    var baseCard = req.body.template.basedOff;
+    CardController.GetCard(baseCard).on('data',function(card){
+      var children = card.children;
+      var attachments = card.attachments;
+      var tags = card.tags;
+
+      delete card.user;
+      delete card.id;
+      delete card.configuration;
+      delete card.attachments;
+      delete card.children;
+      delete card.parents;
+      delete card.tags;
+
+      card.isTemplate = true;
+      card.onMainDisplay = false;
+
+
+      console.log(req.headers.authorization);
+      CardController.DuplicateCard(baseCard,req.headers.authorization,true,null,{isTemplate:true,onMainDisplay:true}).on('data',function(data){
+        console.log('return INFO is')
+        console.log(data);
+        res.status = 200;
+        res.returnData={card:data};
+        next();
+      });
+    });
   });
 
 

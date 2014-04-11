@@ -54,9 +54,10 @@ module.exports = function(){
     .on('data',function(results){
       var createCounter = 0;
       var returnCounter = 0;
-
+      console.log(results);
       for(var i = 0; i<results.length;i++){
-        var rTag = results[0].tag;
+        var rTag = results[i].tag;
+        console.log(rTag);
         nameDictionary[rTag.data.title] = context.FormatObject(rTag);
       }
       for(var key in nameDictionary){
@@ -120,7 +121,6 @@ module.exports = function(){
   }
 
   TagsController.prototype.FormatObject = function(tag){
-    console.log(tag)
     return {
       id:tag.id,
       title:tag.data.title,

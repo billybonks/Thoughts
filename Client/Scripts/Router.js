@@ -22,15 +22,46 @@ App.Router.map(function () {
 App.ApplicationRoute = Ember.Route.extend({
   actions: {
     openModal: function(modalName, model,secondaryModel) {
+      var context = this;
       var controller = this.controllerFor(modalName)
-      controller.set('model', model);
-      if(secondaryModel){
-        controller.set('secondaryModel', secondaryModel);
+      if(modalName == 'cardForm'){
+
+        console.log('setting up the form :P');
+          new Promise(function(resolve, reject){
+          var xhr = new XMLHttpRequest();
+
+          xhr.open('GET',  window.AppSettings.WebserviceURL+'/templates');
+          xhr.onreadystatechange = handler;
+          xhr.responseType = 'json';
+          xhr.setRequestHeader('Accept', 'application/json');
+          xhr.send();
+          function handler() {
+            if (this.readyState === this.DONE) {
+              if (this.status === 200) {
+                resolve(Ember.A(this.response.templates));
+              }
+            }
+          }
+        }).then(function(templates){
+          controller.set('model', templates);
+          controller.set('types',controller.get('typesRaw').concat(templates));
+          controller.set('secondaryModel', secondaryModel);
+          context.render(modalName, {
+            into: 'application',
+            outlet: 'modal'
+          });
+        })
+      }else{
+        controller.set('model', model);
+        if(secondaryModel){
+          controller.set('secondaryModel', secondaryModel);
+        }
+
+        return this.render(modalName, {
+          into: 'application',
+          outlet: 'modal'
+        });
       }
-      return this.render(modalName, {
-        into: 'application',
-        outlet: 'modal'
-      });
     },
 
     closeModal: function() {
@@ -40,9 +71,20 @@ App.ApplicationRoute = Ember.Route.extend({
       });
     },
     error:function(reason){
-      this.get('controller').get('errors').pushObject('something bad happend')
-      console.log('ERRRRRRORRRRR');
+      this.notification(reason,'error');
+    },
+    notification:function(message,level){
+      var notification = {message:message,level:"alert alert-"+level}
+      this.get('controller').get('notifications').pushObject(notification)
+      setTimeout(this.removeNotification(this.get('controller')),3000);
     }
+  },
+  removeNotification:function(controller){
+    var controller = controller;
+    function removeNotif(){
+      controller.set('notifications',Ember.A([]))
+    }
+    return removeNotif;
   },
   model: function () {
     var sessionToken = $.cookie(AppSettings.CookieName);
@@ -73,23 +115,7 @@ App.CardsIndexRoute = Ember.Route.extend({
     return this.modelFor('cards');
   },
   setupController: function(controller, model) {
-
-    var ret =this.store.all('template').map(function(item, index, enumerable){
-      return {id:item.get('id'),title:item.get('title')}
-    });
-    ret.push({title:'None',id:-1})
-    ret.sort(function compare(a, b) {
-      if (a.id<b.id){
-        return -1;
-      }
-      if (a.id>b.id){
-        return 1;
-      }
-      // a must be equal to b
-      return 0;
-    })
     controller.set('content',model);
-    controller.set('templateArr',ret);
   }
 });
 

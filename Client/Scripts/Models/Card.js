@@ -6,6 +6,7 @@ App.Card = DS.Model.extend({
   user: DS.belongsTo('user', { async: true }),
   attachments: DS.hasMany('attachment',{async:true}),
   tags:DS.hasMany('tag',{async:true}),
+  tagsIn:DS.attr(),
   onMainDisplay:DS.attr('boolean'),
   template: DS.attr(),
   isTemplate:DS.attr('boolean'),

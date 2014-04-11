@@ -16,24 +16,23 @@ module.exports = function(){
 
   ConfigurationController.prototype.GetConfiguration=function(ids){
     var returnStream = new Stream();
-    var ret = [];
+    var ret = {};
     var context = this;
     var counter = 0;
     for(var i = 0; i<ids.length;i++){
       var query = ['Start configuration=node('+ids[i]+')',
-                   'Match configuration-[c:Configured]->card',
-                   'Match configuration-[f:For]->target',
+                   'Match configuration-[c:Configures]->card',
+                   'Match configuration-[f:Targets]->target',
                    'Return card,configuration,target'
                   ];
-      console.log('executer')
       this.executeQuery(query.join('\n'),{})
       .on('data',function(results){
-        console.log('Got REzzz')
         for(var i = 0;i<results.length;i++){
-          ret.push(context.FormatNeo4jObject(results[i]))
+          var config = context.FormatNeo4jObject(results[i]);
+          ret[config.id]=config;
         }
         counter++;
-        console.log(counter+'=='+ids.length)
+       // console.log(counter+'=='+ids.length)
         if(counter === ids.length){
           returnStream.emit('data',ret);
         }
@@ -46,17 +45,19 @@ module.exports = function(){
     var returnStream = new Stream();
     var context = this;
     var query = ['Start card=node('+cardId+')',
-                 'Match configuration-[c:Configured]->card',
-                 'Match configuration-[f:For]->target',
+                 'Match configuration-[c:Configures]->card',
+                 'Match configuration-[f:Targets]->target',
                  'Return card,configuration,target'
                 ];
     this.executeQuery(query.join('\n'),{})
     .on('data',function(results){
-      var configurations =[]
+      var configurations ={}
       for(var i = 0;i<results.length;i++){
-        configurations.push(context.FormatNeo4jObject(results[i]))
+        var config = context.FormatNeo4jObject(results[i]);
+        configurations[config.id]=config;
       }
-      console.log(configurations);
+    //  console.log('awadads')
+    //  console.log(configurations)
       returnStream.emit('data',configurations)
     })
     return returnStream;
@@ -71,21 +72,24 @@ module.exports = function(){
     var context = this;
     this.CreateConfiguartionNode(configuration)
     .on('data',function(data){
-      console.log('config node created');
+    //  console.log('config node created');
+    //  console.log(data)
       var configNodeId = data[0].config.id;
+    //  console.log('targetId = '+ targetId)
       context.LinkConfigurationTarget.call(context,targetId,configNodeId)
       .on('data',function(data){
-        console.log('LinkConfigurationTarget');
+     //   console.log('LinkConfigurationTarget');
         context.LinkConfigurationFor.call(context,bindingCardId,configNodeId)
         .on('data',function(data){
-          console.log('LinkConfigurationFor');
-          console.log(data);
+      //    console.log('LinkConfigurationFor');
+       //   console.log(data);
           responseStream.emit('data',data);
         })
       })
     })
     return responseStream;
   }
+
 
   ConfigurationController.prototype.UpdateConfiguration=function(id,data){
   var query = ['START configuration=node('+id+')',
@@ -105,7 +109,7 @@ module.exports = function(){
   ConfigurationController.prototype.LinkConfigurationTarget=function(targetId,configNodeId){
     var configurationCardRelationShip =  [
       'START config=node('+configNodeId+'), target=node('+targetId+')',,
-      'CREATE config-[r:Configured]->target',
+      'CREATE config-[r:Configures]->target',
       'RETURN config,target'
     ];
     return this.executeQuery(configurationCardRelationShip.join('\n'),{})
@@ -114,7 +118,7 @@ module.exports = function(){
   ConfigurationController.prototype.LinkConfigurationFor=function(bindingCard,configNodeId){
     var configurationCardRelationShip =  [
       'START config=node('+configNodeId+'), target=node('+bindingCard+')',,
-      'CREATE config-[r:For]->target',
+      'CREATE config-[r:Targets]->target',
       'RETURN config,target'
     ];
     return this.executeQuery(configurationCardRelationShip.join('\n'),{})

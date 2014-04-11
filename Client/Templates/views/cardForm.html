@@ -5,12 +5,8 @@
     {{input type="text" value=title class="form-control"  id="title" placeholder="Enter title"}}
   </div>
   <div class="form-group">
-    <label for="title">Template</label>
-    {{view Ember.Select class="form-control" content=model optionValuePath="content.id" optionLabelPath="content.title" value=selectedTemplate}}
-  </div>
-  <div class="form-group">
     <label for="type">Type</label>
-    {{view Ember.Select content=types selectionBinding=selectedType class="form-control"}}
+    {{view Ember.Select content=types optionValuePath="content.id" optionLabelPath="content.title"  value=selectedType class="form-control"}}
   </div>
   <div class="form-group">
     <label for="tags">Tags</label>

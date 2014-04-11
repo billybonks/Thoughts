@@ -10,9 +10,12 @@ module.exports = function (app) {
     var ids = [req.params.id]
     ConfigurationController.GetConfiguration(ids)
     .on('data',function(data){
-      console.log(data);
+      var ret = []
+      for(var key in data){
+        ret.push(data[key]);
+      }
       res.status = 200;
-      res.returnData ={configuration:data}
+      res.returnData ={configuration:ret}
       next();
     })
 
@@ -20,10 +23,14 @@ module.exports = function (app) {
 
   app.get('/configurations',function(req,res,next){
     console.log('getting IDS')
+    var ret = []
     ConfigurationController.GetConfiguration(req.query.ids)
     .on('data',function(data){
+      for(var key in data){
+        ret.push(data[key]);
+      }
       res.status = 200;
-      res.returnData ={configuration:data}
+      res.returnData ={configuration:ret}
       next();
     })
   });

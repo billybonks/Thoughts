@@ -74,19 +74,15 @@ module.exports = function(){
       'WHERE not(has(child.isDeleted))',
       'RETURN card,user,child,tag,attachment'//user,card,attachment'
     ];
-    var variableHash = {token:token};
-    var queryStream = this.executeQuery(query.join('\n'),variableHash);
+    var queryStream = this.executeQuery(query.join('\n'),{});
     var responseStream = new Stream();
     queryStream.on('data',function(results){
-      console.log('init results')
-      console.log(results);
       var card = context.FormatNeo4jObject(results);
-      ConfigurationController.GetCardConfigurations(card.id)
+
+      ConfigurationController.GetCardConfigurations(card.card.id)
       .on('data',function(data){
         card.configurations =[]
-        for(var i = 0;i<data.length;i++){
-           card.configurations.push(data[i].id)
-        }
+        card.configurations = data;
         responseStream.emit('data',card)
       })
     });
@@ -204,33 +200,131 @@ module.exports = function(){
   };
 
 
+  Card.prototype.LinkParentToChild=function(childId,parentId){
+    var returnStream = new Stream();
+    var query = ['Start child=node('+childId+') , parent=node('+parentId+')',
+                 'CREATE parent-[r:Has]->child',
+                 'return child']
+    this.executeQuery(query.join('\n'),{})
+    .on('data',function(data){
+      returnStream.emit('data',data);
+    })
+    return returnStream;
+  }
   Card.prototype.DeleteCard=function (token, id){
     var responseStream = this.DeleteEntity(id);
     return responseStream;
   };
 
-  Card.prototype.DuplicateCard = function(data,sections,tags,token){
+  Card.prototype.DuplicateCard = function(baseCard,token,duplicateAttatchments,parentId,variablesToReplace){
     var resultStream = new Stream();
-    var responseStream = this.sections.GetSections(sections);
-    var CardsRoute = this;
-    var SectionRoute = this.sections;
+    var context = this;
 
-    responseStream.on('data',function(results){
-      responseStream = CardsRoute.CreateCard.call(CardsRoute,token,data,tags);
-      responseStream.on('data',function(card){
-        var counter = 0;
-        for(var i =0;i<results.length;i++){
-          resultStream = SectionRoute.DuplicateAndLink.call(SectionRoute,results[i],card.id,token);
-          resultStream.on('data',function(section){
-            counter++;
-            if(counter === results.length){
-              resultStream.emit('data',{});
+    this.GetCard(baseCard).on('data',function(payload){
+
+      var children = payload.children;
+      var attachments = payload.attachments;
+      var configurations = payload.configurations;
+
+
+      var card = context.FormatObject(payload.user,payload.tags,payload.children,payload.card,payload.attachments,payload.parents,payload.configurations)
+      var attLength = card.attachments.length;
+      var childLength = card.children.length;
+      var tags = card.tags;
+
+      delete card.user;
+      delete card.id;
+      delete card.configurations;
+      delete card.attachments;
+      delete card.children;
+      delete card.parents;
+      delete card.tags;
+
+      for(var property in variablesToReplace){
+        console.log(property);
+        if(card.hasOwnProperty(property)){
+          console.log(property);
+          console.log(variablesToReplace[property]);
+          card[property] = variablesToReplace[property];
+        }
+      }
+      console.log(card)
+
+      context.CreateCard(token,card,tags).on('data',function(root){
+        TagsController.TagEntity(tags,root.id).on('data',function(data){
+          var tempResponse = new Stream();
+          var counter = 0;
+          if(parentId){
+            context.LinkParentToChild(root.id,parentId).on('data',function(data){
+              tempResponse.emit('CardCreated',data);
+            });
+          }else{
+            setTimeout(function() {
+              tempResponse.emit('CardCreated',data);
+            }, 100,tempResponse);
+          }
+          tempResponse.on('CardCreated',function(CCret){
+            var counter = 0;
+            var size = 0;
+            for (var key in attachments) {
+              if (attachments.hasOwnProperty(key)) size++;
+            }
+            if(size === 0){
+              tempResponse.emit('attachments',root);
+            }
+            if(duplicateAttatchments){
+              for(var id in attachments){
+                AttachmentController.createAttachment(attachments[id].data,token,[],root.id).on('data',function(results){
+                  counter++;
+                  if(counter == size){
+                    tempResponse.emit('attachments',root)
+                  }
+                });
+              }
+            }else{
+              tempResponse.emit('attachments',root);
             }
           });
-        }
+          tempResponse.on('attachments',function(attRet){
+            var deepDiving = false;
+            if(parentId){
+              for(var config in configurations){
+                //if(parentId == config.for){
+                deepDiving = true;
+                var configures = configurations[config].configures;
+                delete configurations[config].for;
+                delete configurations[config].configures;
+                delete configurations[config].id;
+                ConfigurationController.CreateCardConfiguartion(root.id,parentId,configurations[config])
+                .on('data',function(results){
+                  tempResponse.emit('configuration',results)
+                })
+                // }
+                //ConfigurationController.DuplicateConfiguration(configurations[i],parentId,root.id)
+              }
+            }
+            tempResponse.emit('configuration',{})
+          });
+
+          tempResponse.on('configuration',function(ConfigRet){
+            if(childLength === 0){
+              resultStream.emit('data',root);
+            }
+            for(var child in children){
+              context.DuplicateCard.call(context,child,token,true,root.id,{isTemplate:false,onMainDisplay:false}).on('data',function(data){
+                counter++;
+                console.log(counter +'=='+ childLength)
+                if(counter == childLength){
+                  resultStream.emit('data',root);
+                }
+              });
+            }
+          });
+        });
       });
 
-    });
+    })
+    return resultStream;
   };
 
   Card.prototype.UpdateCard=function (data,id){
@@ -290,18 +384,22 @@ module.exports = function(){
       if(result.configuration){
         var configuration = ConfigurationController.FormatObject(result.configuration);
         configurations[configuration.id]=configuration;
-        console.log('config target start');
-        console.log(result.for)
-        console.log('config target end');
       }
       if(result.for){
-        console.log('config target start');
-        console.log(result.for)
-        console.log('config target end');
+
       }
       user =result.user;
     }
-    card = this.FormatObject(user,tags,children,card,attachments,[]);//configurations);
+    card = {
+      user:user,
+      card:card,
+      tags:tags,
+      attachments:attachments,
+      configurations:[],
+      parents:[],
+      children:children
+    }
+    //card = this.FormatObject(user,tags,children,card,attachments,[]);//configurations);
     return card;
   };
 
@@ -335,7 +433,7 @@ module.exports = function(){
       ret.attachments.push(id);
     }
     for(id in configurations){
-      //ret.configurations.push(id);
+      ret.configurations.push(id);
     }
     return ret;
   };

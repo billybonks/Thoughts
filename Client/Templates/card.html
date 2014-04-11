@@ -2,11 +2,11 @@
 <div class="container">
   <div class="col-md-12">
     <div class="col-md-6">
-      {{title-card model=model tags=model.tags openModal='openModal' templateArr=templateArr isEditing=isEditing store=store isMain='true'}}
+      {{title-card model=model tags=model.tags CreateNotification='CreateNotification' openModal='openModal' templateArr=templateArr isEditing=isEditing store=store isMain='true'}}
     </div>
     {{#each child in model.children}}
     <div class="col-md-6">
-      {{title-card model=child tags=child.tags openModal='openModal'  templateArr=templateArr isEditing=isEditing store=store parent=model}}
+      {{title-card model=child tags=child.tags CreateNotification='CreateNotification' openModal='openModal'  templateArr=templateArr isEditing=isEditing store=store parent=model}}
     </div>
     {{/each}}
   </div>

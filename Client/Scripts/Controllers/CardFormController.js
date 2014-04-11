@@ -5,66 +5,31 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
   store: null,
   tags:{},
   selectedTemplate:-1,
-  types:['Image','List','Properties','Tasks','Text_Area','Titled_Notes',],
+  typesRaw:[{title:'Image',id:'Image'},{title:'List',id:'List'},{title:'Properties',id:'Properties'},{title:'Tasks',id:'Tasks'},{title:'Text_Area',id:'Text_Area'},{title:'Titled_Notes',id:'Titled_Notes'},],
+  types : [],
   selectedType:null,
   secondaryModel:null,
   actions:{
     Submit: function(){
-      var qTags=[];
       var context = this;
+      var qTags = [];
       for(var key in this.get('tags')){
-        qTags.push(this.get('tags')[key])
+        if(this.get('tags').hasOwnProperty(key)){
+          qTags.push(this.get('tags')[key]);
+        }
       }
-      var parent = this.get('secondaryModel').model;
-      var embedded;
-      if(!this.get('secondaryModel').isMain){
-        embedded = true;
-      }else{
-        embedded = false;
-      }
-      this.store.find('card',parent.get('id')).then(function(parent){
-        context.store.find('tag',{names:qTags}).then(function(result){
-          var card = context.store.createRecord('card', {
-            title: context.get('title'),
-            description: context.get('description'),
-            left:0,
-            top:0,
-            tagsIn : [],//tags
-            onMainDisplay:true,
-            template:context.get('selectedTemplate'),
-            type : context.get('selectedType'),
-          });
-          var errorHandler = context.OnError(context,card);
-          card.get('tags').then(function(cTags){
-            cTags.pushObjects(result);
-            card.get('parents').then(function(parents){
-            if(parent != null){
-              parents.pushObject(parent);
-              card.set('onMainDisplay',false);
-              parent.get('children').then(function(children){
-                card.save().then(function(card){
-                  var configuration = context.store.createRecord('configuration',{
-                    position: children.get('length')+1,
-                    embedded: embedded,
-                    'for':parent.get('id'),
-                    configures:card
-                  })
-                  configuration.save().then(function(configuration){
-                    card.get('configurations').then(function(configurations){
-                      configurations.pushObject(configuration);
-                    })
-                    children.pushObject(card);
-                    context.cleanUp.call(context);
-                  })
-                })
-                .catch(errorHandler);
-              })
-            }else{
-              card.save().catch(errorHandler);
-              context.cleanUp.call(context);
-            }
-           })
-          });
+      var embedded = this.get('secondaryModel.embedded');
+      var parent = this.get('secondaryModel.parent')
+      this.GetNewCard(this.get('secondaryModel.onMainDisplay'),parent,qTags).then(function(cardPackage){
+        var card = cardPackage.card;
+        var tags = cardPackage.tags;
+        var position = cardPackage.position;
+        var title = context.get('title');
+        card.set('title',title);
+        card.set('template',context.get('selectedTemplate'));
+        card.set('type',context.get('selectedType'));
+        context.SetParent(card,parent,embedded).then(function(card){
+          context.CleanUp();
         });
       });
     },
@@ -75,10 +40,67 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
       delete this.tags[item];
     },
   },
-  cleanUp:function(){
+  SetParent:function(card,parentCard,embedded){
+    var context = this;
+    return new Promise(function(resolve, reject) {
+      if(parentCard){
+        parentCard.get('children').then(function(children){
+          var position = (children.get('length')+1);
+          card.get('parents').then(function(parents){
+            context.store.find('card',parentCard.get('id')).then(function(parentCard){
+              parents.pushObject(parentCard);
+              card.save().then(function(card){
+                children.pushObject(card);
+                var configuration = context.store.createRecord('configuration',{
+                  position: position,
+                  embedded: embedded,
+                  'for':parentCard.get('id'),
+                  configures:card
+                });
+                configuration.save().then(function(configuration){
+                  card.get('configurations').then(function(configurations){
+                    configurations.pushObject(configuration);
+                    resolve(card);
+                  });
+                });
+              });
+            });
+          });
+        })
+      }else{
+        card.save();
+        resolve(card);
+      }
+    });
+  },
+  GetNewCard:function(onMainDisplay,parent,qTags){
+    var context = this;
+    return new Promise(function(resolve, reject) {
+      var cardPackage = {}
+      var card = context.store.createRecord('card', {
+        left:0,
+        top:0,
+        tagsIn : qTags,//tags
+        onMainDisplay:onMainDisplay,
+      });
+      cardPackage.parent = parent;
+      cardPackage.card = card;
+      resolve(cardPackage);
+      /*card.get('tags').then(function(tags){
+        context.store.find('tag',{ids:[10,48]}).then(function(result){
+          tags.pushObjects(result);
+          //tags.pushObject(result);
+
+        });
+      });*/
+    });//{names:qTags}
+  },
+  CleanUp:function(){
     this.set('title','');
     this.set('description','');
     this.set('tags',[]);
     this.send('close');
   }
 });
+
+;

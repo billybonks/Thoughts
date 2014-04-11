@@ -13,5 +13,11 @@ App.CardsIndexController = Ember.ArrayController.extend(App.PopupOpenerMixin,{
       this.set('templates',false);
       this.set('cards',true);
     }
-  }.observes('selectedView')
+  }.observes('selectedView'),
+  cardFormPackage:function(){
+      var cardPackage = {}
+      cardPackage.parent = null;
+      cardPackage.onMainDisplay = true;
+      return cardPackage;
+  }.property()
 });
