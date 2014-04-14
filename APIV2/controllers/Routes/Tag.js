@@ -1,4 +1,5 @@
 var TagController = require('./../TagsController.js')();
+var ErrorHandler = require('./../../lib/Errors.js');
 
 module.exports = function (app) {
   'use strict';
@@ -34,7 +35,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={tags:data[0]}
       next()
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
   app.get('/tags',function(req,res,next){
@@ -50,14 +51,14 @@ module.exports = function (app) {
           res.status = 200;
           res.returnData ={tags:returnArr}
           next();
-        })
+        }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
       }else{
         TagController.GetTags.call(TagController,req.query.ids)
         .on('data',function(results){
           res.status = 200;
           res.returnData ={tags:results}
           next();
-        })
+        }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
       }
     }else{
       res.status = 200;

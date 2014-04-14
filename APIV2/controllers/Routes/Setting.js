@@ -1,4 +1,6 @@
 var SettingsController = require('./../SettingsController')();
+var ErrorHandler = require('./../../lib/Errors.js');
+
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -11,7 +13,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={settings:settings}
       next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
 };

@@ -1,6 +1,7 @@
 var Stream = require('stream');
 var neo4j = require('neo4j-js');
 var controller = require('./Controller.js');
+var ErrorHandler = require('./../lib/Errors.js');
 
 module.exports = function(){
   'use strict';
@@ -26,7 +27,9 @@ module.exports = function(){
         ret.push(context.FormatObject(results[i].n));
       }
       returnSream.emit('data',ret);
-    })
+    }).on('error',function(error){
+      ErrorHandler.Handle500(emitter,'GetCardConfiguration',error);
+    });
     return returnSream;
   }
 
@@ -78,7 +81,7 @@ module.exports = function(){
       }
     })
     return returnStream;
-  }
+  };
 
   TagsController.prototype.TagEntity=function(tags,entityId){
     var returnStream = new Stream();
@@ -118,7 +121,7 @@ module.exports = function(){
     var createTagQuery = 'CREATE (tag:Tag {data}) RETURN tag';
     var newTagHash = {data:{title:title,description:description}};
     return this.executeQuery(createTagQuery,newTagHash);
-  }
+  };
 
   TagsController.prototype.FormatObject = function(tag){
     return {

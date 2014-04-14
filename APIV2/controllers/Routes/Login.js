@@ -6,6 +6,7 @@ var facebook = require('./../Facebook')();
 var github = require('./../Github')();
 var OauthVars = require('./secrets')
 var os = require("os");
+var ErrorHandler = require('./../../lib/Errors.js');
 
 console.log(os.hostname());
 module.exports = function (app) {
@@ -65,6 +66,9 @@ module.exports = function (app) {
   app.get('/auth/github/callback', function(req, res, next) {
     passport.authenticate('github',
                           function(err, user, info) {
+                            console.log('DONE IS CALLED')
+                            console.log(err);
+                            console.log(user);
                             if (err) { console.log(err); return next(err); }
                             if (user)
                             {

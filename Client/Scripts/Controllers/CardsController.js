@@ -14,6 +14,19 @@ App.CardsIndexController = Ember.ArrayController.extend(App.PopupOpenerMixin,{
       this.set('cards',true);
     }
   }.observes('selectedView'),
+    display:function(model){
+    if(this.get('parentController.templates')){
+      if(this.get('model.isTemplate')){
+        return true;
+      }
+    }else{
+      if(this.get('model.isTemplate')){
+        return false;
+      }else{
+        return true;
+      }
+    }
+  }.property('parentController.templates'),
   cardFormPackage:function(){
       var cardPackage = {}
       cardPackage.parent = null;

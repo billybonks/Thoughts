@@ -2,11 +2,13 @@
 <div class="container">
   <div class="col-md-12">
     <div class="col-md-6">
-      {{title-card model=model tags=model.tags CreateNotification='CreateNotification' openModal='openModal' templateArr=templateArr isEditing=isEditing store=store isMain='true'}}
+      {{title-card model=model CreateNotification='CreateNotification' openModal='openModal' templateArr=templateArr isEditing=isEditing store=store isMain='true'}}
     </div>
     {{#each child in model.children}}
     <div class="col-md-6">
-      {{title-card model=child tags=child.tags CreateNotification='CreateNotification' openModal='openModal'  templateArr=templateArr isEditing=isEditing store=store parent=model}}
+      {{#unless child.isDeleted}}
+        {{title-card model=child CreateNotification='CreateNotification' openModal='openModal'  templateArr=templateArr isEditing=isEditing store=store parent=model}}
+      {{/unless}}
     </div>
     {{/each}}
   </div>

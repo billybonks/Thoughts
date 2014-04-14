@@ -1,8 +1,9 @@
-//require staements
 var Stream = require('stream');
 var crypto = require('crypto');
 var controller = require('./Controller.js');
 var db = require('./../lib/Database')
+var ErrorHandler = require('./../lib/Errors.js');
+
 module.exports = function(){
   'use strict';
   /* ========================================================================================================
@@ -23,10 +24,22 @@ module.exports = function(){
       var accountNode = results.account;
       context.GetUser.call(context,user)
       .on('data',function(results){
-        if(results === null){
+        var user;
+        if(results !== null){
+          user = results.user;
+          var accounts = results.accounts;
+          var accountExists = false;
+          for(var i =0;i<accounts.length;i++){
+            if(context.accountType === accounts[i]){
+              console.log('account Exisits')
+              accountExists = true;
+            }
+          }
+        }
+        if(results === null || accountExists===false){
           context.CreateUser.call(context,user)
           .on('data',function(dbUser){
-            context.CreateOAuthAccount.call(context,'Facebook',accountNode,dbUser.id)
+            context.CreateOAuthAccount.call(context,context.accountType,accountNode,dbUser.id)
             .on('data',function(results){
               context.CreateSession.call(context,dbUser)
               .on('data',function(results){
@@ -35,13 +48,14 @@ module.exports = function(){
             });
           });
         }else{
-          if(!results.data.session_token){
-            context.CreateSession.call(context,results)
+          if(!user.data.session_token){
+            context.CreateSession.call(context,user)
             .on('data',function(results){
+              console.log('Returned Session');
               done(null, results.data, 'info');
             });
           }else{
-            done(null, results.data, 'info');
+            done(null, user.data, 'info');
           }
         }
       })
@@ -68,7 +82,7 @@ module.exports = function(){
         resultStream.emit('data', results[0].n);
       });
     }else{
-      resultStream.emit('data', user);
+      resultStream.emit('data', user.data);
     }
     return resultStream;
   };
@@ -85,6 +99,7 @@ module.exports = function(){
   };
 
   AccountRouteBase.prototype.CreateOAuthAccount = function(accountLabel,accountData,userId){
+    console.log(accountLabel);
     var newUser = 'CREATE (n:'+accountLabel+' {data}) RETURN n';
     var newUserHash = {data:accountData};
     var queryStream = this.executeQuery(newUser,newUserHash);
@@ -112,7 +127,7 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   AccountRouteBase.prototype.GetUser = function (user) {
-    var query = 'START n=node(*) WHERE has (n.email) and n.email={email} RETURN n';
+    var query = 'START n=node(*) WHERE has (n.email) and n.email={email} Match (user)-[:Linked]->(account) RETURN n,Labels(account)';
     var resultStream = new Stream();
     var variableHash = { email: user.email };
     var queryStream = this.executeQuery(query,variableHash);
@@ -120,7 +135,9 @@ module.exports = function(){
       if (results.length === 0) {
         resultStream.emit('data',null);
       }else{
-        resultStream.emit('data',results[0].n);
+
+        var ret = {user:results[0].n,accounts:results[0]['Labels(account)']};
+        resultStream.emit('data',ret);
       }
     });
     return resultStream;

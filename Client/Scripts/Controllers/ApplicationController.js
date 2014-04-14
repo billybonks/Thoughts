@@ -6,6 +6,7 @@ App.ApplicationController = Ember.Controller.extend(App.PopupOpenerMixin,{
     actions: {
         ClearToken: function () {
             $.cookie(AppSettings.CookieName, '', { expires: -1 });
+            window.location='http://'+AppSettings.domain;
         },
         StartDrag:  function(){
             return function (model) {

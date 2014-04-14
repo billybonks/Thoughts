@@ -1,4 +1,5 @@
 var ConfigurationController = require('./../ConfigurationController')();//TemplateRoute
+var ErrorHandler = require('./../../lib/Errors.js');
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -17,7 +18,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={configuration:ret}
       next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
 
   });
 
@@ -32,7 +33,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={configuration:ret}
       next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
   app.post('/configurations',function(req,res,next){
@@ -51,7 +52,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={configuration:config}
       next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
 
@@ -64,6 +65,6 @@ module.exports = function (app) {
       res.status = 200;
     //  res.returnData = {configuration:data}
       next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 };

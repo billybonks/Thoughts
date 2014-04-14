@@ -12,9 +12,8 @@
   {{#each item in model itemController="card"}}
     {{#if display}}
       {{#if item.onMainDisplay}}
-
         <div class='col-md-4'>
-            {{title-card model=item tags=tags openModal='openModal' templateArr=templateArr store=store}}
+            {{title-card model=item openModal='openModal' templateArr=templateArr store=store}}
         </div>
       {{/if}}
     {{/if}}

@@ -2,6 +2,8 @@
 var Stream = require('stream');
 var controller = require('./Controller.js');
 var TagsController = require('./TagsController.js')
+var ErrorHandler = require('./../lib/Errors.js');
+
 module.exports = function(){
   'use strict';
   var _responseStream = new Stream();
@@ -20,7 +22,9 @@ module.exports = function(){
    * ===================================================================================================== */
 
   Attachment.prototype.getAttachments = function(ids){
-    return this.GetNodes(ids);
+    var responseStream;
+    ErrorHandler.HandleResponse(this.GetNodes(ids),responseStream,'GetAttachments')
+    return responseStream;
   }
 
 
@@ -32,9 +36,7 @@ module.exports = function(){
     ];
     var emitter = new Stream();
     var queryStream = this.executeQuery(query.join('\n'),{});
-    queryStream.on('data',function(results){
-      emitter.emit('getAttachment.done',results)
-    });
+    ErrorHandler.HandleResponse(queryStream,emitter,'GetAttachment');
     return emitter;
   }
 
@@ -62,17 +64,12 @@ module.exports = function(){
           var tagStream = tagger.TagEntity(attachmentId,tags);
           tagStream.once('TagEntity.done',function(results){
             resultStream.emit('data',attachment);
-          });
+          }).on('error',FowardError(resultStream));
         }
-      })
-      .on('error',function(error){
-        error.function = 'linkOwner'
-        resultStream.emit('error',error);
-      })
-    })
-    .on('error',function(error){
-      resultStream.emit('error',error);
-    })
+      })//handle link ownder
+      .on('error',FowardError(resultStream))
+    })//handle store attachmetn
+    .on('error',FowardError(resultStream))
     return resultStream;
   }
 
@@ -85,15 +82,8 @@ module.exports = function(){
       var linkStream = context.linkSection.call(context,sectionId,results.id)
       .on('data',function(results){
         createAttachmentReturn.emit('data',results);
-      })
-      .on('error',function(error){
-        error.function = 'linkSection'
-        createAttachmentReturn.emit('error',error);
-      })
-      })
-    .on('error',function(error){
-      createAttachmentReturn.emit('error',error)
-    })
+      }).on('error',FowardError(resultStream));//Handle Link Section
+    }).on('error',FowardError(resultStream));//Handle Base Create Att
     return createAttachmentReturn;
   }
 
@@ -103,23 +93,24 @@ module.exports = function(){
                  'SET link.isDeleted = true',
                  'RETURN link'];
     var queryStream = this.executeQuery(query.join('\n'),{});
-    queryStream.on('data',function(results){
-      responseStream.emit('data',results)
-    })
+    ErrorHandler.HandleResponse(queryStream,responseStream,'DeleteAttachment');
     return responseStream;
   }
 
   Attachment.prototype.linkSection = function(sectionID,attachmentId){
+    var responseStream = new Stream();
     var query =  [
       'START attachment=node('+attachmentId+'),section=node('+sectionID+')',
       'CREATE attachment-[r:Attached]->section',
       'RETURN attachment'
     ];
     var queryStream = this.executeQuery(query.join('\n'),{});
-    return queryStream;
+    ErrorHandler.HandleResponse(queryStream,responseStream,'LinkSection');
+    return responseStream;
   }
 
   Attachment.prototype.linkOwner = function(attachmentId,sessionToken){
+    var responseStream = new Stream();
     var query =  [
       'START attachment=node('+attachmentId+')',
       'MATCH (user:Person)',
@@ -128,29 +119,26 @@ module.exports = function(){
       'RETURN attachment'
     ];
     var variableHash = {token:sessionToken}
-    var relStream = this.executeQuery(query.join('\n'),variableHash);
-    return relStream;
+    var queryStream = this.executeQuery(query.join('\n'),variableHash);
+    ErrorHandler.HandleResponse(queryStream,responseStream,'LinkAttachmentOwner');
+    return responseStream;
   }
 
   Attachment.prototype.storeAttachment= function(attachmentType,data){
+    var responseStream = new Stream();
     var query = 'CREATE (n:'+attachmentType+' {data}) RETURN n';
     var variableHash = {data:data};
     var queryStream = this.executeQuery(query,variableHash);
     var emitter = this;
     var resultStream =new  Stream();
-    queryStream.on('data',function(results){
-      resultStream.emit('data',results)
-    })
-    .on('error',function(error){
-      error.function = 'StoreAttachment'
-      resultStream.emit('error',error);
-    })
+    ErrorHandler.HandleResponse(queryStream,responseStream,'StoreAttachmentOwner');
     return resultStream;
   }
 
 
   //
   Attachment.prototype.updateAttachment = function(attachment,id){
+    var responseStream = new Stream();
     var query = ['START attachment=node('+id+') SET'];
     var variableHash = {}
     var counter = 0;
@@ -169,8 +157,8 @@ module.exports = function(){
       }
     }
     query.push('RETURN attachment');
-    return this.executeQuery(query.join('\n'),variableHash);
-
+    ErrorHandler.HandleResponse(this.executeQuery(query.join('\n'),variableHash),responseStream,'UpdateAttachment');
+    return responseStream;
   }
 
   Attachment.prototype.FormatObject= function(dbAtt,cardId){

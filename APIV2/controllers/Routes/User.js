@@ -1,4 +1,5 @@
 var User = require('./../UserController.js')();
+var ErrorHandler = require('./../../lib/Errors.js');
 
 module.exports = function (app) {
   'use strict';

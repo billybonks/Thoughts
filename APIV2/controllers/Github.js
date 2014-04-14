@@ -12,6 +12,7 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   function GithubController(){
+    this.accountType ='GitHub';
   }
 
   GithubController.prototype = new AccountRouteBase();

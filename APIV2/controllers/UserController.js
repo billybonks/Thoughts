@@ -1,7 +1,7 @@
-
-//require staements
 var controller = require('./Controller.js');
 var Stream = require('stream');
+var ErrorHandler = require('./../lib/Errors.js');
+
 module.exports = function(){
   'use strict';
   /* ========================================================================================================

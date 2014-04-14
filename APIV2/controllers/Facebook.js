@@ -10,6 +10,7 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   function FacebookController(){
+    this.accountType ='Facebook';
   }
 
   FacebookController.prototype = new AccountRouteBase();

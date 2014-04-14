@@ -1,6 +1,7 @@
 var Stream = require('stream');
 var neo4j = require('neo4j-js');
 var controller = require('./Controller.js');
+var ErrorHandler = require('./../lib/Errors.js');
 
 module.exports = function(){
   'use strict';
@@ -32,11 +33,13 @@ module.exports = function(){
           ret[config.id]=config;
         }
         counter++;
-       // console.log(counter+'=='+ids.length)
+        // console.log(counter+'=='+ids.length)
         if(counter === ids.length){
           returnStream.emit('data',ret);
         }
-      })
+      }).on('error',function(error){
+        ErrorHandler.Handle500(emitter,'GetConfiguration',error);
+      });
     }
     return returnStream;
   }
@@ -56,10 +59,12 @@ module.exports = function(){
         var config = context.FormatNeo4jObject(results[i]);
         configurations[config.id]=config;
       }
-    //  console.log('awadads')
-    //  console.log(configurations)
+      //  console.log('awadads')
+      //  console.log(configurations)
       returnStream.emit('data',configurations)
-    })
+    }).on('error',function(error){
+      ErrorHandler.Handle500(emitter,'GetCardConfiguration',error);
+    });
     return returnStream;
   }
 
@@ -72,56 +77,65 @@ module.exports = function(){
     var context = this;
     this.CreateConfiguartionNode(configuration)
     .on('data',function(data){
-    //  console.log('config node created');
-    //  console.log(data)
       var configNodeId = data[0].config.id;
-    //  console.log('targetId = '+ targetId)
       context.LinkConfigurationTarget.call(context,targetId,configNodeId)
       .on('data',function(data){
-     //   console.log('LinkConfigurationTarget');
         context.LinkConfigurationFor.call(context,bindingCardId,configNodeId)
         .on('data',function(data){
-      //    console.log('LinkConfigurationFor');
-       //   console.log(data);
           responseStream.emit('data',data);
-        })
-      })
-    })
+        }).on('error',function(error){
+          responseStream.emit('error',error);
+        });
+      }).on('error',function(error){
+        responseStream.emit('error',error);
+      });
+    }).on('error',function(error){
+      responseStream.emit('error',error);
+    });
     return responseStream;
   }
 
 
   ConfigurationController.prototype.UpdateConfiguration=function(id,data){
-  var query = ['START configuration=node('+id+')',
-               'SET configuration.embedded = {embedded},',
-               'configuration.position = {position}',
-               'RETURN configuration'];
+    var responseStream = new Stream();
+    var query = ['START configuration=node('+id+')',
+                 'SET configuration.embedded = {embedded},',
+                 'configuration.position = {position}',
+                 'RETURN configuration'];
     var variableHash = data;
-    return this.executeQuery(query.join('\n'),variableHash)
+    ErrorHandler.HandleResponse(this.executeQuery(query.join('\n'),variableHash),responseStream,'UpdateConfiguration');
+    return responseStream;
   }
 
   ConfigurationController.prototype.CreateConfiguartionNode=function(configuration){
+    var responseStream = new Stream();
     var query = 'CREATE (config:Configuration {data}) RETURN config';
     var variableHash = {data:configuration};
     return this.executeQuery(query,variableHash)
+    ErrorHandler.HandleResponse(this.executeQuery(query.join('\n'),variableHash),responseStream,'CreateConfiguartionNode');
+    return responseStream;
   }
 
   ConfigurationController.prototype.LinkConfigurationTarget=function(targetId,configNodeId){
+    var responseStream = new Stream();
     var configurationCardRelationShip =  [
       'START config=node('+configNodeId+'), target=node('+targetId+')',,
       'CREATE config-[r:Configures]->target',
       'RETURN config,target'
     ];
-    return this.executeQuery(configurationCardRelationShip.join('\n'),{})
+    ErrorHandler.HandleResponse(this.executeQuery(configurationCardRelationShip.join('\n'),{}),responseStream,'CreateConfiguartionNode');
+    return responseStream;
   }
 
   ConfigurationController.prototype.LinkConfigurationFor=function(bindingCard,configNodeId){
+    var responseStream = new Stream();
     var configurationCardRelationShip =  [
       'START config=node('+configNodeId+'), target=node('+bindingCard+')',,
       'CREATE config-[r:Targets]->target',
       'RETURN config,target'
     ];
-    return this.executeQuery(configurationCardRelationShip.join('\n'),{})
+    ErrorHandler.HandleResponse(this.executeQuery(configurationCardRelationShip.join('\n'),{}),responseStream,'CreateConfiguartionNode');
+    return responseStream
   }
 
   ConfigurationController.prototype.FormatNeo4jObject=function(data){

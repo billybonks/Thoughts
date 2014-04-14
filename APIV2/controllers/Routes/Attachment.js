@@ -1,6 +1,7 @@
 var AttachmentController = require('./../AttachmentController')();
 var UserController = require('./../UserController')();
 var Proessor = require('./../../lib/AttachmentProccessor')();
+var ErrorHandler = require('./../../lib/Errors.js');
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -16,7 +17,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={attachment:{id :att.id,data:att.data}}
       next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
   app.post('/attachments',function(req,res,next){
@@ -33,18 +34,8 @@ module.exports = function (app) {
           res.status = 200;
           res.returnData ={attachment:attachment}
           next();
-        })
-        .on('error',function(error){
-          res.status = 500;
-          res.returnData ={error:error}
-          next();
-        })
-      })
-      .on('error',function(error){
-        res.status = 500;
-        res.returnData ={error:error}
-        next();
-      })
+        }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
+      }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
     });
   });
 
@@ -60,7 +51,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={attachments:ret}
       next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
 
   });
 
@@ -70,7 +61,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={}
       next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
 
   });
 };

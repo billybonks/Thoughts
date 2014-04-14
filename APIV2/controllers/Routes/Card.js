@@ -1,5 +1,8 @@
 var CardController= require('./../CardController')();
+var TagsController = require('./../TagsController.js')();
 var TryParse = require('./../../lib/TryParse');
+var Stream = require('stream');
+var ErrorHandler = require('./../../lib/Errors.js');
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -36,7 +39,8 @@ module.exports = function (app) {
             res.returnData ={cards:returnArray}
             next();
           }
-        });
+        })
+        .on('error',ErrorHandler.FowardErrorToBrowser(res,next));
       }
     }else{
       var ret= [];
@@ -50,7 +54,8 @@ module.exports = function (app) {
         res.status = 200;
         res.returnData ={cards:ret}
         next();
-      });
+      })
+      .on('error',ErrorHandler.FowardErrorToBrowser(res,next));
     }
   });
 
@@ -64,7 +69,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={card:card}
       next();
-    });// UpdateCard
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
   app.post('/cards',function (req,res,next){
@@ -72,6 +77,7 @@ module.exports = function (app) {
     var tags = card.tags;
     var parents = card.parents;
     var children = card.children
+    var responseStream =new Stream();
     card.isTemplate = false;
     console.log(card);
     delete card.attachments;
@@ -86,35 +92,35 @@ module.exports = function (app) {
       if(parents.length !== 0){
         props.onMainDisplay = false;
       }
-      response = CardController.DuplicateCard(template,req.headers.authorization,true,null,props);
+      CardController.DuplicateCard(template,req.headers.authorization,true,null,props).on('data',function(root){
+          TagsController.TagEntity(tags,root.id).on('data',function(tagRes){
+            for(var i = 0; i < tagRes.length;i++){
+             // tagHash[tagRes[i].tag.id]=tagRes[i].tag.data;
+              root.tags.push(tagRes[i].tag.id);
+            }
+            responseStream.emit('data',root);
+          });
+      })
     }else{
-      response = CardController.CreateCard(req.headers.authorization,card,tags);
+      CardController.CreateCard(req.headers.authorization,card,tags).on('data',function(root){
+        responseStream.emit('data',root)
+      })
     }
-    response.on('data',function(results){
+    responseStream.on('data',function(results){
       var card = results;
       if(parents.length !== 0){
         CardController.LinkChild(results.id,parents[0]).on('data',function(){
-          TagsController.TagEntity(tags,card.id).on('data',function(){
-            for(var id in tags){
-              card.tags.push(tags[id]);
-            }
             card.parents = parents;
             res.status = 200;
             res.returnData ={card:card}
             next();
-          });
         });
       }else{
         res.status = 200;
         res.returnData ={card:card}
         next();
       }
-    });
-    response.on('error',function(error){
-      res.error = error;
-      res.status = 500;
-      next();
-    })
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
   app.put('/cards/:id',function (req,res,next){
@@ -123,6 +129,6 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={}
       next();
-    });
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 };

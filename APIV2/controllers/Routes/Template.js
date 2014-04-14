@@ -1,5 +1,7 @@
 var TemplateController = require('./../TemplateController')();//TemplateRoute
 var CardController = require('./../CardController')();//TemplateRoute
+var ErrorHandler = require('./../../lib/Errors.js');
+
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -23,8 +25,7 @@ module.exports = function (app) {
       res.status = 200;
       res.returnData ={templates:ret}
       next();
-    });
-
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
   app.post('/templates',function(req,res,next){
@@ -53,8 +54,8 @@ module.exports = function (app) {
         res.status = 200;
         res.returnData={card:data};
         next();
-      });
-    });
+      }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
+    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
   });
 
 
