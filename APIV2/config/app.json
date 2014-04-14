@@ -10,7 +10,14 @@
         "routes": {
           "routePath": "path:./controllers"
         },
-          "domain":"localhost",
+      "domain":"localhost",
+        "ssl":{
+            "key":    "./config/SSL/server.key",
+            "cert":   "./config/SSL/server.crt",
+            //ca:     fs.readFileSync('ssl/ca.crt'),
+            "requestCert":        true,
+            "rejectUnauthorized": false
+        },
             //
             //  "view engines": {
             //      "js": {

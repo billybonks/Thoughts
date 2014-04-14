@@ -4,6 +4,7 @@ var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 var nconf = require('nconf');
 var facebook = require('./../Facebook')();
 var github = require('./../Github')();
+var google = require('./../Google')();
 var OauthVars = require('./secrets')
 var os = require("os");
 var ErrorHandler = require('./../../lib/Errors.js');
@@ -43,6 +44,20 @@ module.exports = function (app) {
       github.OnAccessToken(accessToken, refreshToken, profile, done);
     }
   ));
+
+  passport.use('google', new OAuth2Strategy(
+    {
+      authorizationURL: OauthVars.google.authorization_url,
+      tokenURL:  OauthVars.google.token_url,
+      clientID:  OauthVars.google.client_id,
+      clientSecret:  OauthVars.google.client_secret,
+      callbackURL:  OauthVars.google.callback_url
+    },
+    function(accessToken, refreshToken, profile, done)
+    {
+      google.OnAccessToken(accessToken, refreshToken, profile, done);
+    }
+  ));
   /* ========================================================================================================
    *
    * Facebook Methods - Keep in alphabetical order
@@ -66,9 +81,19 @@ module.exports = function (app) {
   app.get('/auth/github/callback', function(req, res, next) {
     passport.authenticate('github',
                           function(err, user, info) {
-                            console.log('DONE IS CALLED')
-                            console.log(err);
-                            console.log(user);
+                            if (err) { console.log(err); return next(err); }
+                            if (user)
+                            {
+                              return res.redirect('http://'+nconf.get('clientHostName')+'/?token='+user.session_token);
+                            }
+                          })(req, res, next);
+  });
+
+  app.get('/auth/google', passport.authenticate('google',{ scope: ['https://www.googleapis.com/auth/userinfo.email','https://www.googleapis.com/auth/userinfo.profile'] }));
+
+  app.get('/auth/google/callback', function(req, res, next) {
+    passport.authenticate('google',
+                          function(err, user, info) {
                             if (err) { console.log(err); return next(err); }
                             if (user)
                             {

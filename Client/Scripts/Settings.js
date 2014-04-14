@@ -1,7 +1,7 @@
 'use strict';
 window.AppSettings =
   {
-    WebserviceURL: 'http://localhost:4730',
+    WebserviceURL: 'https://localhost:4730',
     domain:window.location.host,
     CookieName: 'App',
     OAuthRedirect: function (url) {

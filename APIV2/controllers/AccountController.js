@@ -20,9 +20,9 @@ module.exports = function(){
     var context = this;
     var GetUser = this.GetUser;
     this.GetOAuthUser(accessToken).on('data',function(results){
-      var user = results.user;
+      var OAuthuser = results.user;
       var accountNode = results.account;
-      context.GetUser.call(context,user)
+      context.GetUser.call(context,OAuthuser)
       .on('data',function(results){
         var user;
         if(results !== null){
@@ -31,13 +31,13 @@ module.exports = function(){
           var accountExists = false;
           for(var i =0;i<accounts.length;i++){
             if(context.accountType === accounts[i]){
-              console.log('account Exisits')
               accountExists = true;
+              break;
             }
           }
         }
-        if(results === null || accountExists===false){
-          context.CreateUser.call(context,user)
+        if(results === null){
+          var createUserStream = context.CreateUser.call(context,OAuthuser)
           .on('data',function(dbUser){
             context.CreateOAuthAccount.call(context,context.accountType,accountNode,dbUser.id)
             .on('data',function(results){
@@ -47,11 +47,22 @@ module.exports = function(){
               });
             });
           });
+        }else if(accountExists===false){
+          context.CreateOAuthAccount.call(context,context.accountType,accountNode,user.id)
+          .on('data',function(data){
+            if(!user.data.session_token){
+              context.CreateSession.call(context,user)
+              .on('data',function(results){
+                done(null, results.data, 'info');
+              });
+            }else{
+              done(null, user.data, 'info');
+            }
+          })
         }else{
           if(!user.data.session_token){
             context.CreateSession.call(context,user)
             .on('data',function(results){
-              console.log('Returned Session');
               done(null, results.data, 'info');
             });
           }else{
@@ -99,7 +110,6 @@ module.exports = function(){
   };
 
   AccountRouteBase.prototype.CreateOAuthAccount = function(accountLabel,accountData,userId){
-    console.log(accountLabel);
     var newUser = 'CREATE (n:'+accountLabel+' {data}) RETURN n';
     var newUserHash = {data:accountData};
     var queryStream = this.executeQuery(newUser,newUserHash);
@@ -121,6 +131,7 @@ module.exports = function(){
   };
 
 
+
   /* ========================================================================================================
    *
    * Get Methods - Keep in alphabetical order
@@ -135,8 +146,12 @@ module.exports = function(){
       if (results.length === 0) {
         resultStream.emit('data',null);
       }else{
-
-        var ret = {user:results[0].n,accounts:results[0]['Labels(account)']};
+        var user = results[0].n;
+        var accounts = []
+        for(var i = 0; i<results.length;i++){
+          accounts.push(results[i]['Labels(account)'][0]);
+        }
+        var ret = {user:user,accounts:accounts};
         resultStream.emit('data',ret);
       }
     });
