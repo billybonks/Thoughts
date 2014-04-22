@@ -119,6 +119,8 @@ UpgradeLog*.XML
 /Client/data
 /Client/.jshintignore
 /Deploy
+/node_modules
+/plugins.json
 
 
 
