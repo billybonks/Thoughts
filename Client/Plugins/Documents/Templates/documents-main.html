@@ -1,0 +1,7 @@
+{{!view App.DocumentsDropView controller=this}}
+<p>Drop files here</p>
+<ul>
+{{#each item in data}}
+ <a {{bind-attr href=item.data.link}}> <li>{{item.data.title}}</li></a>
+{{/each}}
+  </ul>
