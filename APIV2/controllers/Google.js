@@ -1,8 +1,8 @@
 //require staements
 var Stream = require('stream');
-var fbgraph = require('fbgraph');
-var GitHubApi = require("github");
 var request = require('request');
+var OauthVars = require('./Routes/secrets')
+var refresh = require('google-refresh-token');
 
 var AccountRouteBase = require('./AccountController.js');
 module.exports = function(){
@@ -24,7 +24,7 @@ module.exports = function(){
    *
    * ===================================================================================================== */
 
-  GoogleController.prototype.GetOAuthUser = function(accessToken) {
+  GoogleController.prototype.GetOAuthUser = function(accessToken,refreshToken,params) {
     var returnStream = new Stream();
     var context = this;
     var authValue = 'Bearer '+accessToken;
@@ -39,7 +39,7 @@ module.exports = function(){
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
         var user = context.OAuthUserToDBUser(info);
-        var account = context.GetLinkedAccountNodeData(info, accessToken);
+        var account = context.GetLinkedAccountNodeData(info, accessToken,refreshToken,params);
         console.log(user);
         console.log(account);
         returnStream.emit('data',{user:user,account:account});
@@ -73,14 +73,34 @@ lE/KJBivNDSv4s/photo.jpg',
     };
   };
 
-  GoogleController.prototype.GetLinkedAccountNodeData = function(body,accessToken){
+  GoogleController.prototype.GetLinkedAccountNodeData = function(body,accessToken,refreshToken,params){
     return {
       username: body.email,
       uid : body.id,
-      access_token: accessToken
+      access_token: accessToken,
+      refresh_token:refreshToken,
+      expires_in:params.expires_in
     };
   };
 
+  GoogleController.prototype.GetAccessToken = function(refreshToken){
+    var responseStream = new Stream();
+    refresh(refreshToken, OauthVars.google.client_id, OauthVars.google.client_secret, function (err, json, res) {
+      console.log(json)
+      if (err) console.log(err)
+      if (json.error) console.log(json.error)
+
+      var newAccessToken = json.accessToken;
+      if (! newAccessToken) {
+        console.log('no access token')
+      }
+      if(newAccessToken){
+        console.log('returning')
+        responseStream.emit('data',{access_token:newAccessToken,expires_in:json.expiresIn})
+      }
+    });
+    return responseStream;
+  };
 
   return new GoogleController();
 };

@@ -21,7 +21,7 @@ module.exports = function(){
    *
    * ===================================================================================================== */
 
-  FacebookController.prototype.GetOAuthUser = function(accessToken) {
+  FacebookController.prototype.GetOAuthUser = function(accessToken,refreshToken,params) {
     var returnStream = new Stream();
     fbgraph.setAccessToken(accessToken);
     fbgraph.setContext(this);
@@ -30,7 +30,7 @@ module.exports = function(){
         done(error);
       }
       var user = this.FBUserToDBUser(body);
-      var account = this.GetLinkedAccountNodeData(body, accessToken);
+      var account = this.GetLinkedAccountNodeData(body, accessToken,params);
       returnStream.emit('data',{user:user,account:account});
     });
     return returnStream;
@@ -49,11 +49,12 @@ module.exports = function(){
     };
   };
 
-  FacebookController.prototype.GetLinkedAccountNodeData = function(body,accessToken){
+  FacebookController.prototype.GetLinkedAccountNodeData = function(body,accessToken,params){
     return {
-      fb_username: body.username,
-      fb_uid : body.id,
-      fb_access_token: accessToken
+      username: body.username,
+      uid : body.id,
+      access_token: accessToken,
+      expires_in:params.expires
     };
   };
 

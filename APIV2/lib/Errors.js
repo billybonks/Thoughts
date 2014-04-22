@@ -16,11 +16,13 @@ exports.Handle505 = function(stream,method){
 };
 
 exports.FowardError = function(stream){
-  stream.on('error',
-  function(error){
-    stream.emit(error);
-  });
-  return stream;
+  var stream = stream;
+  console.log('prepping error bugout')
+  function OnError (error){
+    console.log('fowarding error')
+    stream.emit('error',error);
+  }
+  return OnError;
 };
 
 exports.FowardErrorToBrowser = function(res,next){
@@ -35,10 +37,15 @@ exports.FowardErrorToBrowser = function(res,next){
 };
 
 exports.HandleResponse= function(inStream,outStream,method){
+
   inStream.on('data',function(data){
+    console.log('handling done');
+    console.log(data);
     outStream.emit('data',data);
   }).on('error',function(error){
     var data={statusCode:500,message:"Internal Server error on : "+method,error:error};
+    console.log('handling Error');
+    console.log(data);
     outStream.emit('error',data);
   })
 }

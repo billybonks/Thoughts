@@ -25,9 +25,9 @@ module.exports = function (app) {
       clientSecret:  OauthVars.facebook.client_secret,
       callbackURL:  OauthVars.facebook.callback_url
     },
-    function(accessToken, refreshToken, profile, done)
-    {
-      facebook.OnAccessToken(accessToken, refreshToken, profile, done);
+    function(accessToken, refreshToken, params,profile, done)
+    {;
+      facebook.OnAccessToken(accessToken, refreshToken,params, profile, done);
     }
   ));
 
@@ -39,9 +39,9 @@ module.exports = function (app) {
       clientSecret:  OauthVars.github.client_secret,
       callbackURL:  OauthVars.github.callback_url
     },
-    function(accessToken, refreshToken, profile, done)
+    function(accessToken, refreshToken, params,profile, done)
     {
-      github.OnAccessToken(accessToken, refreshToken, profile, done);
+      github.OnAccessToken(accessToken, refreshToken,params, profile, done);
     }
   ));
 
@@ -51,11 +51,12 @@ module.exports = function (app) {
       tokenURL:  OauthVars.google.token_url,
       clientID:  OauthVars.google.client_id,
       clientSecret:  OauthVars.google.client_secret,
-      callbackURL:  OauthVars.google.callback_url
+      callbackURL:  OauthVars.google.callback_url,
+
     },
-    function(accessToken, refreshToken, profile, done)
+    function(accessToken, refreshToken, params,profile, done)
     {
-      google.OnAccessToken(accessToken, refreshToken, profile, done);
+      google.OnAccessToken(accessToken, refreshToken,params, profile, done);
     }
   ));
   /* ========================================================================================================
@@ -89,7 +90,7 @@ module.exports = function (app) {
                           })(req, res, next);
   });
 
-  app.get('/auth/google', passport.authenticate('google',{ scope: ['https://www.googleapis.com/auth/userinfo.email','https://www.googleapis.com/auth/userinfo.profile'] }));
+  app.get('/auth/google', passport.authenticate('google',{scope: ['https://www.googleapis.com/auth/plus.stream.write','https://www.googleapis.com/auth/drive','https://www.googleapis.com/auth/userinfo.email','https://www.googleapis.com/auth/userinfo.profile'], access_type: 'offline'}));
 
   app.get('/auth/google/callback', function(req, res, next) {
     passport.authenticate('google',

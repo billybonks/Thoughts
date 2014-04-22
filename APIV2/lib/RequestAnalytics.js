@@ -29,6 +29,7 @@ module.exports = function (config) {
     function Log(req, res, next) {
       var timeStamp = Date.now();
       if(res.error){
+        console.log(res.error);
         res.error.id = req.id;
         res.error.level='ERROR';
         res.error.status=res.status;

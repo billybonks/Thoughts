@@ -154,7 +154,6 @@ App.SettingsRoute = Ember.Route.extend({
 
 App.SettingsIndexRoute = Ember.Route.extend({
   model: function () {
-    console.log('QQQQQQQ')
     return this.modelFor('settings');
   }
 });
@@ -187,8 +186,32 @@ App.CardRoute = Ember.Route.extend({
       // a must be equal to b
       return 0;
     })
+    $(document).attr('title',model.get('title'));
     controller.set('content',model);
     controller.set('templateArr',ret);
   }
 });
+
+Ember.Route.reopen({
+    activate: function(router) {
+        this._super(router)
+        var controller = this.controllerFor();
+        var title = '';
+        var routeName = this.get('routeName')
+        if(routeName === 'application'){
+          title = 'Home'
+        }
+        if(routeName === 'settings'){
+          title = 'Settings'
+        }
+        if(routeName === 'cards'){
+          title = 'Cards'
+        }
+        if (title !== '') {
+          $(document).attr('title',title)
+        }
+        //# Set page title
+     //   name = this.parentState.get('name')
+   }
+})
 

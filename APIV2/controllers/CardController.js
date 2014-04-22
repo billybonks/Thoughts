@@ -73,10 +73,9 @@ module.exports = function(){
       'Start card=node('+id+')',
       'MATCH (user:Person)-[Created]->(card:Card)',
       'OPTIONAL MATCH  (tag)-[t:Tagged]->(card)',
-      'OPTIONAL MATCH  (attachment)-[a:Attached]->(card)',
       'OPTIONAL MATCH  (child)<-[h:Has]-(card)',
       'WHERE not(has(child.isDeleted))',
-      'RETURN card,user,child,tag,attachment'//user,card,attachment'
+      'RETURN card,user,child,tag'//user,card,attachment'
     ];
     var queryStream = this.executeQuery(query.join('\n'),{});
     var responseStream = new Stream();
@@ -87,7 +86,15 @@ module.exports = function(){
         .on('data',function(data){
           card.configurations =[]
           card.configurations = data;
+          AttachmentController.GetCardsAttachments(id)
+          .on('data',function(data){
+            card.attachments = {};
+            for(var i = 0;i<data.length;i++){
+              var att =AttachmentController.FormatObject(data[i].attachment,id);
+              card.attachments[att.id] = att;
+            }
           responseStream.emit('data',card)
+          })
         });
       }else{
         ErrorHandler.Handle404(responseStream,'Card',id);

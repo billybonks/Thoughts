@@ -23,7 +23,7 @@ module.exports = function(){
    *
    * ===================================================================================================== */
 
-  GithubController.prototype.GetOAuthUser = function(accessToken) {
+  GithubController.prototype.GetOAuthUser = function(accessToken,refreshToken,params) {
     var returnStream = new Stream();
     var github = new GitHubApi({
       // required

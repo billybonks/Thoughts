@@ -102,9 +102,43 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
     this.store.find('card',this.get('model').get('id')).then(function(card){
       var attachments =card.get('attachments').then(function(attachments){
         attachments.pushObject(attachment);
-        attachment.save();//.then(context.sendAction('modelSateChange',attachment.currentState));
+        attachment.save().then(
+          function(attachment){
+            if(context.get('targetObject')){
+              context.get('targetObject').FowardNotification('Attachment saved','success')
+            }else{
+              context.send('notification','Attachment saved','success')
+            }
+          },
+          function(error){
+            if(context.get('targetObject')){
+               context.get('targetObject').FowardNotification('Attachment couldnt be saved','danger')
+            }else{
+              context.send('notification','Attachment couldnt be saved','danger')
+            }
+
+          });;//.then(context.sendAction('modelSateChange',attachment.currentState));
       });
     });
+  },
+  SaveAttachment:function(model){
+    var context = this;
+    model.save().then(function(att){
+                        if(context.get('targetObject')){
+                          context.get('targetObject').FowardNotification('Attachment updated','success');
+                        }else{
+                          context.send('notification','Attachment updated','success')
+                        }
+
+                      },
+                      function(error){
+                        if(context.get('targetObject')){
+                          context.get('targetObject').FowardNotification('Attachment couldnt be saved','danger')
+                        }else{
+                          context.send('notification','Attachment couldnt be saved','danger')
+                        }
+
+                      })
   }
 })
 

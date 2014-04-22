@@ -1,16 +1,18 @@
-<div class="row">
-  <div class="col-md-6">
-    {{#if isNediting}}
-    {{view App.EditBox class="form-control"  toggleDone=isNediting value=model.data.name}}
+<div class="row" {{action toggleEdit on="doubleClick"}}>
+  {{#if isEditing}}
+    <div class="col-md-6">
+      {{input type="text" class="form-control" placeholder="" value=model.data.name}}
+    </div>
+    <div class="col-md-6">
+      {{input type="text" class="form-control" placeholder="" value=model.data.value}}
+    </div>
+    <button class="btn btn-success"{{action Update}}>Save</button>
     {{else}}
-    <p {{action toggleN}}>{{model.data.name}}</p>
-    {{/if}}
-  </div>
-  <div class="col-md-6">
-    {{#if isVediting}}
-    {{view App.EditBox class="form-control"  toggleDone=isVediting value=model.data.value}}
-    {{else}}
-    <p {{action toggleV}}>{{model.data.value}}</p>
-    {{/if}}
-  </div>
+    <div class="col-md-6">
+      <p >{{model.data.name}}</p>
+      </div>
+    <div class="col-md-6">
+      <p>{{model.data.value}}</p>
+    </div>
+  {{/if}}
 </div>

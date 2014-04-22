@@ -1,10 +1,12 @@
 'use strict';
-App.PropertyController = Ember.ObjectController.extend({
-    isNediting:false,
-    isVediting:false,
+App.PropertyController = Ember.ObjectController.extend(App.SubmitAttachmentMixin,{
+    isEditing:false,
     actions:{
-      toggleV:function(){this.get('isVediting')? this.set('isVediting', false): this.set('isVediting', true);},
-      toggleN:function(){this.get('isNediting')? this.set('isNediting', false): this.set('isNediting', true);},
+      toggleEdit:function(){this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);},
+      Update:function(){
+        this.SaveAttachment(this.get('model'));
+        this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
+      }
     },
   close:function(){
     console.log('closing')

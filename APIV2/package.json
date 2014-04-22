@@ -28,7 +28,10 @@
         "neo4j-js":"0.0.8",
         "node-uuid":"1.4.1",
         "loggly":"1.0.4",
-        "github":"0.1.14"
+        "github":"0.1.14",
+        "google-drive":"0.0.6",
+        "google-refresh-token":"0.5.3",
+        "mime":"1.2.11"
     },
     "devDependencies": {
         "mocha": "~1.17.0",

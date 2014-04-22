@@ -11,7 +11,10 @@ App.DropCube = Ember.View.extend({
       var context = this
       this.store.find('attachment',event.originalEvent.dataTransfer.getData('id')).then(function(obj){
         obj.deleteRecord();
-        obj.save();
+        obj.save().then(function(obj)
+                        {
+                          context.get('controller').FowardNotification('Attachment deleted','success')
+                        });
       })
 
     }

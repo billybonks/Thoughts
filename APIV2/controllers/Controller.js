@@ -63,8 +63,8 @@ module.exports = function(){
   Controller.prototype.executeQuery = function(query,variableHash){
     var queryStream = new Stream();
     neo4j.connect(nconf.get('database'),function (err, graph, done) {
-     // console.log(query);
-     // console.log(variableHash);
+      console.log(query);
+      console.log(variableHash);
       graph.query(query,variableHash, function (err, results) {
         if(err){
           console.log(err);

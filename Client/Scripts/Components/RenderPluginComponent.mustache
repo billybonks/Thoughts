@@ -15,6 +15,9 @@ App.RenderPluginComponent = Ember.Component.extend({
   }.property('model.configurations.@each.for'),
   actions:{
   },
+  FowardNotification:function(message,level){
+    this.get('targetObject').FowardNotification(message,level);
+  },
   openModal:function(modalName,model,secondaryModel){
     return this.get('targetObject').openPluginModal(modalName,model,secondaryModel);
   },

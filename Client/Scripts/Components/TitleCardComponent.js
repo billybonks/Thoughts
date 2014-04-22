@@ -4,10 +4,16 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
   test:false,
   actions:{
     Delete:function(){
+      var context  = this;
       this.get('store').find('card', this.get('model').get('id')).then(function(rec){
         rec.deleteRecord();
-        rec.save();
-      });
+        rec.save().then(function(){
+                          context.sendAction('CreateNotification','Card deleted','success')
+                        },
+                        function(){
+                          context.sendAction('CreateNotification','Error deleting card','danger')
+                        });
+      })
     },
     ToggleEdit:function(){
       console.log('editing')
@@ -20,7 +26,7 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
       this.get('section') ? this.set('section',false):this.set('section',true);
     },
     Save:function(){
-      console.log(this.get('model.title'));
+      $(document).attr('title',this.get('model.title'));
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
       this.get('store').find('Card',this.get('model.id')).then(function(card){
         card.save();
@@ -39,6 +45,9 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
         context.sendAction('CreateNotification','Template couldnt be saved','danger')
       });
     },
+  },
+  FowardNotification:function(message,level){
+    this.sendAction('CreateNotification',message,level)
   },
   openPluginModal:function(modalName,model,secondaryModel){
     return this.sendAction('openModal',modalName,model,secondaryModel);

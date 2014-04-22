@@ -61,10 +61,8 @@ module.exports = function (app) {
 
   app.get('/cards/:id',function (req,res,next){
     var cardController = CardController;
-    console.log('getting someeeeeeeeeeeeeeeeeee')
     var response = CardController.GetCard(req.params.id);
     response.on('data',function(card){
-      console.log(card)
       var card = cardController.FormatObject(card.user,card.tags,card.children,card.card,card.attachments,card.parents,card.configurations)
       res.status = 200;
       res.returnData ={card:card}
@@ -79,7 +77,6 @@ module.exports = function (app) {
     var children = card.children
     var responseStream =new Stream();
     card.isTemplate = false;
-    console.log(card);
     delete card.attachments;
     delete card.tags;
     delete card.parents;

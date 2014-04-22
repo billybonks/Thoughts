@@ -25,8 +25,8 @@ module.exports = function (app) {
     var resultStream;
     //proccsss Attachment
     var methodName = 'Process'+body.type
-    UserController.GetUser(req.headers.authorization).on('data',function(results){
-      Proessor.ProccessAttatchment(body.data,results[0].user.id)
+    UserController.GetFullUser(req.headers.authorization).on('data',function(user){
+      Proessor.ProccessAttatchment(body,user)
       .on('data',function(results){
         resultStream = AttachmentController.createAttachment(results,req.headers.authorization,[],body.sectionid)
         .on('data',function(results){

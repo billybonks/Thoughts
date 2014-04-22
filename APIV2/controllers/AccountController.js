@@ -13,15 +13,40 @@ module.exports = function(){
    * ===================================================================================================== */
   function AccountRouteBase(){
     this.responseStream = new Stream();
+    this.word ='fart'
   }
+
   AccountRouteBase.prototype = new controller();
 
-  AccountRouteBase.prototype.OnAccessToken = function(accessToken, refreshToken, profile, done){
+  AccountRouteBase.prototype.RefreshAccessToken= function(refreshToken,userId){
+    var responseStream = new Stream();
+    var context = this;
+    /*
+        var access_token = user.accounts.Google.access_token;
+    var expiry = user.accounts.Google.expires_in;
+    var dateModified = user.accounts.Google.date_modified;
+    if((dateModified +expiry)>Date.now()){
+
+    }
+    */
+    this.GetAccessToken(refreshToken).on('data',function(result){
+      context.ReplaceAccessToken(context.accountType,userId,result.access_token,result.expires_in).on('data',function(results){
+        responseStream.emit('data',results[0].account.data.access_token);
+      });
+    });
+    return responseStream;
+  }
+
+
+  AccountRouteBase.prototype.OnAccessToken = function(accessToken, refreshToken,params, profile, done){
     var context = this;
     var GetUser = this.GetUser;
-    this.GetOAuthUser(accessToken).on('data',function(results){
+
+    this.GetOAuthUser(accessToken,refreshToken,params).on('data',function(results){
       var OAuthuser = results.user;
       var accountNode = results.account;
+      accountNode.date_created = Date.now();
+      accountNode.date_modified = Date.now();
       context.GetUser.call(context,OAuthuser)
       .on('data',function(results){
         var user;
@@ -60,14 +85,16 @@ module.exports = function(){
             }
           })
         }else{
-          if(!user.data.session_token){
-            context.CreateSession.call(context,user)
-            .on('data',function(results){
-              done(null, results.data, 'info');
-            });
-          }else{
-            done(null, user.data, 'info');
-          }
+          context.ReplaceAccessToken.call(context,context.accountType,user.id,accessToken,accountNode.expires_in).on('data',function(data){
+            if(!user.data.session_token){
+              context.CreateSession.call(context,user)
+              .on('data',function(results){
+                done(null, results.data, 'info');
+              });
+            }else{
+              done(null, user.data, 'info');
+            }
+          });
         }
       })
     });
@@ -97,6 +124,17 @@ module.exports = function(){
     }
     return resultStream;
   };
+
+  AccountRouteBase.prototype.ReplaceAccessToken=function(accountLabel,userId,token,expiresIn){
+    var query = ['Start user=node('+userId+')',
+                 'Match user-[:Linked]->(account:'+accountLabel+')',
+                 'Set account.access_token = {access_token},',
+                 'account.date_modified = {date_modified},',
+                 'account.expires_in = {expires_in}',
+                 'return account']
+    var variableHash = {access_token:token,expires_in:expiresIn,date_modified:Date.now()};
+    return this.executeQuery(query.join('\n'),variableHash);
+  }
 
   AccountRouteBase.prototype.CreateUser = function(user){
     var newUser = 'CREATE (n:Person {data}) RETURN n';

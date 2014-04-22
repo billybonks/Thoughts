@@ -1,11 +1,11 @@
 'use strict';
-App.QuestionController = Ember.ObjectController.extend({
+App.QuestionController = Ember.ObjectController.extend(App.SubmitAttachmentMixin,{
    displayAnswer : false,
    class:'panel-collapse collapse in',
    actions:{
      UpdateQuestion:function(){
        console.log(this.get('model').get('data').answer)
-       this.get('model').save();
+       this.SaveAttachment(this.get('model'));
        this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
      },
      ToggleAnswer:function(){

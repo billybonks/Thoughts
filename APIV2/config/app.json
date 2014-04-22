@@ -12,8 +12,8 @@
         },
       "domain":"localhost",
         "ssl":{
-            "key":    "./config/SSL/server.key",
-            "cert":   "./config/SSL/server.crt",
+            "key":    "file:./config/SSL/server.key",
+            "cert":   "file:./config/SSL/server.crt",
             //ca:     fs.readFileSync('ssl/ca.crt'),
             "requestCert":        true,
             "rejectUnauthorized": false
