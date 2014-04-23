@@ -6,7 +6,7 @@
     {{#view App.LinkView model=item}}
       {{#unless model.isDeleted}}
           {{#if model.data.href}}
-            <li><a {{bind-attr href=item.data.href}}>{{model.data.title}}</a></li>
+            <li><a {{bind-attr href=model.data.href}}>{{model.data.title}}</a></li>
           {{else}}
             {{#unless isEditing}}
               <li {{action Edit on='doubleClick'}}>{{model.data.title}}</li>

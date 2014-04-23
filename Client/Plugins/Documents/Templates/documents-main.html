@@ -2,6 +2,8 @@
 <p>Drop files here</p>
 <ul>
 {{#each item in data}}
- <a {{bind-attr href=item.data.link}}> <li>{{item.data.title}}</li></a>
+  {{#unless item.isSaving}}
+     <a {{bind-attr href=item.data.link}}> <li>{{item.data.title}}</li></a>
+  {{/unless}}
 {{/each}}
   </ul>
