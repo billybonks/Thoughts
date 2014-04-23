@@ -88,7 +88,8 @@ module.exports = function(grunt) {
           {expand: true, src: ['Client/Scripts/**/*'], dest: 'Deploy/'},
           {expand: true, src: ['Client/fonts/*'], dest: 'Deploy/'},
           {expand: true, src: ['Client/Plugins/**/*'], dest: 'Deploy/'},
-          {expand: true, src: ['Client/Content/*'], dest: 'Deploy/'}
+          {expand: true, src: ['Client/Content/*'], dest: 'Deploy/'},
+          {expand: true, src: ['APIV2/**'], dest: 'Deploy/'}
 
         ]
       }
