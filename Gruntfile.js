@@ -83,12 +83,16 @@ module.exports = function(grunt) {
       }
     },
     copy: {
-      main: {
+      client: {
         files: [
           {expand: true, src: ['Client/Scripts/**/*'], dest: 'Deploy/'},
           {expand: true, src: ['Client/fonts/*'], dest: 'Deploy/'},
           {expand: true, src: ['Client/Plugins/**/*'], dest: 'Deploy/'},
-          {expand: true, src: ['Client/Content/*'], dest: 'Deploy/'},
+          {expand: true, src: ['Client/Content/*'], dest: 'Deploy/'}
+        ]
+      },
+      api: {
+        files: [
           {expand: true,cwd:'API/', src: ['**'], dest: 'Deploy/'}
 
         ]
@@ -132,8 +136,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-html-build');
   grunt.loadNpmTasks('grunt-mustache-render');
-  grunt.registerTask('dev',['copy','mustache_render','emberTemplates','htmlbuild:dev']);
-  grunt.registerTask('default', ['mustache_render','emberTemplates','concat','copy','htmlbuild']);//,'jshint']);
+  grunt.registerTask('dev',['copy:client','mustache_render','emberTemplates','htmlbuild:dev']);
+  grunt.registerTask('default', ['mustache_render','emberTemplates','concat','copy:client','htmlbuild']);//,'jshint']);
 
 
 };

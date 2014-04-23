@@ -3,13 +3,11 @@ App.ListMainComponent = App.BaseSectionComponent.extend({
   isEditing:false,
   title:'Links',
   actions:{
-    edit:function(){
+    Edit:function(){
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
-      console.log(this.get('popup'))
     },
     Submit: function(){
       //title to be set server side
-
       var href = this.get('newLink');
       var data;
       if(this.urlIsWellFormed(href)){

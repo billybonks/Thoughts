@@ -7,5 +7,10 @@ App.LinkView = Ember.View.extend(DragNDrop.DragAndDroppable,{
     dataTransfer.setData('Type', 'Attachment');
     dataTransfer.setData('AttachmentType', 'link');
     dataTransfer.setData('id', model.get('id'));
+  },
+  actions:{
+    Edit:function(){
+      console.log('edit')
+    }
   }
 });

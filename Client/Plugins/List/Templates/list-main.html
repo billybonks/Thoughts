@@ -2,13 +2,17 @@
   {{input type="text" class="form-control" placeholder="enter link press enter to submit" value=newLink action="Submit"}}
 </div>
   <ul>
-{{#each item in data}}
+{{#each item in data itemController="ListItem"}}
     {{#view App.LinkView model=item}}
-      {{#unless item.isDeleted}}
-          {{#if item.data.href}}
-            <li><a {{bind-attr href=item.data.href}}>{{item.data.title}}</a></li>
+      {{#unless model.isDeleted}}
+          {{#if model.data.href}}
+            <li><a {{bind-attr href=item.data.href}}>{{model.data.title}}</a></li>
           {{else}}
-          <li>{{item.data.title}}</li>
+            {{#unless isEditing}}
+              <li {{action Edit on='doubleClick'}}>{{model.data.title}}</li>
+            {{else}}
+              <li>{{input type="text" class="form-control" placeholder="" value=model.data.title action="Update"}}</li>
+            {{/unless}}
           {{/if}}
       {{/unless}}
     {{/view}}
