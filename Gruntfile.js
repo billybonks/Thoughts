@@ -89,10 +89,7 @@ module.exports = function(grunt) {
           {expand: true, src: ['Client/fonts/*'], dest: 'Deploy/'},
           {expand: true, src: ['Client/Plugins/**/*'], dest: 'Deploy/'},
           {expand: true, src: ['Client/Content/*'], dest: 'Deploy/'},
-          {expand: true, src: ['API/config/**'], dest: 'Deploy/'},
-          {expand: true, src: ['API/controllers/**'], dest: 'Deploy/'},
-          {expand: true, src: ['API/models/**'], dest: 'Deploy/'},
-          {expand: true, src: ['API/node_modules/**'], dest: 'Deploy/'},
+          {expand: true,cwd:'API/', src: ['**'], dest: 'Deploy/'}
 
         ]
       }
