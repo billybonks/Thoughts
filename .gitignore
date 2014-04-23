@@ -108,7 +108,6 @@ Backup*/
 UpgradeLog*.XML
 
 /APIV2/config/app.json
-/APIV2/config/SSL
 /Client/Scripts/Settings.js
 /Client/Scripts/Controllers/NewSectionController.js
 /Client/Templates/result.js
@@ -121,6 +120,7 @@ UpgradeLog*.XML
 /Deploy
 /node_modules
 /plugins.json
+/API/config/SSL
 
 
 
