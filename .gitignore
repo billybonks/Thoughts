@@ -121,6 +121,7 @@ UpgradeLog*.XML
 /node_modules
 /plugins.json
 /API/config/SSL
+/API/Client/data
 
 
 
