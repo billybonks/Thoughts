@@ -119,7 +119,7 @@ module.exports = function(){
       */
   TagsController.prototype.CreateTag=function(title,description){
     var createTagQuery = 'CREATE (tag:Tag {data}) RETURN tag';
-    var newTagHash = {data:{title:title,description:description}};
+    var newTagHash = {data:{title:title,description:description,date_created:Date.now(),date_modified:Date.now()}};
     return this.executeQuery(createTagQuery,newTagHash);
   };
 

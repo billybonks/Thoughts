@@ -39,7 +39,7 @@ module.exports = function(){
     }else{
       setTimeout(function() {
         console.log(attachment)
-        returnStream.emit('data',attachment);
+        returnStream.emit('data',attachment.data);
       }, 100,returnStream);
     }
     return returnStream;

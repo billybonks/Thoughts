@@ -144,6 +144,9 @@ module.exports = function(){
   Attachment.prototype.storeAttachment= function(attachmentType,data){
     var responseStream = new Stream();
     var query = 'CREATE (n:'+attachmentType+' {data}) RETURN n';
+    data.date_created = Date.now();
+    data.date_modified = Date.now();
+    console.log(data);
     var variableHash = {data:data};
     var queryStream = this.executeQuery(query,variableHash);
     var emitter = this;
@@ -155,8 +158,8 @@ module.exports = function(){
   //
   Attachment.prototype.updateAttachment = function(attachment,id){
     var responseStream = new Stream();
-    var query = ['START attachment=node('+id+') SET'];
-    var variableHash = {}
+    var query = ['START attachment=node('+id+') SET attachment.date_modified = {date_modified},'];
+    var variableHash = {date_modified:Date.now()}
     var counter = 0;
     for(var key in attachment.data){
       counter++;
@@ -173,16 +176,33 @@ module.exports = function(){
       }
     }
     query.push('RETURN attachment');
+    console.log(variableHash);
     ErrorHandler.HandleResponse(this.executeQuery(query.join('\n'),variableHash),responseStream,'UpdateAttachment');
     return responseStream;
   }
 
   Attachment.prototype.FormatObject= function(dbAtt,cardId){
-    return {
+
+    var data = {}
+    for(var key in dbAtt.data){
+      console.log(key);
+      if(key === 'date_created' || key === 'date_modified'){
+        continue;
+      }
+      if(dbAtt.data.hasOwnProperty(key))
+        data[key] = dbAtt.data[key];
+    }
+    console.log(dbAtt)
+    var att= {
       id:dbAtt.id,
-      data:dbAtt.data,
+      data:data,
       card:cardId
     }
+
+    att.date_created = dbAtt.data.date_created;
+    att.date_modified = dbAtt.data.date_modified;
+        console.log(att)
+    return att;
   }
 
   return new Attachment();

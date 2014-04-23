@@ -112,6 +112,9 @@ module.exports = function(){
    * ===================================================================================================== */
   Card.prototype.CreateCard=function (token,data,tags){
     var newCard = 'CREATE (n:Card {data}) RETURN n';
+    data.date_created = Date.now();
+    data.date_modified = Date.now();
+    console.log(data);
     var newCardHash = {data:data};
     var user = this.user;
     var responseStream = new Stream();
@@ -315,8 +318,10 @@ module.exports = function(){
     var query = ['START card=node('+id+')',
                  'SET card.title = {title},',
                  'card.top = {top},',
-                 'card.left = {left}',
-                 ' RETURN card'];
+                 'card.left = {left},',
+                 'card.date_modified = {date_modified}',
+                 'RETURN card'];
+    data.date_modified = Date.now();
     var responseStream = new Stream();
     var variableHash = data;
     delete variableHash.user;
