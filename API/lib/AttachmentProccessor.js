@@ -91,8 +91,8 @@ module.exports = function(){
     var buffer = new Buffer(data, 'base64');
     var name = uuid.v4()+'.'+ext;
     var path = '/data/users/'+user.id+'/images';
-    mkpath.sync('../Client'+path);
-    fs.writeFile('../Client'+path+'/'+name, buffer,function(err, written,buffer) {
+    mkpath.sync('./Client'+path);
+    fs.writeFile('./Client'+path+'/'+name, buffer,function(err, written,buffer) {
       console.log('saved')
       data = {
         image:path+'/'+name
