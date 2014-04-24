@@ -1,9 +1,8 @@
-{{!view App.DocumentsDropView controller=this}}
-<p>Drop files here</p>
+{{view App.DocumentsDropView controller=this}}
 <ul>
 {{#each item in data}}
-  {{#unless item.isSaving}}
-     <a {{bind-attr href=item.data.link}}> <li>{{item.data.title}}</li></a>
-  {{/unless}}
+    {{#view App.DocumentView model=item}}
+       <li ><a draggable="true" {{bind-attr href=item.data.link}}> {{item.data.title}}</a></li>
+    {{/view}}
 {{/each}}
   </ul>

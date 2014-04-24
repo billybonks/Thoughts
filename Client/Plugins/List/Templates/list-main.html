@@ -2,7 +2,7 @@
   {{input type="text" class="form-control" placeholder="enter link press enter to submit" value=newLink action="Submit"}}
 </div>
   <ul>
-{{#each item in data itemController="ListItem"}}
+{{#each item in data itemController="listItem"}}
     {{#view App.LinkView model=item}}
       {{#unless model.isDeleted}}
           {{#if model.data.href}}

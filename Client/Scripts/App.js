@@ -29,6 +29,9 @@ DragNDrop.cancel = function(event) {
   event.preventDefault();
   return false;
 };
+DragNDrop.blank = function(){
+  return true;
+};
 
 DragNDrop.DragAndDroppable = Ember.Mixin.create({
   layoutName:'DragAndDroppable',
@@ -38,6 +41,14 @@ DragNDrop.DragAndDroppable = Ember.Mixin.create({
   draggable: 'true',
   dragStart: DragNDrop.cancel,
   drop:DragNDrop.cancel
+});
+
+
+DragNDrop.DropTarget = Ember.Mixin.create({
+  dragEnter: DragNDrop.blank,
+  dragOver: DragNDrop.blank,
+  dragStart: DragNDrop.blank,
+  drop:DragNDrop.blank
 });
 
 App.PopupMixin = Ember.Mixin.create({

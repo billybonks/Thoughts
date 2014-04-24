@@ -1,5 +1,5 @@
 'use strict';
-App.DocumentsMainComponent = App.BaseSectionComponent.extend(DragNDrop.DragAndDroppable,{
+App.DocumentsMainComponent = App.BaseSectionComponent.extend(DragNDrop.DropTarget ,{
   drop: function(event) {
     var files = event.originalEvent.dataTransfer.files;
     for(var i = 0;i<files.length;i++){
