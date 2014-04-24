@@ -100,6 +100,7 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
     var context = this;
     attachment = this.store.createRecord('attachment', attachment);
     this.store.find('card',this.get('model').get('id')).then(function(card){
+     attachment.set('card',card);
       var attachments =card.get('attachments').then(function(attachments){
         attachments.pushObject(attachment);
         attachment.save().then(
@@ -119,6 +120,8 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
 
           });;//.then(context.sendAction('modelSateChange',attachment.currentState));
       });
+
+
     });
   },
   SaveAttachment:function(model){

@@ -11,13 +11,21 @@ module.exports = function (app) {
    * ===================================================================================================== */
   app.put('/attachments/:id',function(req,res,next){
     //proccsss Attachment
-    var resultStream = AttachmentController.updateAttachment(req.body.attachment,req.params.id)
-    resultStream.on('data',function(results){
-      var att=results[0].attachment
-      res.status = 200;
-      res.returnData ={attachment:{id :att.id,data:att.data}}
-      next();
-    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
+    UserController.GetFullUser(req.headers.authorization).on('data',function(user){
+      Proessor.ProccessAttatchment(req.body.attachment,'Update',user)
+      .on('data',function(results){
+        var attachment = req.body.attachment;
+        attachment.data = results;
+
+        var resultStream = AttachmentController.updateAttachment(attachment,req.params.id)
+        resultStream.on('data',function(results){
+          var att=results[0].attachment;
+          res.status = 200;
+          res.returnData =results[0];
+          next();
+        }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
+      });
+    });
   });
 
   app.post('/attachments',function(req,res,next){
@@ -26,9 +34,9 @@ module.exports = function (app) {
     //proccsss Attachment
     var methodName = 'Process'+body.type
     UserController.GetFullUser(req.headers.authorization).on('data',function(user){
-      Proessor.ProccessAttatchment(body,user)
+      Proessor.ProccessAttatchment(body,'Create',user)
       .on('data',function(results){
-        resultStream = AttachmentController.createAttachment(results,req.headers.authorization,[],body.sectionid)
+        resultStream = AttachmentController.createAttachment(results,req.headers.authorization,[],body.card)
         .on('data',function(results){
           var attachment = AttachmentController.FormatObject(results[0].attachment,body.sectionid)
           res.status = 200;

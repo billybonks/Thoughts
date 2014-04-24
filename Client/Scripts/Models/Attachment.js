@@ -1,7 +1,7 @@
 'use strict';
 App.Attachment = DS.Model.extend({
   data:DS.attr(),
-  sectionid:DS.attr(),
-  tags:DS.hasMany('tag'),
+  card:DS.belongsTo('card',{async:true}),
+  tags:DS.hasMany('tag',{async:true}),
   type:DS.attr('string')
 })

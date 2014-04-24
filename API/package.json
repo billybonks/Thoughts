@@ -31,7 +31,8 @@
         "github":"0.1.14",
         "google-drive":"0.0.6",
         "google-refresh-token":"0.5.3",
-        "mime":"1.2.11"
+        "mime":"1.2.11",
+        "googleapis":"0.7.0"
     },
     "devDependencies": {
         "mocha": "~1.17.0",

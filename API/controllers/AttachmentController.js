@@ -52,13 +52,10 @@ module.exports = function(){
     var context = this;
     var tagger = this.tags;
     var resultStream  = new Stream();
-      console.log('Storing att');
     this.storeAttachment('Attachment',data)
     .on('data',function(results){
-      console.log('Store att')
       var attachmentId = results[0].n.id;
       attachment = results[0].n;
-      console.log('linking Owner');
       context.linkOwner.call(context,attachmentId,token)
       .on('data',function(results){
         if(tags.length === 0){
@@ -82,7 +79,6 @@ module.exports = function(){
     var createAttachmentReturn = new Stream();
     this.createAttachmentBase(data,token,tags)
     .on('data',function(results){
-      console.log('linking Section');
       var linkStream = context.linkSection.call(context,sectionId,results.id)
       .on('data',function(results){
         createAttachmentReturn.emit('data',results);
@@ -146,7 +142,6 @@ module.exports = function(){
     var query = 'CREATE (n:'+attachmentType+' {data}) RETURN n';
     data.date_created = Date.now();
     data.date_modified = Date.now();
-    console.log(data);
     var variableHash = {data:data};
     var queryStream = this.executeQuery(query,variableHash);
     var emitter = this;
@@ -158,7 +153,7 @@ module.exports = function(){
   //
   Attachment.prototype.updateAttachment = function(attachment,id){
     var responseStream = new Stream();
-    var query = ['START attachment=node('+id+') SET attachment.date_modified = {date_modified},'];
+    var query = ['START attachment=node('+id+') SET'];
     var variableHash = {date_modified:Date.now()}
     var counter = 0;
     for(var key in attachment.data){
@@ -166,17 +161,11 @@ module.exports = function(){
       if(attachment.data[key] !== null){
         var str = 'attachment.'+key+' = {'+key+'}';
         variableHash[key] = attachment.data[key]
-        if(counter < Object.keys(attachment.data).length){
           query.push(str+',')
         }
-        else{
-          query.push(str)
-
-        }
       }
-    }
+    query.push('attachment.date_modified = {date_modified}')
     query.push('RETURN attachment');
-    console.log(variableHash);
     ErrorHandler.HandleResponse(this.executeQuery(query.join('\n'),variableHash),responseStream,'UpdateAttachment');
     return responseStream;
   }
@@ -185,14 +174,12 @@ module.exports = function(){
 
     var data = {}
     for(var key in dbAtt.data){
-      console.log(key);
       if(key === 'date_created' || key === 'date_modified'){
         continue;
       }
       if(dbAtt.data.hasOwnProperty(key))
         data[key] = dbAtt.data[key];
     }
-    console.log(dbAtt)
     var att= {
       id:dbAtt.id,
       data:data,
@@ -201,7 +188,6 @@ module.exports = function(){
 
     att.date_created = dbAtt.data.date_created;
     att.date_modified = dbAtt.data.date_modified;
-        console.log(att)
     return att;
   }
 
