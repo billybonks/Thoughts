@@ -3,7 +3,7 @@
 </div>
   <ul>
 {{#each item in data itemController="listItem"}}
-    {{#view App.LinkView model=item}}
+    {{#view App.LinkView model=item.content}}
       {{#unless model.isDeleted}}
           {{#if model.data.href}}
             <li><a {{bind-attr href=model.data.href}}>{{model.data.title}}</a></li>

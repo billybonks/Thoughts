@@ -140,6 +140,8 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
     model.save().then(function(att){
                         if(context.get('targetObject')){
                           context.get('targetObject').FowardNotification('Attachment updated','success');
+                        }else if(context.parentController){
+                          context.parentController.Notify('Attachment updated','success')
                         }else{
                           context.send('notification','Attachment updated','success')
                         }
@@ -148,6 +150,9 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
                       function(error){
                         if(context.get('targetObject')){
                           context.get('targetObject').FowardNotification('Attachment couldnt be saved','danger')
+                          context.get('targetObject').FowardNotification('Attachment updated','success');
+                        }else if(context.parentController){
+                          context.parentController.Notify('Attachment couldnt be saved','danger');
                         }else{
                           context.send('notification','Attachment couldnt be saved','danger')
                         }
