@@ -129,7 +129,7 @@ module.exports = function(){
 
   AttachmentProcessor.prototype.FormatData = function(attachment){
       if(attachment.data.type === ""){
-        var mimeType ='application/vnd.google-apps.document'//mime.lookup(attachment.data.title);
+        var mimeType =mime.lookup(attachment.data.title);
         attachment.data.data = attachment.data.data.replace('data:;','data:'+mimeType+';');
         attachment.data.type = mimeType
       }
@@ -151,9 +151,13 @@ module.exports = function(){
           access_token:access_token
         });
         googleapis.discover('drive', 'v2').execute(function(err, client) {
-          client
-          .drive.files.insert({ title: title, mimeType: mimeType,parents:[parentFolder] })
-          .withMedia('application/base64', buffer)
+          var res = client
+          .drive.files.insert({title: title, mimeType: mimeType,parents:[parentFolder]})
+          if(mimeType.indexOf('image') === -1){
+            console.log('converting');
+            res.params.convert=true
+          }
+          res.withMedia('application/base64', buffer)
           .withAuthClient(auth)
           .execute(function(err, result) {
             var data = {
@@ -163,6 +167,9 @@ module.exports = function(){
               downloadUrl:result.downloadUrl,
               iconLink:result.iconLink
             }
+            console.log(title);
+            console.log(mimeType);
+
             resultStream.emit('data',data);
           });
         })
