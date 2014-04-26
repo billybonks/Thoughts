@@ -137,7 +137,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-build');
   grunt.loadNpmTasks('grunt-mustache-render');
   grunt.registerTask('dev',['copy:client','mustache_render','emberTemplates','htmlbuild:dev']);
-  grunt.registerTask('prod', ['mustache_render','emberTemplates','concat','copy:client','copy:api','htmlbuild']);//,'jshint']);
+  grunt.registerTask('prod', [,'copy:client','copy:api','mustache_render','emberTemplates','concat','htmlbuild']);//,'jshint']);
 
 
 };
