@@ -26,7 +26,7 @@ module.exports = function(grunt) {
            template: "Client/Scripts/Components/RenderPluginComponent.mustache",
            dest: "Deploy/Client/Scripts/Components/RenderPluginComponent.js"},
           {data: 'plugins.json',
-           template: "Client/Templates/Components/render-plugin.mustache",
+           template: "Client/Templates/components/render-plugin.mustache",
            dest: "Deploy/Client/Templates/Components/render-plugin.html"},
           {data: 'plugins.json',
            template: "Client/Scripts/Controllers/CardFormController.mustache",
@@ -137,7 +137,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-html-build');
   grunt.loadNpmTasks('grunt-mustache-render');
   grunt.registerTask('dev',['copy:client','mustache_render','emberTemplates','htmlbuild:dev']);
-  grunt.registerTask('prod', [,'copy:client','copy:api','mustache_render','emberTemplates','concat','htmlbuild']);//,'jshint']);
+  grunt.registerTask('prod', ['copy:client','copy:api','mustache_render','emberTemplates','concat','htmlbuild']);//,'jshint']);
 
 
 };
