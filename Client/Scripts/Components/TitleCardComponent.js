@@ -2,6 +2,7 @@
 App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
   showControlls:false,
   test:false,
+  isLoading:false,
   actions:{
     Delete:function(){
       var context  = this;

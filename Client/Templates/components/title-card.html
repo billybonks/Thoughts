@@ -1,4 +1,5 @@
 {{#if showControlls}}
+ {{#unless isLoading}}
 <div class="" style="padding-right:0px;float: left;margin-right: 10px;padding-right:0px">
   <div class="row">
     <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
@@ -32,9 +33,15 @@
   </div>
   {{/unless}}
 </div>
+  {{/unless}}
 {{/if}}
 <div class='col-md-11' style="padding-left:0px">
   <div class="panel panel-default" style="padding:20px">
+    {{#if isLoading}}
+    <div class="cardOverlay">
+      <img  style="margin-left: 45%;margin-top: 20%;" src="Content/ajax-loader.gif">
+    </div>
+    {{/if}}
     <div class="col-md-8">
       {{#if isEditing}}
       {{input type="text" class="form-control" value=model.title action="Save"}}
@@ -48,13 +55,13 @@
     <div class="panel-body">
       {{render-plugin model=model store=store}}
       {{#if isMain}}
-        <button class="btn btn-default" {{action SaveAsTemplate}}>Save as tempalte</button>
-        {{view App.DropCube store=store}}
+      <button class="btn btn-default" {{action SaveAsTemplate}}>Save as tempalte</button>
+      {{view App.DropCube store=store}}
       {{/if}}
       {{#unless isMain}}
-        {{#each child in model.children}}
-            {{render-plugin model=child parent=model store=store}}
-        {{/each}}
+      {{#each child in model.children}}
+      {{render-plugin model=child parent=model store=store}}
+      {{/each}}
       {{/unless}}
     </div>
     <div class="panel-footer" style="background-color: white;">

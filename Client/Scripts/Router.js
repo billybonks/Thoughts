@@ -74,7 +74,7 @@ App.ApplicationRoute = Ember.Route.extend({
       this.notification(reason,'error');
     },
     notification:function(message,level){
-      var notification = {message:message,level:"alert alert-"+level}
+      var notification = {message:message,level:"mainAlert alert alert-"+level}
       this.get('controller').get('notifications').pushObject(notification)
       setTimeout(this.removeNotification(this.get('controller')),3000);
     }

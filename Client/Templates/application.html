@@ -37,7 +37,9 @@
   </div>
 </div>
 {{#each notification in notifications}}
-<div {{bind-attr class="notification.level"}}>{{notification.message}}</div>
+<div class="notification">
+  <div {{bind-attr class="notification.level"}}>{{notification.message}}</div>
+</div>
 {{/each}}
 {{!#view App.DropDelete}}
 {{outlet}}

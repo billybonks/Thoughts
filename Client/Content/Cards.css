@@ -51,6 +51,11 @@ body {
   padding: 1em;
 }
 
+.notification {
+  margin: 10px auto;
+  width: 300px;
+}
+
 
 .overlay {
   height: 100%;
@@ -59,7 +64,7 @@ body {
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.2);
-  z-index:10000;
+  z-index:20000;
 }
 
 .flush--top {
@@ -79,4 +84,22 @@ body {
   width:100px;
   height:100px;
   display: inline-block;
+}
+
+.mainAlert{
+z-index: 20000;
+  position: absolute;
+  width: 300px;
+  text-align: center;
+}
+
+
+.cardOverlay {
+  height: 93%;
+  width: 97%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index:10000;
 }

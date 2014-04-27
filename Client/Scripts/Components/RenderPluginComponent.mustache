@@ -21,6 +21,12 @@ App.RenderPluginComponent = Ember.Component.extend({
   openModal:function(modalName,model,secondaryModel){
     return this.get('targetObject').openPluginModal(modalName,model,secondaryModel);
   },
+  StartLoading:function(){
+    this.get('targetObject').set('isLoading',true);
+  },
+  StopLoading:function(){
+    this.get('targetObject').set('isLoading',false);
+  },
   isEmbedded:function(){
     var configuration = this.get('configuration')
     if(configuration){
