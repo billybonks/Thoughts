@@ -43,6 +43,7 @@ module.exports = function(){
     var GetUser = this.GetUser;
 
     this.GetOAuthUser(accessToken,refreshToken,params).on('data',function(results){
+      console.log(accountNode);
       var OAuthuser = results.user;
       var accountNode = results.account;
       accountNode.date_created = Date.now();
@@ -53,6 +54,7 @@ module.exports = function(){
         if(results !== null){
           user = results.user;
           var accounts = results.accounts;
+          console.log(results.accounts);
           var accountExists = false;
           for(var i =0;i<accounts.length;i++){
             if(context.accountType === accounts[i]){
