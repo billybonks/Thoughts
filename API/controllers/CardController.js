@@ -34,7 +34,8 @@ module.exports = function(){
       'AND not(has(card.isDeleted))',
       'AND not(card-[:Is]->())',
       'AND card.onMainDisplay = true',
-      'RETURN card'
+      'RETURN card',
+      'ORDER BY card.date_created'
     ];
     var context = this;
     var responseStream = new Stream();

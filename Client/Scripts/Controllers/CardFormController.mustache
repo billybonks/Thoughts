@@ -20,11 +20,15 @@ App.CardFormController = Ember.ObjectController.extend(App.PopupMixin,App.OnErro
       }
       var embedded = this.get('secondaryModel.embedded');
       var parent = this.get('secondaryModel.parent')
+      var title = context.get('title');
+      if(title ==='' || typeof title === 'undefined'){
+      return;
+      }
       this.GetNewCard(this.get('secondaryModel.onMainDisplay'),parent,qTags).then(function(cardPackage){
         var card = cardPackage.card;
         var tags = cardPackage.tags;
         var position = cardPackage.position;
-        var title = context.get('title');
+
         card.set('title',title);
         card.set('template',context.get('selectedTemplate'));
         card.set('type',context.get('selectedType'));
