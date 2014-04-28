@@ -1,5 +1,6 @@
 {{barsStart}}#if parent{{barsEnd}}
   {{barsStart}}#if isEmbedded{{barsEnd}}
+  <h5><b>{{barsStart}}model.title{{barsEnd}}</b></h5>
     {{#plugins}}
     {{barsStart}}#if is{{name}}{{barsEnd}}
       {{barsStart}}{{nameLower}}-main modelSateChange = 'modelSateChange' model=model data=model.attachments startLoading = StartLoading endLoading = EndLoading store=store{{barsEnd}}

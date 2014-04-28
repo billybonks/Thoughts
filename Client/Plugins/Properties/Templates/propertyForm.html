@@ -1,8 +1,4 @@
-{{#modal-dialog action="close"}}
-  <div style="margin-bottom:10px">
-    {{input type="text" class="form-control" placeholder="Enter property name" value=name}}
-    {{input type="text" class="form-control" placeholder="Enter property value" value=value}}
-    {{view Ember.Select content=types selectionBinding=selectedType class="form-control"}}
-    <button class="btn btn-default"{{action 'CreateProperty'}}> submit </button>
-  </div>
-{{/modal-dialog}}
+{{log content}}
+{{input type="text" class="form-control" placeholder="Enter property name" value=content.model.name}}
+{{input type="text" class="form-control" placeholder="Enter property value" value=content.model.value}}
+{{view Ember.Select content=content.types selectionBinding=content.model.type class="form-control"}}
