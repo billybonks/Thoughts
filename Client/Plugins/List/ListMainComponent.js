@@ -9,6 +9,9 @@ App.ListMainComponent = App.BaseSectionComponent.extend({
     Submit: function(){
       //title to be set server side
       var href = this.get('newLink');
+      if(href === '' || typeof href === 'undefined'){
+        return;
+      }
       var data;
       if(this.urlIsWellFormed(href)){
         data =
@@ -17,6 +20,12 @@ App.ListMainComponent = App.BaseSectionComponent.extend({
             type:'List'
           }
 
+      }else if(href.indexOf('card:') ===0){
+        data =
+          {
+            card : href,
+            type:'List'
+          }
       }else{
         data =
           {

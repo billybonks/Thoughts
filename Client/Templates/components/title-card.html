@@ -60,6 +60,7 @@
       {{/if}}
       {{#unless isMain}}
       {{#each child in model.children}}
+      <h5><b>{{child.title}}</b></h5>
       {{render-plugin model=child parent=model store=store}}
       {{/each}}
       {{/unless}}

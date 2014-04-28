@@ -11,6 +11,7 @@ var Google = require('./../controllers/Google')();
 var mime = require('mime');
 var controller = require('./../controllers/Controller.js');
 var googleapis = require('googleapis');
+var CardController = require('./../controllers/CardController')();
 //var AttachmentController = require('google-drive');
 module.exports = function(){
   'use strict';
@@ -56,13 +57,34 @@ module.exports = function(){
    *
    * ===================================================================================================== */
   AttachmentProcessor.prototype.ProcessCreateList = function(attachment,user){
-
     var href = attachment.data.link;
     var responseStream = new Stream();
     if(typeof href  == 'undefined'){
-      setTimeout(function() {
-        responseStream.emit('data',attachment.data);
-      }, 100,responseStream);
+      if(typeof attachment.data.card !== 'undefined'){
+        var cardid = attachment.data.card.substring(5);
+        CardController.GetCard(cardid).on('data',function(results){
+          if(results === null){
+            console.log('nooooooooooooooooot fouuuuuuuuuuuund')
+          }else{
+            var data = {
+              title: results.card.data.title,
+              card : results.card.id
+            }
+            console.log(results);
+            console.log(data)
+            console.log('fouuuuuuuuuuuund')
+            responseStream.emit('data',data);
+          }
+        })
+        //get card
+        //if no card Break
+        //get title
+
+      }else{
+        setTimeout(function() {
+          responseStream.emit('data',attachment.data);
+        }, 100,responseStream);
+      }
     }else{
       request(href, function(err, resp, html) {
         if (err){

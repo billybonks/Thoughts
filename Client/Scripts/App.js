@@ -108,14 +108,18 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
       sectionid: this.get('model').get('id'),
       type:this.get('model').get('type')
     };
-    this.get('targetObject').StartLoading();
+    if(this.get('targetObject')){
+      this.get('targetObject').StartLoading();
+    }
     var context = this;
     attachment = this.store.createRecord('attachment', attachment);
     this.store.find('card',this.get('model').get('id')).then(function(card){
       attachment.set('card',card);
       attachment.save().then(
         function(attachment){
-          context.get('targetObject').StopLoading();
+          if(context.get('targetObject')){
+            context.get('targetObject').StopLoading();
+          }
           var attachments =card.get('attachments').then(function(attachments){
             attachments.pushObject(attachment);
             if(context.get('targetObject')){
@@ -126,7 +130,9 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
           });
         },
         function(error){
-          context.get('targetObject').StopLoading();
+          if(context.get('targetObject')){
+            context.get('targetObject').StopLoading();
+          }
           attachment.rollback();
           if(context.get('targetObject')){
             context.get('targetObject').FowardNotification('Attachment couldnt be saved','danger')
