@@ -1,17 +1,14 @@
-{{#modal-dialog action="close"}}
 <form role="form">
   <div class="form-group">
     <label for="title">Title</label>
-    {{input type="text" value=title class="form-control"  id="title" placeholder="Enter title"}}
+    {{input type="text" value=content.title class="form-control"  id="title" placeholder="Enter title"}}
   </div>
   <div class="form-group">
     <label for="type">Type</label>
-    {{view Ember.Select content=types optionValuePath="content.id" optionLabelPath="content.title"  value=selectedType class="form-control"}}
+    {{view Ember.Select content=content.types optionValuePath="content.id" optionLabelPath="content.title"  value=content.selectedType class="form-control"}}
   </div>
   <div class="form-group">
     <label for="tags">Tags</label>
-    {{view App.TaggerView viewName="tagger"}}
+    {{view App.TaggerView viewName="tagger" contentBinding=content.tags}}
   </div>
-  <button type="submit" class="btn btn-success" {{action Submit}}>Submit</button>
 </form>
-{{/modal-dialog}}

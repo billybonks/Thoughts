@@ -13,6 +13,23 @@ App.ApplicationController = Ember.Controller.extend(App.PopupOpenerMixin,{
                 this.set('currentDrag', model);
             };
         },
+        OpenLoginModal:function(){
+         Ember.Widgets.ModalComponent.popup({
+              targetObject: this,
+              confirm: "LoginConf",
+             // cancel: "BaseModalCancel",
+             // content: content,
+              contentViewClass:App.LoginModalView,
+              headerText:'Login'
+            });
+        },
+      LoginGoogle:function(){
+        console.log('GOOGLE');
+      },
+      LoginConf:function(){
+
+      }
+
     },
     MouseMove: function (application) {
         var controller = application;

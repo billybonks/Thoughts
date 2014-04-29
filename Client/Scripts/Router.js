@@ -25,32 +25,6 @@ App.ApplicationRoute = Ember.Route.extend({
       var context = this;
       var controller = this.controllerFor(modalName)
       if(modalName == 'cardForm'){
-
-        console.log('setting up the form :P');
-          new Promise(function(resolve, reject){
-          var xhr = new XMLHttpRequest();
-
-          xhr.open('GET',  window.AppSettings.WebserviceURL+'/templates');
-          xhr.onreadystatechange = handler;
-          xhr.responseType = 'json';
-          xhr.setRequestHeader('Accept', 'application/json');
-          xhr.send();
-          function handler() {
-            if (this.readyState === this.DONE) {
-              if (this.status === 200) {
-                resolve(Ember.A(this.response.templates));
-              }
-            }
-          }
-        }).then(function(templates){
-          controller.set('model', templates);
-          controller.set('types',controller.get('typesRaw').concat(templates));
-          controller.set('secondaryModel', secondaryModel);
-          context.render(modalName, {
-            into: 'application',
-            outlet: 'modal'
-          });
-        })
       }else{
         controller.set('model', model);
         if(secondaryModel){

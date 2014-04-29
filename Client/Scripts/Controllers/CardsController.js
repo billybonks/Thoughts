@@ -1,5 +1,5 @@
 'use strict';
-App.CardsIndexController = Ember.ArrayController.extend(App.PopupOpenerMixin,{
+App.CardsIndexController = Ember.ArrayController.extend(App.NewCardMixin,{
   views:['Cards','Templates'],
   selectedView:'Cards',
   templates:false,

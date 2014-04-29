@@ -25,7 +25,7 @@
       <li><a href="#">Welcome {{model.name}}</a></li>
       <li><button class="btn btn-danger btn-nav "{{action "ClearToken" on="click"}}>Logout</button></li>
       {{else}}
-      <li><button class="btn btn-info btn-nav"{{action "openModalSource" 'login'}}>Login</button></li>
+      <li><button class="btn btn-info btn-nav"{{action "openModalSource" 'login'}} {{!action "OpenLoginModal" on="click"}}>Login</button></li>
       {{/if}}
     </ul>
   </div><!-- /.navbar-collapse -->

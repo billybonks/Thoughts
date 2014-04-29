@@ -111,6 +111,7 @@ module.exports = function(grunt) {
             components:'Deploy/Client/Scripts/Components/*.js',
             models:'Deploy/Client/Scripts/Models/*.js',
             views:'Deploy/Client/Scripts/Views/*.js',
+            mixins:'Deploy/Client/Scripts/Mixins/*.js',
             templates:'Deploy/Client/Templates/result.js'
           },
           styles: {

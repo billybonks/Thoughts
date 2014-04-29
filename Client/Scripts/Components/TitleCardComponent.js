@@ -1,5 +1,5 @@
 'use strict';
-App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
+App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin,{
   showControlls:false,
   test:false,
   isLoading:false,
@@ -62,11 +62,12 @@ App.TitleCardComponent = Ember.Component.extend(App.PopupOpenerMixin,{
   mouseEnter: function(ctx){
     this.set('showControlls',true)
   },
-  cardFormPackage:function(){
-    var cardPackage = {}
-    cardPackage.parent = this.get('model');
-    cardPackage.embedded = this.get('isMain') ? false : true;
-    cardPackage.onMainDisplay = false;
-    return cardPackage;
+  parent:function(){
+    if(this.get('model.content')){
+      return this.get('model.content');
+    }else{
+      return this.get('model');
+    }
+
   }.property('model')
 });
