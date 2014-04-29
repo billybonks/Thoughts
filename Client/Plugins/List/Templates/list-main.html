@@ -7,7 +7,7 @@
       {{#unless model.isDeleted}}
           {{#if model.data.href}}
             {{#unless isEditing}}
-              <li><a target="_blank" {{bind-attr href=model.data.href}}>{{model.data.title}}</a></li>
+              <li><a target="_blank" {{bind-attr href=model.data.href}}>{{model.data.title}}</a><button {{action Edit}} class="btn btn-default btn-xs">edit</button></li>
             {{else}}
               <li>{{input type="text" class="form-control" placeholder="" value=model.data.title action="Update"}}</li>
             {{/unless}}
