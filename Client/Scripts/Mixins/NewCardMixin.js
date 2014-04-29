@@ -1,5 +1,6 @@
 App.NewCardMixin = Ember.Mixin.create({
   typesRaw:[{title:'Documents',id:'Documents'},{title:'Image',id:'Image'},{title:'List',id:'List'},{title:'Properties',id:'Properties'},{title:'Text_Area',id:'Text_Area'},{title:'Titled_Notes',id:'Titled_Notes'}],
+  // typesRaw:[{{#plugins}}{title:'{{name}}',id:'{{name}}'},{{/plugins}}],
   actions:{
     NewCard:function(){
       var typesRaw = this.get('typesRaw');

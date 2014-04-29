@@ -27,10 +27,10 @@ module.exports = function(grunt) {
            dest: "Deploy/Client/Scripts/Components/RenderPluginComponent.js"},
           {data: 'plugins.json',
            template: "Client/Templates/components/render-plugin.mustache",
-           dest: "Deploy/Client/Templates/Components/render-plugin.html"},
+           dest: "Deploy/Client/Templates/Components/render-plugin.html"}/*,
           {data: 'plugins.json',
            template: "Client/Scripts/Controllers/CardFormController.mustache",
-           dest: "Deploy/Client/Scripts/Controllers/CardFormController.js"}
+           dest: "Deploy/Client/Scripts/Controllers/CardFormController.js"}*/
         ]
       },
     },
