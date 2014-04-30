@@ -54,10 +54,10 @@ App.NewCardMixin = Ember.Mixin.create({
     var f = function(templates){
       var types =typesRaw.concat(templates);
       var content= {types:types};//parent embedded
-
-      if(context.get('parent')){
+      var parent = context.GetParent();
+      if(parent){
         content.onMainDisplay = false;
-        content.parent = context.get('parent');
+        content.parent = parent;
         content.embedded = context.get('isMain') ? false : true;
       }else{
         content.onMainDisplay = true;

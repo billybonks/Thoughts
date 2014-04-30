@@ -106,14 +106,14 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin,{
   mouseEnter: function(ctx){
     this.set('showControlls',true)
   },
-  parent:function(){
+  GetParent:function(){
     if(this.get('model.content')){
       return this.get('model.content');
     }else{
       return this.get('model');
     }
 
-  }.property('model'),
+  },
     configuration:function(){
       var parentId = parseInt(this.get('model.id'));
       var configs = this.get('model.configurations');
