@@ -46,6 +46,50 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin,{
         context.sendAction('CreateNotification','Template couldnt be saved','danger')
       });
     },
+    EditCardSetting:function(){
+      var configuration = this.GetConfiguration();
+      var content = {
+        embedded :configuration.get('embedded'),
+        isOnMain :this.get('model.onMainDisplay')
+      }
+      if(typeof content.isOnMain ==='undefined' ){
+        content.isOnMain = false;
+      }
+      var header = this.get('model.title') + ' Properties'
+      this.set('modal',Ember.Widgets.ModalComponent.popup({
+        targetObject: this,
+        confirm: "SaveConfiguration",
+        content: content,
+        contentViewClass:Ember.View.extend({
+          templateName:'cardSettings',
+        }),
+        headerText:header
+      }));
+    },
+    SaveConfiguration:function(){
+      var content = this.get('modal.content');
+      var context = this;
+      var model = this.get('model')
+      var configuration = this.GetConfiguration();
+      model.set('onMainDisplay',content.isOnMain);
+      configuration.set('embedded',content.embedded);
+      console.log(configuration.get('configures'))
+      configuration.get('configures').then(function(configures){
+        configuration.set('configures',configures);
+        model.save();
+        configuration.save();
+      })
+    }
+  },
+  GetConfiguration:function(){
+    var parentId = parseInt(this.get('parent.id'));
+    var configs = this.get('model.configurations');
+    return configs.find(function(item, index, enumerable){
+      var f = item.get('for')
+      if(f === parentId){
+        return true;
+      }
+    },configs)
   },
   FowardNotification:function(message,level){
     this.sendAction('CreateNotification',message,level)
@@ -69,5 +113,15 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin,{
       return this.get('model');
     }
 
-  }.property('model')
+  }.property('model'),
+    configuration:function(){
+      var parentId = parseInt(this.get('model.id'));
+      var configs = this.get('model.configurations');
+      return configs.find(function(item, index, enumerable){
+        var f = item.get('for')
+        if(f === parentId){
+          return true;
+        }
+      },configs)
+    }.property('model.configurations.@each.for')
 });

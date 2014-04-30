@@ -73,7 +73,9 @@ App.ApplicationRoute = Ember.Route.extend({
 
 App.IndexRoute = Ember.Route.extend({
   model: function () {
-    return this.modelFor('cards');
+    var id = $.cookie(AppSettings.CookieName);
+    var model =  this.store.getById('application', id);
+    return model;
   }
 });
 
