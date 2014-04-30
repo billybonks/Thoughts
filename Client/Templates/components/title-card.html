@@ -26,11 +26,13 @@
     </button>
   </div>
   {{#unless isMain}}
+    {{#unless isOnMain}}
   <div class="row">
     <button type="button" class="btn btn-default btn-xs" {{action 'EditCardSetting'}}>
       <span class="glyphicon glyphicon-cog"></span>
     </button>
   </div>
+  {{/unless}}
   {{/unless}}
 </div>
   {{/unless}}
