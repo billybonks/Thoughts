@@ -91,6 +91,9 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin,{
       }
     },configs)
   },
+  Notify:function(message,level){
+    this.FowardNotification(message,level);
+  },
   FowardNotification:function(message,level){
     this.sendAction('CreateNotification',message,level)
   },

@@ -4,6 +4,9 @@ App.CardsIndexController = Ember.ArrayController.extend(App.NewCardMixin,{
   selectedView:'Cards',
   templates:false,
   cards:true,
+  Notify:function(message,level){
+    this.send('notification',message,level);
+  },
   viewSwapper:function(){
     if(this.get('selectedView') === 'Templates'){
       this.set('templates',true);

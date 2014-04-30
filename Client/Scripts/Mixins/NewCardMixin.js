@@ -86,10 +86,10 @@ App.NewCardMixin = Ember.Mixin.create({
     var context = this;
     promise.then(
       function(card){
-        context.send('notification','Card saved','success')
+        context.Notify('Card saved','success')
       },
       function(error){
-        context.send('notification','Card couldnt be saved','danger')
+        context.Notify('Card couldnt be saved','danger')
       }
     );
   },
@@ -113,7 +113,7 @@ App.NewCardMixin = Ember.Mixin.create({
                 configuration.save().then(function(configuration){
                   card.get('configurations').then(function(configurations){
                     configurations.pushObject(configuration);
-                    context.send('notification','Card saved','success');
+                     context.Notify('Card saved','success')
                     resolve(card);
                   });
                 });
@@ -139,7 +139,7 @@ App.NewCardMixin = Ember.Mixin.create({
     });
   },
   OnError:function(error){
-    this.send('notification','Card couldnt be saved','danger');
+    this.Notify('Card couldnt be saved','danger')
     this.CleanUp();
   },
   GetNewCard:function(onMainDisplay,parent,qTags){
