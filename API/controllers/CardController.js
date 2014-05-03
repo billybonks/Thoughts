@@ -68,6 +68,20 @@ module.exports = function(){
     return responseStream;
   };
 
+  /*
+   parent:
+  { id: '121',
+    data:
+     { title: 'asd',
+       tagsIn: [],
+       date_modified: 1399144778595,
+       onMainDisplay: true,
+       date_created: 1399043435028,
+       left: 0,
+       isTemplate: false,
+       type: 'Text_Area',
+       top: 0 } } }
+       */
   Card.prototype.GetCard=function (id){
     var context = this;
     var query=[
@@ -85,16 +99,19 @@ module.exports = function(){
         var card = context.FormatNeo4jObject(results);
         ConfigurationController.GetCardConfigurations(card.card.id)
         .on('data',function(data){
-          card.configurations =[]
           card.configurations = data;
-          AttachmentController.GetCardsAttachments(id)
+          context.GetCardParents.call(context,id)
           .on('data',function(data){
-            card.attachments = {};
-            for(var i = 0;i<data.length;i++){
-              var att =AttachmentController.FormatObject(data[i].attachment,id);
-              card.attachments[att.id] = att;
-            }
-          responseStream.emit('data',card)
+            card.parents = data;
+            AttachmentController.GetCardsAttachments(id)
+            .on('data',function(data){
+              card.attachments = {};
+              for(var i = 0;i<data.length;i++){
+                var att =AttachmentController.FormatObject(data[i].attachment,id);
+                card.attachments[att.id] = att;
+              }
+              responseStream.emit('data',card)
+            })
           })
         });
       }else{
@@ -106,6 +123,27 @@ module.exports = function(){
     })
     return responseStream;
   };
+
+  Card.prototype.GetCardParents=function (id){
+    var responseStream = new Stream();
+    var context = this;
+    var query=[
+      'Start card=node('+id+')',
+      'MATCH  (card)<-[h:Has]-(parent)',
+      'RETURN parent'//user,card,attachment'
+    ];
+    this.executeQuery(query.join('\n'),{}).on('data',function(results){
+      for(var i = 0;i<results.length;i++){
+        var parents = {}
+        parents[results[i].parent.id]=results[i].parent;
+      }
+      console.log('pareeeeeeeeents')
+      console.log(parents)
+      responseStream.emit('data',parents)
+    })
+    return responseStream;
+  }
+
   /* ========================================================================================================
    *
    * Write Methods - Keep in alphabetical order
@@ -350,6 +388,7 @@ module.exports = function(){
     for(var i = 0; i < results.length;i++){
 
       var result = results[i];
+      console.log(result);
       card = result.card;
       if(result.child){
         var parents ={}

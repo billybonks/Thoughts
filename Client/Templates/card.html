@@ -1,4 +1,10 @@
 <div class="container">
+  <div class="row">
+    parents:
+  {{#each parent in model.parents}}
+  {{#link-to 'card' parent.id}}{{parent.title}}{{/link-to}}
+  {{/each}}
+  </div>
   <div class="col-md-12">
     <div class="col-md-6">
       {{title-card model=model CreateNotification='CreateNotification' openModal='openModal' templateArr=templateArr store=store isMain='true'}}
