@@ -1,0 +1,26 @@
+<div class="panel-group" id="accordion">
+  {{#view App.CollapseableView}}
+  <div class="panel panel-default">
+    <div class="panel-heading">URL</div>
+    {{#view App.CollapseableContent}}
+    <div class="panel-body">Currently Unsupported{{!input type="text" class="form-control" placeholder="Enter url and submit" value=content.url}}</div>
+    {{/view}}
+  </div>
+  {{/view}}
+  {{#view App.CollapseableView}}
+  <div class="panel panel-default">
+    <div class="panel-heading">Drag and Drop</div>
+    {{#view App.CollapseableContent}}
+    <div class="panel-body">{{view App.DocumentsDropView controller=this contentBinding=content.files}} </div>
+    {{/view}}
+  </div>
+  {{/view}}
+  {{#view App.CollapseableView}}
+  <div class="panel panel-default">
+    <div class="panel-heading">File picker</div>
+    {{#view App.CollapseableContent}}
+    <div class="panel-body">Currently Unsupported</div>
+    {{/view}}
+  </div>
+  {{/view}}
+</div>

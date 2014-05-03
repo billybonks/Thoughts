@@ -8,12 +8,13 @@ App.TextAreaMainComponent = App.BaseSectionComponent.extend({
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     },
     NewMultiLineText:function(){
-      console.log(this.get('data'));
-      var data = {
-        value:this.get('newText'),
+      if(this.get('newText')){
+        var data = {
+          value:this.get('newText'),
+        }
+        this.submitAttachment(data);
+        this.set('text',this.get('newText'));
       }
-      this.submitAttachment(data);
-      this.set('text',this.get('newText'));
     },
     Update:function(){
       this.SaveAttachment(this.get('data').objectAt(0));

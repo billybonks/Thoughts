@@ -1,8 +1,9 @@
-{{view App.DocumentsDropView controller=this}}
+
 <ul>
 {{#each item in data}}
     {{#view App.DocumentView model=item}}
        <li ><a draggable="true" {{bind-attr href=item.data.link}}> {{item.data.title}}</a></li>
     {{/view}}
 {{/each}}
+  <button class="btn btn-default" {{action 'SelectFile'}}>Upload document</button>
   </ul>

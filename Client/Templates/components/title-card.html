@@ -1,42 +1,4 @@
-{{#if showControlls}}
- {{#unless isLoading}}
-<div class="" style="padding-right:0px;float: left;margin-right: 10px;padding-right:0px">
-  <div class="row">
-    <button type="button" class="btn btn-default btn-xs" {{action "Delete" on="mouseDown"}}>
-      <span class="glyphicon glyphicon-remove"></span>
-    </button>
-  </div>
-  <div class="row">
-    <button type="button" class="btn btn-default btn-xs">
-      <span class="glyphicon glyphicon-share-alt"></span>
-    </button>
-  </div>
-  <div class="row">
-    <button type="button" class="btn btn-default btn-xs"  {{action "ToggleEdit" on="click"}}>
-      {{#if editing}}
-      <span class="glyphicon glyphicon-check"></span>
-      {{else}}
-      <span class="glyphicon glyphicon-edit"></span>
-      {{/if}}
-    </button>
-  </div>
-  <div class="row">
-    <button type="button" class="btn btn-default btn-xs" {{action 'NewCard'}}>
-      <span class="glyphicon glyphicon-plus"></span>
-    </button>
-  </div>
-  {{#unless isMain}}
-    {{#unless isOnMain}}
-  <div class="row">
-    <button type="button" class="btn btn-default btn-xs" {{action 'EditCardSetting'}}>
-      <span class="glyphicon glyphicon-cog"></span>
-    </button>
-  </div>
-  {{/unless}}
-  {{/unless}}
-</div>
-  {{/unless}}
-{{/if}}
+
 <div class='col-md-11' style="padding-left:0px">
   <div class="panel panel-default" style="padding:20px">
     {{#if isLoading}}
@@ -44,7 +6,7 @@
       <img  style="margin-left: 45%;margin-top: 20%;" src="Content/ajax-loader.gif">
     </div>
     {{/if}}
-    <div class="col-md-8">
+    <div class="col-md-7">
       {{#if isEditing}}
       {{input type="text" class="form-control" value=model.title action="Save"}}
       {{else}}
@@ -53,6 +15,29 @@
     </div>
     <div class="col-md-4">
       <h4 style="float:right;">{{model.user.name}}</h4>
+    </div>
+    <div class="col-md-1">
+      {{#if showControlls}}
+      {{#unless isLoading}}
+      <div class="btn-group">
+        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><a href="#" {{action "Delete"}}>Delete</a></li>
+          <li><a href="#" {{action "ToggleEdit"}}>Edit</a></li>
+          <li><a href="#" {{action "Share"}}>Share</a></li>
+          {{#unless isMain}}
+          {{#unless isOnMain}}
+          <li><a href="#" {{action 'EditCardSetting'}}>Settings</a></li>
+          {{/unless}}
+          {{/unless}}
+          <li class="divider"></li>
+          <li><a href="#" {{action 'NewCard'}}>New Subcard</a></li>
+        </ul>
+      </div>
+      {{/unless}}
+      {{/if}}
     </div>
     <div class="panel-body">
       {{render-plugin model=model store=store}}

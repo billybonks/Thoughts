@@ -1,7 +1,16 @@
 'use strict';
-App.DocumentsMainComponent = App.BaseSectionComponent.extend(DragNDrop.DropTarget ,{
-  drop: function(event) {
-    var files = event.originalEvent.dataTransfer.files;
+App.DocumentsMainComponent = App.BaseSectionComponent.extend({
+  actions:{
+    SelectFile:function(){
+      var data = {model:{name:null,value:null,type:null},types:this.get('types')};
+      var view = Ember.View.extend({
+        templateName:'uploadFile',
+      });
+      return this.OpenModal( this.get('FilesSelected'),null,data,view,'Upload Document');
+    },
+  },
+  FilesSelected:function(data){
+    var files = data.files;
     for(var i = 0;i<files.length;i++){
       var item = this.get('data').find(function(item, index, enumerable){
         if(item.get('data.title') == files[i].name)
@@ -9,15 +18,17 @@ App.DocumentsMainComponent = App.BaseSectionComponent.extend(DragNDrop.DropTarge
       })
       this.UploadDocument(files[i],item);
     }
-    event.preventDefault();
+  },
+  drop: function(event) {
+nt.preventDefault();
     return false;
   },
   UpdateDocument:function(file,item){
   },
   UploadDocument:function(file,item){
-      var reader = new FileReader();
-      reader.addEventListener('load',this.OnReader(file,item));
-      reader.readAsDataURL(file);
+    var reader = new FileReader();
+    reader.addEventListener('load',this.OnReader(file,item));
+    reader.readAsDataURL(file);
   },
   OnReader:function(file,item){
     var name = file.name;
