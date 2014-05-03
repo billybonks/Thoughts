@@ -1,4 +1,4 @@
-{{view App.PhotoDropView controller=this}}
+{{!view App.PhotoDropView controller=this}}
 {{#each item in data}}
   {{#unless item.isSaving}}
     {{#unless item.isDeleted}}
@@ -6,3 +6,6 @@
     {{/unless}}
   {{/unless}}
 {{/each}}
+<div class="row">
+  <button class="btn btn-default" {{action 'SelectImage'}}>Upload image</button>
+</div>

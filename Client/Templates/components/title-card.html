@@ -28,12 +28,13 @@
           <li><a href="#" {{action "ToggleEdit"}}>Edit</a></li>
           <li><a href="#" {{action "Share"}}>Share</a></li>
           {{#unless isMain}}
-          {{#unless isOnMain}}
-          <li><a href="#" {{action 'EditCardSetting'}}>Settings</a></li>
-          {{/unless}}
+            {{#unless isOnMain}}
+              <li><a href="#" {{action 'EditCardSetting'}}>Settings</a></li>
+            {{/unless}}
           {{/unless}}
           <li class="divider"></li>
           <li><a href="#" {{action 'NewCard'}}>New Subcard</a></li>
+          <li><a href="#" {{action SaveAsTemplate}}>Save as template</a></li>
         </ul>
       </div>
       {{/unless}}
@@ -42,8 +43,7 @@
     <div class="panel-body">
       {{render-plugin model=model store=store}}
       {{#if isMain}}
-      <button class="btn btn-default" {{action SaveAsTemplate}}>Save as tempalte</button>
-      {{view App.DropCube store=store}}
+        {{view App.DropCube store=store}}
       {{/if}}
       {{#unless isMain}}
         {{#each child in model.children}}

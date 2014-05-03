@@ -19,10 +19,6 @@ App.DocumentsMainComponent = App.BaseSectionComponent.extend({
       this.UploadDocument(files[i],item);
     }
   },
-  drop: function(event) {
-nt.preventDefault();
-    return false;
-  },
   UpdateDocument:function(file,item){
   },
   UploadDocument:function(file,item){
