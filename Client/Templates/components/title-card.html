@@ -17,8 +17,8 @@
       <h4 style="float:right;">{{model.user.name}}</h4>
     </div>
     <div class="col-md-1">
-      {{#if showControlls}}
-      {{#unless isLoading}}
+      {{!#if showControlls}}
+      {{!#unless isLoading}}
       <div class="btn-group">
         <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
           <span class="caret"></span>
@@ -37,10 +37,11 @@
           <li><a href="#" {{action SaveAsTemplate}}>Save as template</a></li>
         </ul>
       </div>
-      {{/unless}}
-      {{/if}}
+      {{!/unless}}
+      {{!/if}}
     </div>
     <div class="panel-body">
+      <br />
       {{render-plugin model=model store=store}}
       {{#if isMain}}
         {{view App.DropCube store=store}}
