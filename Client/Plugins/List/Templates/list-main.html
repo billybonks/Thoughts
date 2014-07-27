@@ -4,23 +4,24 @@
   <ul>
 {{#each item in data itemController="listItem"}}
     {{#view App.LinkView model=item.content}}
-      {{#unless model.isDeleted}}
-          {{#if model.data.href}}
+      {{#unless item.content.isDeleted}}
+          {{#if item.content.data.href}}
             {{#unless isEditing}}
-              <li><a target="_blank" {{bind-attr href=model.data.href}}>{{model.data.title}}</a><button {{action Edit}} class="btn btn-default btn-xs">edit</button></li>
+            {{log item.content.data}}
+              <li><a target="_blank" {{bind-attr href=model.data.href}}>{{item.content.data.title}}</a><button {{action Edit}} class="btn btn-default btn-xs">edit</button></li>
             {{else}}
-              <li>{{input type="text" class="form-control" placeholder="" value=model.data.title action="Update"}}</li>
+              <li>{{input type="text" class="form-control" placeholder="" value=item.content.data.title action="Update"}}</li>
             {{/unless}}
           {{/if}}
-          {{#if model.data.card}}
-            <li>{{#link-to 'card' model.data.card}}{{model.data.title}}{{/link-to}}</li>
+          {{#if item.content.data.card}}
+            <li>{{#link-to 'card' item.content.data.card}}{{item.content.data.title}}{{/link-to}}</li>
           {{/if}}
-          {{#unless model.data.card}}
-            {{#unless model.data.href}}
+          {{#unless item.content.data.card}}
+            {{#unless item.content.data.href}}
               {{#unless isEditing}}
-                <li {{action Edit on='doubleClick'}}>{{model.data.title}}</li>
+                <li {{action Edit on='doubleClick'}}>{{item.content.data.title}}</li>
               {{else}}
-                <li>{{input type="text" class="form-control" placeholder="" value=model.data.title action="Update"}}</li>
+                <li>{{input type="text" class="form-control" placeholder="" value=item.content.data.title action="Update"}}</li>
               {{/unless}}
             {{/unless}}
           {{/unless}}
@@ -28,4 +29,3 @@
     {{/view}}
 {{/each}}
 </ul>
-
