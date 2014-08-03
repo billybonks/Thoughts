@@ -6,17 +6,14 @@
       <img  style="margin-left: 45%;margin-top: 20%;" src="Content/ajax-loader.gif">
     </div>
     {{/if}}
-    <div class="col-md-7">
+    <div class="col-sm-5 col-lg-5 col-md-5">
       {{#if isEditing}}
       {{input type="text" class="form-control" value=model.title action="Save"}}
       {{else}}
       <h4>{{#link-to 'card' model.id}}{{model.title}}{{/link-to}}</h4>
       {{/if}}
     </div>
-    <div class="col-md-4">
-      <h4 style="float:right;">{{model.user.name}}</h4>
-    </div>
-    <div class="col-md-1">
+    <div class="col-sm-1 col-lg-1 col-md-1 pull-right" style="position: absolute;top: -10px;right: 15px;">
       <br />
       {{!#if showControlls}}
       {{!#unless isLoading}}
@@ -40,6 +37,9 @@
       </div>
       {{!/unless}}
       {{!/if}}
+    </div>
+    <div class="col-sm-4 col-lg-4 col-md-4 pull-right">
+      <h4 style="float:right;">{{model.user.name}}</h4>
     </div>
     <div class="panel-body">
       <br />
