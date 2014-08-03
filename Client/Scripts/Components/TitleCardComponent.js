@@ -9,10 +9,11 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin,{
       this.get('store').find('card', this.get('model').get('id')).then(function(rec){
         rec.deleteRecord();
         rec.save().then(function(){
-                          context.sendAction('CreateNotification','Card deleted','success')
+                          context.transitionTo('cards.index');
+                          context.sendAction('CreateNotification','Card deleted','success');
                         },
                         function(){
-                          context.sendAction('CreateNotification','Error deleting card','danger')
+                          context.sendAction('CreateNotification','Error deleting card','danger');
                         });
       })
     },

@@ -18,7 +18,7 @@ App.CardsIndexController = Ember.ArrayController.extend(App.NewCardMixin,{
     }
   }.observes('selectedView'),
     display:function(model){
-    if(this.get('parentController.templates')){
+    if(this.get('templates')){
       if(this.get('model.isTemplate')){
         return true;
       }
