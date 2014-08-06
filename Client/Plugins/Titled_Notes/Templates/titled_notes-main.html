@@ -4,25 +4,25 @@
 <div class="panel-group">
   {{#each item in data itemController="question"}}
     {{#unless item.isDeleted}}
-      {{#view App.QuestionView model=item}}
+      {{#view App.QuestionView}}
          <div class="panel panel-default">
           <div class="panel-heading" {{action 'ToggleAnswer'}}>
             <h4 class="panel-title" {{action 'ToggleAnswer'}}>
-              {{#if isEditingAnswer}}
-                {{input type="text" class="form-control" placeholder="" value=data.question action="UpdateQuestion"}}
+              {{#if controller.isEditingAnswer}}
+                {{input type="text" class="form-control" placeholder="" value=item.data.question action="controller.UpdateQuestion"}}
               {{else}}
-              <p {{action 'ToggleEditAnswer' on='doubleClick'}}>{{data.question}}</p>
+              <p {{action 'ToggleEditAnswer' on='doubleClick'}}>{{item.data.question}}</p>
               {{/if}}
             </h4>
           </div>
-          <div  {{bind-attr class="answerClass"}}>
+          <div  {{bind-attr class="controller.answerClass"}}>
             <div class="panel-body">
-                {{#if isEditingAnswer}}
-                  {{textarea class="form-control" placeholder="enter answer" value=model.data.answer}}
+                {{#if controller.isEditingAnswer}}
+                  {{textarea class="form-control" placeholder="enter answer" value=item.data.answer}}
                   <button class="btn btn-success" {{action 'UpdateQuestion'}}>Save</button>
                 {{else}}
-                  {{#if model.data.answer}}
-              <div {{action 'ToggleEditAnswer' on='doubleClick'}}>{{{text}}}</div>
+                  {{#if item.data.answer}}
+                  <div {{action 'ToggleEditAnswer' on='doubleClick'}}>{{{controller.text}}}</div>
                   {{else}}
                   <p {{action 'ToggleEditAnswer' on='doubleClick'}}>Double click to edit</p>
                   {{/if}}
@@ -34,4 +34,3 @@
     {{/unless}}
   {{/each}}
 </div>
-
