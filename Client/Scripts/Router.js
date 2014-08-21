@@ -21,29 +21,6 @@ App.Router.map(function () {
 
 App.ApplicationRoute = Ember.Route.extend({
   actions: {
-    openModal: function(modalName, model,secondaryModel) {
-      var context = this;
-      var controller = this.controllerFor(modalName)
-      if(modalName == 'cardForm'){
-      }else{
-        controller.set('model', model);
-        if(secondaryModel){
-          controller.set('secondaryModel', secondaryModel);
-        }
-
-        return this.render(modalName, {
-          into: 'application',
-          outlet: 'modal'
-        });
-      }
-    },
-
-    closeModal: function() {
-      return this.disconnectOutlet({
-        outlet: 'modal',
-        parentView: 'application'
-      });
-    },
     error:function(reason){
       this.notification(reason,'error');
     },
@@ -190,4 +167,3 @@ Ember.Route.reopen({
      //   name = this.parentState.get('name')
    }
 })
-

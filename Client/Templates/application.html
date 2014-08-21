@@ -24,7 +24,7 @@
     <ul class="nav navbar-nav navbar-right">
       {{#if model.token}}
       <li><a href="#">Welcome {{model.name}}</a></li>
-      <li><button class="btn btn-danger btn-nav "{{action "ClearToken" on="click"}}>Logout</button></li>
+      <li><button class="btn btn-danger btn-nav "{{action "Logout" on="click"}}>Logout</button></li>
       {{else}}
       <li><a class="navbar-brand" href="#">Login :</a></li>
       <li><button style="margin-top: 10px;" class="btn btn-social facebook" {{action "LoginFacebook" on="click"}}>With Facebook</button></li>

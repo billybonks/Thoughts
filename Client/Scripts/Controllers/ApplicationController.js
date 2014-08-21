@@ -4,16 +4,11 @@ App.ApplicationController = Ember.Controller.extend(App.PopupOpenerMixin, {
   menuOpen: false,
   notifications: Ember.A([]),
   actions: {
-    ClearToken: function() {
+    Logout: function() {
       $.cookie(AppSettings.CookieName, '', {
         expires: -1
       });
       window.location = 'http://' + AppSettings.domain;
-    },
-    StartDrag: function() {
-      return function(model) {
-        this.set('currentDrag', model);
-      };
     },
     OpenLoginModal: function() {
       Ember.Widgets.ModalComponent.popup({
