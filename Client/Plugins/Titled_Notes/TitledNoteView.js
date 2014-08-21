@@ -1,5 +1,5 @@
 'use strict';
-App.QuestionView = Ember.View.extend(DragNDrop.DragAndDroppable,{
+App.TitledNoteView = Ember.View.extend(DragNDrop.DragAndDroppable,{
   dragStart: function(event) {
     console.log('dragStart');
     var model = this.get('model')

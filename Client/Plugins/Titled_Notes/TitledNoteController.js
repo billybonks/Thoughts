@@ -1,5 +1,5 @@
 'use strict';
-App.QuestionController = Ember.ObjectController.extend(App.SubmitAttachmentMixin,{
+App.TitledNoteController = Ember.ObjectController.extend(App.SubmitAttachmentMixin,{
    displayAnswer : false,
    class:'panel-collapse collapse in',
    actions:{

@@ -2,9 +2,9 @@
   {{input type="text" class="form-control" placeholder="enter title press enter to submit" value=newQuestion action="CreateQuestion"}}
 </div>
 <div class="panel-group">
-  {{#each item in data itemController="question"}}
+  {{#each item in data itemController="titledNote"}}
     {{#unless item.isDeleted}}
-      {{#view App.QuestionView}}
+      {{#view App.TitledNoteView}}
          <div class="panel panel-default">
           <div class="panel-heading" {{action 'ToggleAnswer'}}>
             <h4 class="panel-title" {{action 'ToggleAnswer'}}>
