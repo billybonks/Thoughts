@@ -73,7 +73,7 @@ App.NewCardMixin = Ember.Mixin.create({
         // cancel: "BaseModalCancel",
         content: content,
         contentViewClass:Ember.View.extend({
-          templateName:'cardForm',
+          templateName:'popups/cardForm',
         }),
         headerText:'New Card'
       }));

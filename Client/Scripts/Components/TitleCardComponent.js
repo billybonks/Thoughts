@@ -62,7 +62,7 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin,{
         confirm: "SaveConfiguration",
         content: content,
         contentViewClass:Ember.View.extend({
-          templateName:'cardSettings',
+          templateName:'popups/cardSettings',
         }),
         headerText:header
       }));
