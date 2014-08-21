@@ -3,7 +3,7 @@ App.PhotoDropView = Ember.View.extend({
   templateName:'photoDrop',
   drop: function(event) {
     console.log('Dropped')
-    this.controller.get('newPhoto').call(this.controller,event.originalEvent.dataTransfer.files);
+    this.controller.get('FilesSelected').call(this.controller,event.originalEvent.dataTransfer.files);
     event.preventDefault();
     return false;
   },
@@ -11,5 +11,5 @@ App.PhotoDropView = Ember.View.extend({
   dragOver: DragNDrop.cancel,
   draggable: 'true',
   dragStart: DragNDrop.cancel,
-});
 
+});
