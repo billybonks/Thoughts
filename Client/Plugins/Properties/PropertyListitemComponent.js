@@ -1,5 +1,5 @@
 'use strict'
-App.PropertiesListItemComponenet = Ember.Component.extend(App.SubmitAttachmentMixin, DragNDrop.DragAndDroppable, {
+App.PropertyListitemComponent = Ember.Component.extend(App.SubmitAttachmentMixin, DragNDrop.DragAndDroppable, {
   isEditing: false,
   actions: {
     toggleEdit: function() {
