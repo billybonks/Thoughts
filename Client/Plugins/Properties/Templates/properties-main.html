@@ -2,9 +2,10 @@
   <div class="col-md-6"><b>Name</b></div>
   <div class="col-md-6"><b>Value</b></div>
 </div>
-{{#each item in data itemController='property'}}
+{{#each item in data}}
   {{#unless item.isDeleted}}
-    {{view App.PropertyView model=item}}
+    {{property-listitem model=item}}
+    {{!view App.PropertyView model=item}}
   {{/unless}}
 {{/each}}
 <button class="btn btn-default"{{action  'openModal' 'propertyForm' model}}> New Property </button>
