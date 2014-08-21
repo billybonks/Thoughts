@@ -1,9 +1,13 @@
 'use strict'
-App.ImagePreviewComponent = Ember.Component.extend(DragNDrop.DragAndDroppable, {
+App.ImagePreviewComponent = Ember.Component.extend(DragNDrop.DragAndDroppable,App.PopupMixin,{
   classNames: ['image-view'],
   actions:{
     viewFullImage:function(){
-      console.log('opening popper')
+      var data = {image:this.get('item.data.image')};
+      var view = Ember.View.extend({
+        templateName:'imagePopup',
+      });
+      return this.OpenModal(null,null,data,view,'Image');
     }
   },
   dragStart: function(event) {
