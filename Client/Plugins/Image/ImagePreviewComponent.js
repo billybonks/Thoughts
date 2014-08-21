@@ -1,7 +1,11 @@
-'use strict';
-App.ImageView = Ember.View.extend(DragNDrop.DragAndDroppable,{
-  templateName:'image',
+'use strict'
+App.ImagePreviewComponent = Ember.Component.extend(DragNDrop.DragAndDroppable, {
   classNames: ['image-view'],
+  actions:{
+    viewFullImage:function(){
+      console.log('opening popper')
+    }
+  },
   dragStart: function(event) {
     console.log('dragStart');
     var model = this.get('item')
@@ -10,4 +14,4 @@ App.ImageView = Ember.View.extend(DragNDrop.DragAndDroppable,{
     dataTransfer.setData('AttachmentType', 'Image');
     dataTransfer.setData('id', model.get('id'));
   }
-});
+})
