@@ -3,31 +3,9 @@
 </div>
   <ul>
 
-{{#each item in data itemController="listItem"}}
-    {{isEditing}}
-    {{#view App.LinkView}}
+{{#each item in data}}
       {{#unless item.content.isDeleted}}
-          {{#if item.content.data.href}}
-            {{#unless isEditing}}
-            {{log item.content.data}}
-              <li><a target="_blank" {{bind-attr href=model.data.href}}>{{item.content.data.title}}</a><button {{action Edit}} class="btn btn-default btn-xs">edit</button></li>
-            {{else}}
-              <li>{{input type="text" class="form-control" placeholder="" value=item.content.data.title action="Update"}}</li>
-            {{/unless}}
-          {{/if}}
-          {{#if item.content.data.card}}
-            <li>{{#link-to 'card' item.content.data.card}}{{item.content.data.title}}{{/link-to}}</li>
-          {{/if}}
-          {{#unless item.content.data.card}}
-            {{#unless item.content.data.href}}
-              {{#unless isEditing}}
-                <li {{action Edit on='doubleClick'}}>{{item.content.data.title}}</li>
-              {{else}}
-                <li>{{input type="text" class="form-control" placeholder="" value=item.content.data.title action="Update"}}</li>
-              {{/unless}}
-            {{/unless}}
-          {{/unless}}
+        {{list-item model=item}}
       {{/unless}}
-    {{/view}}
 {{/each}}
 </ul>

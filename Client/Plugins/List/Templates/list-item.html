@@ -1,0 +1,23 @@
+{{#if model.data.href}}
+  {{#unless isEditing}}
+  {{log model.data}}
+    <li><a target="_blank" {{bind-attr href=model.data.href}}>{{model.data.title}}</a><button {{action Edit}} class="btn btn-default btn-xs">edit</button></li>
+  {{else}}
+    <li>{{input type="text" class="form-control" placeholder="" value=model.data.title action="Update"}}</li>
+  {{/unless}}
+{{/if}}
+
+{{#if model.data.card}}
+  <li>{{#link-to 'card' model.data.card}}{{model.data.title}}{{/link-to}}</li>
+{{/if}}
+
+
+{{#unless model.data.card}}
+  {{#unless model.data.href}}
+    {{#unless isEditing}}
+      <li {{action Edit on='doubleClick'}}>{{model.data.title}}</li>
+    {{else}}
+      <li>{{input type="text" class="form-control" placeholder="" value=model.data.title action="Update"}}</li>
+    {{/unless}}
+  {{/unless}}
+{{/unless}}
