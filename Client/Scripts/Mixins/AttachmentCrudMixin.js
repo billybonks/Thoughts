@@ -2,7 +2,7 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
   submitAttachment:function(data){
     var attachment =  {
       data: data,
-      sectionid: this.get('model').get('id'),
+      card: this.get('model').get('id'),
       type:this.get('model').get('type')
     };
     if(this.get('targetObject')){
