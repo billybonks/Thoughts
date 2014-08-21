@@ -3,15 +3,15 @@ App.TitledNoteController = Ember.ObjectController.extend(App.SubmitAttachmentMix
    displayAnswer : false,
    class:'panel-collapse collapse in',
    actions:{
-     UpdateQuestion:function(){
+     UpdateTitledNote:function(){
        console.log(this.get('model').get('data').answer)
        this.SaveAttachment(this.get('model'));
        this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
      },
-     ToggleAnswer:function(){
+     ToggleNote:function(){
         this.get('displayAnswer')? this.set('displayAnswer', false): this.set('displayAnswer', true);
      },
-     ToggleEditAnswer:function(){
+     ToggleEditNote:function(){
        this.get('isEditingAnswer')? this.set('isEditingAnswer', false): this.set('isEditingAnswer', true);
      }
    },

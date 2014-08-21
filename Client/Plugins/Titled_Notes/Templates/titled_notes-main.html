@@ -1,17 +1,17 @@
 <div style="margin-bottom:10px">
-  {{input type="text" class="form-control" placeholder="enter title press enter to submit" value=newQuestion action="CreateQuestion"}}
+  {{input type="text" class="form-control" placeholder="enter title press enter to submit" value=newTitledNote action="CreateTitledNote"}}
 </div>
 <div class="panel-group">
   {{#each item in data itemController="titledNote"}}
     {{#unless item.isDeleted}}
       {{#view App.TitledNoteView}}
          <div class="panel panel-default">
-          <div class="panel-heading" {{action 'ToggleAnswer'}}>
-            <h4 class="panel-title" {{action 'ToggleAnswer'}}>
+          <div class="panel-heading" {{action 'ToggleNote'}}>
+            <h4 class="panel-title" {{action 'ToggleNote'}}>
               {{#if controller.isEditingAnswer}}
-                {{input type="text" class="form-control" placeholder="" value=item.data.question action="controller.UpdateQuestion"}}
+                {{input type="text" class="form-control" placeholder="" value=item.data.question action="controller.UpdateTitledNote"}}
               {{else}}
-              <p {{action 'ToggleEditAnswer' on='doubleClick'}}>{{item.data.question}}</p>
+              <p {{action 'ToggleEditNote' on='doubleClick'}}>{{item.data.question}}</p>
               {{/if}}
             </h4>
           </div>
@@ -19,12 +19,12 @@
             <div class="panel-body">
                 {{#if controller.isEditingAnswer}}
                   {{textarea class="form-control" placeholder="enter answer" value=item.data.answer}}
-                  <button class="btn btn-success" {{action 'UpdateQuestion'}}>Save</button>
+                  <button class="btn btn-success" {{action 'UpdateTitledNote'}}>Save</button>
                 {{else}}
                   {{#if item.data.answer}}
-                  <div {{action 'ToggleEditAnswer' on='doubleClick'}}>{{{controller.text}}}</div>
+                  <div {{action 'ToggleEditNote' on='doubleClick'}}>{{{controller.text}}}</div>
                   {{else}}
-                  <p {{action 'ToggleEditAnswer' on='doubleClick'}}>Double click to edit</p>
+                  <p {{action 'ToggleEditNote' on='doubleClick'}}>Double click to edit</p>
                   {{/if}}
                 {{/if}}
             </div>

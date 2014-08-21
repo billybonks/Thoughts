@@ -1,22 +1,15 @@
 'use strict';
 App.TitledNotesMainComponent = App.BaseSectionComponent.extend({
-  layoutName:'cardview',
-  title:'Questions',
   actions:{
-    CreateQuestion:function(){
+    CreateTitledNote:function(){
       var data={
-        question:this.get('newQuestion')
+        question:this.get('newTitledNote')
       }
       this.submitAttachment(data);
-      this.set('newQuestion','')
+      this.set('newTitledNote','')
     },
     ToggleEdit:function(){
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);
     }
-  },
-  willInsertElement:function(){
-    console.log('setting Up');
-    console.log(this.get('layoutName'));
-    this.set('layoutName','cardview');
   }
 });
