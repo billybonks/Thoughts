@@ -46,9 +46,6 @@
     <div class='row'>
       <div class="panel-body">
         {{render-plugin model=model store=store}}
-        {{#if isMain}}
-          {{view App.DropCube store=store}}
-        {{/if}}
         {{#unless isMain}}
           {{#each child in model.children}}
             {{render-plugin model=child parent=model store=store}}
