@@ -1,6 +1,6 @@
 'use strict';
 App.ListItemController = Ember.Controller.extend(App.SubmitAttachmentMixin,{
-  isEditing:false,
+  isEditing2:false,
   actions: {
     Edit:function(){
       this.get('isEditing')? this.set('isEditing', false): this.set('isEditing', true);

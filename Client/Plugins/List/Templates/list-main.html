@@ -2,8 +2,10 @@
   {{input type="text" class="form-control" placeholder="enter text press enter to submit" value=newLink action="Submit"}}
 </div>
   <ul>
+
 {{#each item in data itemController="listItem"}}
-    {{#view App.LinkView model=item.content}}
+    {{isEditing}}
+    {{#view App.LinkView}}
       {{#unless item.content.isDeleted}}
           {{#if item.content.data.href}}
             {{#unless isEditing}}
