@@ -1,6 +1,10 @@
 {{barsStart}}#if parent{{barsEnd}}
   {{barsStart}}#if isEmbedded{{barsEnd}}
-  <h5><b>{{barsStart}}model.title{{barsEnd}}</b></h5>
+  {{barsStart}}#if model.children.length{{barsEnd}}
+    {{barsStart}}#link-to 'card' model.id{{barsEnd}}{{barsStart}}model.title{{barsEnd}}{{barsStart}}/link-to{{barsEnd}}
+  {{barsStart}}else{{barsEnd}}
+    <h5><b>{{barsStart}}model.title{{barsEnd}}</b></h5>
+  {{barsStart}}/if{{barsEnd}}
     {{#plugins}}
     {{barsStart}}#if is{{name}}{{barsEnd}}
       {{barsStart}}{{nameLower}}-main modelSateChange = 'modelSateChange' model=model data=model.attachments startLoading = StartLoading endLoading = EndLoading store=store{{barsEnd}}
@@ -14,5 +18,3 @@
     {{barsStart}}/if{{barsEnd}}
   {{/plugins}}
 {{barsStart}}/if{{barsEnd}}
-
-
