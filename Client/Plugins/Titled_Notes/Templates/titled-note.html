@@ -1,0 +1,26 @@
+{{#view App.CollapseableView}}
+  <div class="panel panel-default">
+    <div class="panel-heading" >
+      <h4 class="panel-title">
+        {{#if controller.isEditingAnswer}}
+          {{input type="text" class="form-control" placeholder="" value=item.data.question action="controller.UpdateTitledNote"}}
+        {{else}}
+        <p {{action 'ToggleEditNote' on='doubleClick'}}>{{item.data.question}}</p>
+        {{/if}}
+      <h4>
+    </div>
+  {{#view App.CollapseableContent}}
+      <div class="panel-body">
+          {{#if controller.isEditingAnswer}}
+            {{textarea class="form-control" placeholder="enter answer" value=item.data.answer}}
+            <button class="btn btn-success" {{action 'UpdateTitledNote'}}>Save</button>
+          {{else}}
+            {{#if item.data.answer}}
+            <div {{action 'ToggleEditNote' on='doubleClick'}}>{{{text}}}</div>
+            {{else}}
+            <p {{action 'ToggleEditNote' on='doubleClick'}}>Double click to edit</p>
+            {{/if}}
+          {{/if}}
+      </div>
+  {{/view}}
+{{/view}}
