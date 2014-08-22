@@ -244,7 +244,7 @@ module.exports = function(grunt) {
         dest: 'Deploy/Client/index.html',
         options: {
           scripts: {
-            app: 'Deploy/Client/emberApp.min.js',
+            app: 'Deploy/Client/emberapp.min.js',
             templates: 'Deploy/Client/result.js',
             libs: 'Deploy/Client/libs.js'
           },
