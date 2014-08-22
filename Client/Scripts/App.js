@@ -1,10 +1,10 @@
 App = Ember.Application.create({
 
-  ready: function () {
-    var token = $.urlParam('token');
+  ready: function() {
+    var token = this.getTokenFromUrl('token');
     if (token) {
       $.cookie(AppSettings.CookieName, token);
-      window.location = 'http://'+AppSettings.domain+'/'
+      window.location = 'http://' + AppSettings.domain + '/'
     }
     token = $.cookie(AppSettings.CookieName);
     if (!token) {
@@ -13,9 +13,19 @@ App = Ember.Application.create({
     App.ApplicationAdapter = DS.RESTAdapter.extend({
       //  namespace: 'api',
       host: AppSettings.WebserviceURL,
-      headers: { 'Authorization': token },
+      headers: {
+        'Authorization': token
+      },
       // defaultSerializer: 'App/appacitiveREST'
     });
+  },
+  getTokenFromUrl: function(name) {
+    var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results) {
+      return results[1]
+    } else {
+      return null;
+    }
   },
   customEvents: {
     "mouseover": "mouseOver"

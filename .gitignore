@@ -122,3 +122,4 @@ UpgradeLog*.XML
 /plugins.json
 /API/config/SSL
 /API/Client/data
+/Temp
