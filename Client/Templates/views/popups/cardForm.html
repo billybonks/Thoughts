@@ -9,6 +9,6 @@
   </div>
   <div class="form-group">
     <label for="tags">Tags</label>
-    {{view App.TaggerView viewName="tagger" contentBinding=content.tags}}
+    {{view App.TaggerView viewName="tagger" contentBinding=content.tags instanceBinding=content.tagger}}
   </div>
 </form>

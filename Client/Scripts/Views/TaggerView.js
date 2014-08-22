@@ -11,6 +11,7 @@ App.TaggerView = Ember.View.extend({
       tagRemoved:this.get('tagRemoved'),
       context :this
     });
+    this.set(this.get('instanceBinding._from'),this.tagger)
   },
   tagAdded:function(item){
     this.get('tags')[item] = item;
@@ -31,31 +32,3 @@ App.TaggerView = Ember.View.extend({
     this.set(this.get('contentBinding._from'),qTags)
   }.observes('tags')
 });
-
-/*
-
-        this.To = new Tagger($('#test2'), {
-            source: ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Dakota", "North Carolina", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"]
-        });
-
-                this.tagger = new Tagger($('#tags'), {
-            source: function (partialTag, proxy) {
-                $.ajax({
-                    method: "get",
-                    url: "api/Tags/TagSearch?partialTag=" + partialTag,
-                    success: proxy
-                });
-            },
-            processReturn: function (data) {
-                if (data.Name) {
-                    return data.id;
-                } else {
-                    return data
-                };
-            },
-            property: 'Name'
-        });
-
-
-
-*/

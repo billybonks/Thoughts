@@ -108,4 +108,8 @@ Tagger.prototype = {
         }
         return ret;
     }
+
+    , getCurrentVal: function () {
+      return this.$element.val();
+    }
 }

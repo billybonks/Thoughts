@@ -24,6 +24,12 @@ App.NewCardMixin = Ember.Mixin.create({
       return false;
     },
     NewCardConfirm:function(){
+      var model = this.get('modal.content')
+      var remainingTag = model.tagger.getCurrentVal();
+      if(remainingTag.length > 0){
+        model.tags.push(remainingTag);
+      }
+      delete model.tagger;
       this.get('SubmitCard').call(this,this.get('modal.content'));
     },
     tagAdded:function(item){
