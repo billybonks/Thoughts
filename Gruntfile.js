@@ -1,22 +1,4 @@
-var fs = require('fs')
-
 module.exports = function(grunt) {
-
-  //prep
-  var plugins = fs.readdirSync('Client/Plugins')
-  var ret = {
-    plugins: [],
-    barsStart: '{{',
-    barsEnd: '}}'
-  }
-
-  for (var i = 0; i < plugins.length; i++) {
-    ret.plugins.push({
-      name: plugins[i],
-      nameLower: plugins[i].toLowerCase()
-    })
-  }
-  var result = fs.writeFileSync('plugins.json', JSON.stringify(ret))
   grunt.initConfig({
 
     pkg: grunt.file.readJSON('package.json'),

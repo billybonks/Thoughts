@@ -11,8 +11,8 @@ module.exports = function (app) {
    * ===================================================================================================== */
 
   app.get('/applications/:id',function (req,res,next){
-    var response = ApplicationController.GetApplication(req.headers.authorization);
-    response.on('data',function(results){
+    ApplicationController.GetApplication(req.headers.authorization).then(function(results){
+      console.log(application)
       if(results.length > 0){
         var application = ApplicationController.FormatObject(results[0].n);
       }else{

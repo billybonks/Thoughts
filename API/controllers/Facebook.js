@@ -27,7 +27,8 @@ module.exports = function() {
     (function(context) {
       fbgraph.get('/me', function(error, body) {
         if (error) {
-          done(error);
+          //done(error);
+          console.log(error)
         }
         var user = context.FBUserToDBUser(body);
         var account = context.GetLinkedAccountNodeData(body, accessToken, params);

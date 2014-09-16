@@ -120,6 +120,8 @@ UpgradeLog*.XML
 /Deploy
 /node_modules
 /plugins.json
+/pluginsDev.json
+/pluginsProd.json
 /API/config/SSL
 /API/Client/data
 /Temp

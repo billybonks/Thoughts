@@ -11,9 +11,9 @@ module.exports = function (app) {
    * ===================================================================================================== */
   app.put('/attachments/:id',function(req,res,next){
     //proccsss Attachment
-    UserController.GetFullUser(req.headers.authorization).on('data',function(user){
+    UserController.GetFullUser(req.headers.authorization).then(function(user){
       Proessor.ProccessAttatchment(req.body.attachment,'Update',user)
-      .on('data',function(results){
+      .then(function(results){
         var attachment = req.body.attachment;
         attachment.data = results;
 
@@ -33,9 +33,9 @@ module.exports = function (app) {
     var resultStream;
     //proccsss Attachment
     var methodName = 'Process'+body.type
-    UserController.GetFullUser(req.headers.authorization).on('data',function(user){
+    UserController.GetFullUser(req.headers.authorization).then(function(user){
       Proessor.ProccessAttatchment(body,'Create',user)
-      .on('data',function(results){
+      .then(function(results){
         resultStream = AttachmentController.createAttachment(results,req.headers.authorization,[],body.card)
         .on('data',function(results){
           var attachment = AttachmentController.FormatObject(results[0].attachment,body.sectionid)

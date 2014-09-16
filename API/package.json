@@ -32,7 +32,8 @@
         "google-drive":"0.0.6",
         "google-refresh-token":"0.5.3",
         "mime":"1.2.11",
-        "googleapis":"0.7.0"
+        "googleapis":"0.7.0",
+        "rsvp":"latest"
     },
     "devDependencies": {
         "mocha": "~1.17.0",
