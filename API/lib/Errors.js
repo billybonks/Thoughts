@@ -25,6 +25,12 @@ exports.Handle505 = function(stream, method) {
   }, 100);
 };
 
+exports.reject = function(reject){
+  return function(error) {
+    reject(error);
+  }
+};
+
 exports.FowardError = function(stream) {
   var stream = stream;
   console.log('prepping error bugout')
@@ -41,6 +47,7 @@ exports.FowardErrorToBrowser = function(res, next) {
   var next = next;
 
   function HandleError(error) {
+    console.log('foward')
     console.log(error)
     if (error.message && error.statusCode) {
       res.status = error.statusCode;
@@ -49,6 +56,7 @@ exports.FowardErrorToBrowser = function(res, next) {
       res.status = 500;
       res.returnData = error;
     }
+    next();
   }
   return HandleError;
 };

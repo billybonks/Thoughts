@@ -1,8 +1,7 @@
-var Stream = require('stream');
-var neo4j = require('neo4j-js');
 var controller = require('./Controller.js');
-var ErrorHandler = require('./../lib/Errors.js');
-var rsvp = require('rsvp');
+var error = require('./../lib/Errors.js').reject;
+var Promise = require('./../lib/promise')
+var Tag = require('./../models/tag')();
 module.exports = function() {
   'use strict';
   /* ========================================================================================================
@@ -19,83 +18,81 @@ module.exports = function() {
    *
    * ===================================================================================================== */
   TagsController.prototype.GetTags = function(ids) {
-    var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
-      console.log('gEtting Nodes')
-      context.GetNodes(ids).then(function(results) {
-        console.log('Got Em Nodes')
+    return Promise.call(this, function(resolve, reject) {
+      this.GetNodes(ids).then(function(results) {
         var ret = []
         for (var i = 0; i < results.length; i++) {
-          ret.push(context.FormatObject(results[i].n));
+          ret.push(Tag.parse(results[i].n));
         }
         resolve(ret);
-      }, function(error) {
-        console.log('ERRORRS')
-        reject(error);
-      })
+      }, error(reject))
     });
   }
 
   TagsController.prototype._findByNames = function(names) {
-    var query = ['Match (tag:Tag)']
-    var variableHash = {}
-    for (var i = 0; i < names.length; i++) {
-      //nameDictionary[names[i]] = null;
-      var varname = 'tag' + i;
-      variableHash[varname] = names[i];
-      var where
-      if (i === 0) {
-        where = 'Where ';
-      } else {
-        where = 'Or ';
+    var nameDictionary = {}
+    return Promise.call(this, function(resolve, reject) {
+      var query = ['Match (tag:Tag)']
+      var variableHash = {}
+      for (var i = 0; i < names.length; i++) {
+        nameDictionary[names[i]] = null;
+        var varname = 'tag' + i;
+        variableHash[varname] = names[i];
+        var where
+        if (i === 0) {
+          where = 'Where ';
+        } else {
+          where = 'Or ';
+        }
+        where += 'tag.title = {' + varname + '}';
+        query.push(where);
       }
-      where += 'tag.title = {' + varname + '}';
-      query.push(where);
-    }
-    query.push('return tag');
-    return this.executeQueryRSVP(query.join('\n'), variableHash);
-  }
-
-  TagsController.prototype.FindOrCreate = function(names) {
-    var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
-      context._findByNames(names).then(function(results) {
-        var nameDictionary = {}
-        console.log('gOttage')
-        var createCounter = 0;
-        var returnCounter = 0;
-        console.log(results);
+      query.push('return tag');
+      this.executeQueryRSVP(query.join('\n'), variableHash).then(function(results) {
         for (var i = 0; i < results.length; i++) {
           var rTag = results[i].tag;
-          console.log(rTag);
-          nameDictionary[rTag.data.title] = context.FormatObject(rTag);
+          nameDictionary[rTag.data.title] = Tag.parse(rTag);
         }
-        for (var key in names) {
-          var name = names[key];
-          if (!nameDictionary[name]) {
+        resolve(nameDictionary);
+      }, error(reject));
+    });
+  }
+
+  //TODO will the 2nd resolve ever get hit
+  TagsController.prototype.FindOrCreate = function(names) {
+    var context = this;
+    return Promise.call(this, function(resolve, reject) {
+      this._findByNames(names).then(function(nameDictionary) {
+        var createCounter = 0;
+        var returnCounter = 0;
+        for (var key in nameDictionary) {
+          if (!nameDictionary[key]) {
             createCounter++;
-            context.CreateTag.call(context, name, 'Add Description').then(function(result) {
-              nameDictionary[result[0].tag.data.title] = context.FormatObject(result[0].tag);
+            context._createTag.call(context, key, 'Add Description').then(function(tag) {
+              console.log('returned')
+              nameDictionary[tag.title] = tag
               returnCounter++;
+              console.log(createCounter +' == '+returnCounter)
               if (returnCounter === createCounter) {
-                console.log('Resolvage')
+                console.log('resolve1')
+                console.log(nameDictionary);
                 resolve(nameDictionary);
               }
-            })
+            }, error(reject))
           }
         }
+        //if no tags to be created
         if (createCounter === returnCounter) {
-          console.log('ResolveAge 2')
+          console.log('resolve2')
+          console.log(nameDictionary);
           resolve(nameDictionary);
         }
-      },function(error){reject(error)});
+      }, error(reject));
     });
   };
 
-  //BOUND TO CARD CONTROLLER AND ROUTE
   TagsController.prototype.TagEntity = function(tags, entityId) {
-    var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       if (tags.length >= 1) {
         var tagEntityRelationShip = [];
         var temp = 'START tag=node('
@@ -113,35 +110,38 @@ module.exports = function() {
         this.executeQueryRSVP(tagEntityRelationShip.join('\n'), {})
           .then(function(results) {
             resolve(results);
-          }, function(error) {
-            reject(error)
-          });
-
+          }, error(reject));
       } else {
         resolve([]);
       }
     });
   }
 
-  TagsController.prototype.CreateTag = function(title, description) {
-    var createTagQuery = 'CREATE (tag:Tag {data}) RETURN tag';
-    var newTagHash = {
-      data: {
-        title: title,
-        description: description,
-        date_created: Date.now(),
-        date_modified: Date.now()
-      }
-    };
-    return this.executeQueryRSVP(createTagQuery, newTagHash);
+  TagsController.prototype._createTag = function(title, description) {
+    console.log(this)
+    console.log('creting tag')
+    return Promise.call(this, function(resolve, reject) {
+      console.log('preping query')
+      var createTagQuery = 'CREATE (tag:Tag {data}) RETURN tag';
+      var newTagHash = {
+        data: {
+          title: title,
+          description: description,
+          date_created: Date.now(),
+          date_modified: Date.now()
+        }
+      };
+
+      this.executeQueryRSVP(createTagQuery, newTagHash).then(function(result) {
+        console.log('tag created')
+        resolve(Tag.parse(result[0].tag));
+      }, error(reject))
+
+    });
   };
 
-  TagsController.prototype.FormatObject = function(tag) {
-    return {
-      id: tag.id,
-      title: tag.data.title,
-      description: tag.data.description
-    }
-  }
   return new TagsController();
 };
+
+/*
+ */

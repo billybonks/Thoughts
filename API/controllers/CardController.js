@@ -6,6 +6,7 @@ var controller = require('./Controller.js');
 var AttachmentController = require('./AttachmentController.js')();
 var ConfigurationController = require('./ConfigurationController.js')();
 var ErrorHandler = require('./../lib/Errors.js');
+var Tag = require('./../models/tag')();
 module.exports = function() {
   'use strict';
   /* ========================================================================================================
@@ -410,7 +411,7 @@ module.exports = function() {
         children[child.id] = child;
       }
       if (result.tag) {
-        var tag = TagsController.FormatObject(result.tag);
+        var tag = Tag.parse(result.tag);
         tags[tag.id] = tag;
       }
       if (result.attachment) {

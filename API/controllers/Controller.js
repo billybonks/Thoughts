@@ -32,8 +32,6 @@ module.exports = function() {
     var context = this;
     return new rsvp.Promise(function(resolve, reject) {
       if(ids){
-
-
       var query = 'START n=node(';
       for (var c = 0; c < ids.length; c++) {
         if (c + 1 == ids.length) {
