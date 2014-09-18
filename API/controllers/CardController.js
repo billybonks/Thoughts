@@ -347,13 +347,13 @@ module.exports = function() {
                     parentId[parentId] = {};
                   }
                   console.log(token);
-                  context.user.GetUser(token).on('data', function(results) {
+                  context.user.GetUser(token).then(function(user) {
                     console.log('user')
                     console.log(results);
-                    card = context.FormatObject(context.user.FormatObject(results[0].user), tagHash, newChildren, card, newAttachments, parentId, newConfiguration);
+                    card = context.FormatObject(user, tagHash, newChildren, card, newAttachments, parentId, newConfiguration);
                     console.log(card);
                     resultStream.emit('data', card);
-                  })
+                  })//TODO:throw error)
                 }
               });
             }

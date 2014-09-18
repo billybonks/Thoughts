@@ -2,6 +2,10 @@ var controller = require('./Controller.js');
 var Stream = require('stream');
 var ErrorHandler = require('./../lib/Errors.js');
 var rsvp = require('rsvp');
+var error = require('./../lib/Errors.js').reject;
+var Promise = require('./../lib/promise')
+var User = require('./../models/user')();
+var Tag = require('./../models/tag')();
 module.exports = function() {
   'use strict';
   /* ========================================================================================================
@@ -9,9 +13,9 @@ module.exports = function() {
    * Class Setup - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  function User() {}
+  function UserController() {}
 
-  User.prototype = new controller();
+  UserController.prototype = new controller();
 
   /* ========================================================================================================
    *
@@ -19,14 +23,25 @@ module.exports = function() {
    *
    * ===================================================================================================== */
 
-  User.prototype.GetUser = function(token) {
-    var query = 'Match (user:Person) where user.session_token = {token} return user';
-    return this.executeQuery(query, {
-      token: token
+  UserController.prototype.GetUser = function(token) {
+    return Promise.call(this, function(resolve, reject) {
+      var query = 'Match (node:Person) where node.session_token = {token} return node';
+      this.executeQueryRSVP(query, {
+        token: token
+      }).then(function(results){
+        if(results.length ===0){
+          console.log('t')
+          reject({message:'notfound',statusCode:404});
+        }
+        console.log(new User(results[0].node).id);
+        var user = User.parse(results[0].node)
+        console.log('resolving')
+        resolve(user)
+      },error(reject));
     });
   };
 
-  User.prototype.GetFullUser = function(token) {
+  UserController.prototype.GetFullUser = function(token) {
     var context = this;
     return new rsvp.Promise(function(resolve, reject) {
       var query = ['Match (user:Person)',
@@ -48,12 +63,12 @@ module.exports = function() {
     });
   }
 
-  User.prototype.GetUserById = function(id) {
+  UserController.prototype.GetUserById = function(id) {
     var query = 'start user=node(' + id + ') return user';
     return this.executeQuery(query, {});
   };
 
-  User.prototype.CreatedEntity = function(token, id) {
+  UserController.prototype.CreatedEntity = function(token, id) {
     var cardPersonRelationShip = [
       'START entity=node(' + id + ')',
       'MATCH (user:Person)',
@@ -72,7 +87,7 @@ module.exports = function() {
     return responseStream;
   };
 
-  User.prototype.FormatObject = function(object) {
+  UserController.prototype.FormatObject = function(object) {
     return {
       id: object.id,
       name: object.data.name,
@@ -80,7 +95,7 @@ module.exports = function() {
     };
   };
 
-  User.prototype.FormatAccount = function(object) {
+  UserController.prototype.FormatAccount = function(object) {
     return {
       uid: object.data.uid,
       access_token: object.data.access_token,
@@ -97,5 +112,5 @@ module.exports = function() {
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-  return new User();
+  return new UserController();
 };

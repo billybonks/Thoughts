@@ -18,16 +18,20 @@ module.exports = function (app) {
       }else{
         //404 error
       }
-      UserController.GetUser(req.headers.authorization).on('data',function(results){
-        if(!results[0]){
+      console.log('user gettting')
+      UserController.GetUser(req.headers.authorization).then(function(user){
+          res.status = 200;
+          res.returnData ={application:application,user:user};
+          next();
+      },function(error){
+        console.log(error)
+        if(error.statusCode === 404){
+          console.log('not found')
           res.status = 200;
           res.returnData ={application:{id:0,name:'guest',token:null}}
           next();
         }else{
-          var user = UserController.FormatObject(results[0].user);
-          res.status = 200;
-          res.returnData ={application:application,user:user};
-          next();
+          //TODO: Internal server error
         }
       });
     });

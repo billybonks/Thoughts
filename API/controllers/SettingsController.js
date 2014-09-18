@@ -2,7 +2,8 @@ var Controller = require('./Controller.js');
 var UserController = require('./UserController.js')();
 var Stream = require('stream');
 var ErrorHandler = require('./../lib/Errors.js');
-
+var error = require('./../lib/Errors.js').reject;
+var Promise = require('./../lib/promise')
 
 module.exports = function(){
   'use strict';
@@ -20,7 +21,7 @@ module.exports = function(){
     var settings = {id:0};
     var resultStream = new Stream()
     var context = this;
-    UserController.GetUser(token).on('data',function(user){
+
       var user = user[0].user;
       settings.name = user.data.name;
       var responseStream=context.GetUserLinkedAccounts.call(context,user.id);
@@ -37,7 +38,7 @@ module.exports = function(){
         }
         resultStream.emit('data',settings);
       })
-    });
+    
     return resultStream;
   }
 
