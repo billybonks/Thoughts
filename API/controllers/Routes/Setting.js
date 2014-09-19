@@ -10,14 +10,15 @@ module.exports = function(app) {
    * ===================================================================================================== */
   app.get('/settings/:id', function(req, res, next) {
     UserController.GetUser(req.headers['authorization']).then(function(user) {
-      SettingsController.GetSettings(user).on('data', function(settings) {
+      console.log(  SettingsController.GetSettings)
+      SettingsController.GetSettings(user).then(function(settings) {
         res.status = 200;
         res.returnData = {
           settings: settings
         }
         next();
-      }).on('error', ErrorHandler.FowardErrorToBrowser(res, next));
-    });//TOD:HANDLE ERROR
+      },ErrorHandler.FowardErrorToBrowser(res, next));
+    },ErrorHandler.FowardErrorToBrowser(res, next));
   });
 
 };

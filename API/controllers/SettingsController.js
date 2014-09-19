@@ -1,53 +1,53 @@
 var Controller = require('./Controller.js');
-var UserController = require('./UserController.js')();
-var Stream = require('stream');
-var ErrorHandler = require('./../lib/Errors.js');
 var error = require('./../lib/Errors.js').reject;
 var Promise = require('./../lib/promise')
 
-module.exports = function(){
-  'use strict';
-  /* ========================================================================================================
-   *
-   * Class Setup - Keep in alphabetical order
-   *
-   * ===================================================================================================== */
-  function SettinsController(){
-  }
+module.exports = function() {
+    'use strict';
+    /* ========================================================================================================
+     *
+     * Class Setup - Keep in alphabetical order
+     *
+     * ===================================================================================================== */
+    function SettingsController() {}
 
-  SettinsController.prototype = new Controller();
+    SettingsController.prototype = new Controller();
 
-  SettinsController.prototype.GetSettings = function(token){
-    var settings = {id:0};
-    var resultStream = new Stream()
-    var context = this;
+    //FIXME: Add settings model
+    SettingsController.prototype.GetSettings = function(user) {
+        return Promise.call(this, function(resolve, reject) {
+            var settings = {
+                id: 0
+            };
+            var context = this;
+            settings.first_name = user.first_name;
+            console.log('getting accounts')
+            this.GetUserLinkedAccounts.call(context, user.id).then(function(accounts) {
+              console.log('got accounts')
+                for (var i = 0; i < accounts.length; i++) {
+                    var label = accounts[i]['labels(account)'][0];
+                    console.log(label)
+                    if (label === 'Facebook') {
+                        settings.facebook = true;
+                    }
+                    if (label === 'Google') {
+                        settings.facebook = true;
+                    }
+                }
+                resolve(settings);
+            }, error(reject))
+        });
+    }
 
-      var user = user[0].user;
-      settings.name = user.data.name;
-      var responseStream=context.GetUserLinkedAccounts.call(context,user.id);
-      responseStream.on('data',function(accounts){
-        for(var i = 0; i < accounts.length; i++){
-          var label = accounts[i]['labels(account)'][0];
-          console.log(label)
-          if(label === 'Facebook'){
-            settings.facebook = true;
-          }
-          if(label === 'Google'){
-            settings.facebook = true;
-          }
-        }
-        resultStream.emit('data',settings);
-      })
-    
-    return resultStream;
-  }
+    //FIXME: Does this duplicate with getfulluser
+    SettingsController.prototype.GetUserLinkedAccounts = function(userId) {
+        return Promise.call(this, function(resolve, reject) {
+            var query = "Start user=node(" + userId + ") Match user-[l:Linked]->account return labels(account)";
+            this.executeQueryRSVP(query, {}).then(function(results) {
+                resolve(results);
+            }, error(reject))
+        });
+    }
 
-  SettinsController.prototype.GetUserLinkedAccounts= function(userId){
-    var responseStream = new Stream();
-    var query = "Start user=node("+userId+") Match user-[l:Linked]->account return labels(account)";
-    ErrorHandler.HandleResponse(this.executeQuery(query,{}),responseStream,'GetUserLinkedAccounts');
-    return responseStream;
-  }
-
-  return new SettinsController();
+    return new SettingsController();
 };
