@@ -11,6 +11,8 @@ var controller = require('./../controllers/Controller.js');
 var googleapis = require('googleapis');
 var CardController = require('./../controllers/CardController')();
 var rsvp = require('rsvp')
+var error = require('./Errors.js').reject;
+var Promise = require('./promise')
   //var AttachmentController = require('google-drive');
 module.exports = function() {
   'use strict';
@@ -28,7 +30,7 @@ module.exports = function() {
 
   AttachmentProcessor.prototype.ProccessAttatchment = function(attachment, action, user) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       console.log(attachment.type)
       var methodName = ('Process' + action + attachment.type);
       console.log(methodName);
@@ -58,7 +60,7 @@ module.exports = function() {
    * ===================================================================================================== */
   AttachmentProcessor.prototype.ProcessCreateList = function(attachment, user) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       var href = attachment.data.link;
       //if not a link try get card id
       if (typeof href == 'undefined') {
@@ -107,7 +109,7 @@ module.exports = function() {
 
   AttachmentProcessor.prototype.ProcessCreateImage = function(attachment, user) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       var regex = /^data:.+\/(.+);base64,(.*)$/;
       var matches = attachment.data.image.match(regex);
       var ext = matches[1];
@@ -127,27 +129,27 @@ module.exports = function() {
 
   AttachmentProcessor.prototype.ProcessCreateDocuments = function(attachment, user) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       Google.RefreshAccessToken(user.accounts.Google.refresh_token, user.id)
-        .on('data', function(access_token) {
+        .then(function(access_token) {
           var buffer = context.FormatData(attachment);
           context.UploadNewDocument.call(context, buffer, attachment.data.type, attachment.data.title, attachment.card, user, access_token).then(function(data) {
             resolve(data);
           })
-        })
+        },error(reject))
     });
   }
 
   AttachmentProcessor.prototype.ProcessUpdateDocuments = function(attachment, user) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       Google.RefreshAccessToken(user.accounts.Google.refresh_token, user.id)
-        .on('data', function(access_token) {
+        .then(function(access_token) {
           var buffer = context.FormatData(attachment);
           context.UpdateDocument.call(context, buffer, attachment.data.type, attachment.data.title, attachment.data.foreign_id, access_token).then(function(data) {
             resolve(data);
           })
-        });
+        },error(reject));
     });
   }
 
@@ -168,7 +170,7 @@ module.exports = function() {
 
   AttachmentProcessor.prototype.UploadNewDocument = function(buffer, mimeType, title, cardId, user, access_token) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       this.FindRoot(access_token).then(function(rootId) {
         context.FindAttachmentFolder(access_token, cardId, rootId).then(function(parentFolder) {
           var auth = new googleapis.OAuth2Client();
@@ -207,7 +209,7 @@ module.exports = function() {
   AttachmentProcessor.prototype.UpdateDocument = function(buffer, mimeType, title, fileId, access_token) {
     var auth = new googleapis.OAuth2Client();
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       auth.setCredentials({
         access_token: access_token
       });
@@ -256,7 +258,7 @@ module.exports = function() {
 
   AttachmentProcessor.prototype.FindRoot = function(accessToken) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       googleDrive(accessToken).files().list({
           q: "'root' in parents and title='Cards' and mimeType = 'application/vnd.google-apps.folder'"
         },
@@ -287,7 +289,7 @@ module.exports = function() {
 
   AttachmentProcessor.prototype.FindAttachmentFolder = function(accessToken, cardId, rootId) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       var url = "https://www.googleapis.com/drive/v2/files/0B7cV1rUiPOCJcjc4NVc5bEJsMkk/children?";
       var query = "q=title%3D'" + cardId + "'+and+mimeType+%3D+'application%2Fvnd.google-apps.folder'";
       var authValue = 'Bearer ' + accessToken;

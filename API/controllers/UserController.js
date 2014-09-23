@@ -5,7 +5,6 @@ var rsvp = require('rsvp');
 var error = require('./../lib/Errors.js').reject;
 var Promise = require('./../lib/promise')
 var User = require('./../models/user')();
-var Tag = require('./../models/tag')();
 module.exports = function() {
   'use strict';
   /* ========================================================================================================
@@ -43,15 +42,16 @@ module.exports = function() {
 
   UserController.prototype.GetFullUser = function(token) {
     var context = this;
-    return new rsvp.Promise(function(resolve, reject) {
+    return Promise.call(this, function(resolve, reject) {
       var query = ['Match (user:Person)',
         'Match (user)-[:Linked]->(account)',
         ' where user.session_token = {token}',
         ' return user,account,Labels(account)'
       ];
-      context.executeQuery(query.join('\n'), {
+      this.executeQueryRSVP(query.join('\n'), {
         token: token
-      }).on('data', function(results) {
+      }).then(function(results) {
+        //TODO:Add to user model
         var accounts = {}
         var user = context.FormatObject(results[0].user);
         for (var i = 0; i < results.length; i++) {
@@ -59,7 +59,7 @@ module.exports = function() {
         }
         user.accounts = accounts;
         resolve(user);
-      });
+      },error(reject));
     });
   }
 

@@ -12,22 +12,19 @@ module.exports = function (app) {
   app.get('/templates/:id',function(req,res,next){
     var template = req.body.template;
     template.isTempalte = true;
-    // var response = CardsRoute.CreateCard(req.headers['authorization'],,req.body.template.tagsIn)
+    //TODO:This route hasnt been built
   });
 
   app.get('/templates',function(req,res,next){
     var GetObject = TemplateController.GetObject;
-    TemplateController.GetTemplates(req.headers.authorization).on('data',function(results){
-      var ret = [];
-      for(var i = 0; i< results.length;i++){
-        ret.push(GetObject(results[i].template));
-      }
+    TemplateController.GetTemplates(req.headers.authorization).then(function(templates){
       res.status = 200;
-      res.returnData ={templates:ret}
+      res.returnData ={templates:templates}
       next();
-    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
+    },ErrorHandler.FowardErrorToBrowser(res,next))
   });
 
+  //FIXME: this stuff needs to be moved into a model
   app.post('/templates',function(req,res,next){
     var baseCard = req.body.template.basedOff;
     CardController.GetCard(baseCard).on('data',function(card){
