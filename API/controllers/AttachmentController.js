@@ -9,7 +9,6 @@ var error = require('./../lib/Errors.js').reject;
 module.exports = function() {
     'use strict';
     needs: ['tag']
-    var _responseStream = new Stream();
 
     function Attachment(settings) {
         this.tags = new TagsController();
@@ -31,14 +30,15 @@ module.exports = function() {
 
 
     Attachment.prototype.getAttachment = function(id) {
-        var query = [
-            'START attachment=node(' + id + ')',
-            'RETURN attachment'
-        ];
-        var emitter = new Stream();
-        var queryStream = this.executeQuery(query.join('\n'), {});
-        ErrorHandler.HandleResponse(queryStream, emitter, 'GetAttachment');
-        return emitter;
+        return Promise.call(this, function(resolve, reject) {
+            var query = [
+                'START attachment=node(' + id + ')',
+                'RETURN attachment'
+            ];
+            var queryStream = this.executeQueryRSVP(query.join('\n'), {}).then(function(results) {
+                resolve(results);
+            }, error(reject));
+        });
     }
 
     /* ========================================================================================================
@@ -56,19 +56,16 @@ module.exports = function() {
             this.storeAttachment('Attachment', data).then(function(results) {
                 var attachmentId = results[0].n.id;
                 attachment = results[0].n;
-                context.linkOwner.call(context, attachmentId, token)
-                    .on('data', function(results) {
-                        if (tags.length === 0) {
+                context.linkOwner.call(context, attachmentId, token).then(function(results) {
+                    console.log('owner linked')
+                    if (tags.length === 0) {
+                        resolve(attachment);
+                    } else {
+                        tagger.TagEntity(attachmentId, tags).then(function(results) {
                             resolve(attachment);
-                        } else {
-                            tagger.TagEntity(attachmentId, tags).then(function(results) {
-                                resolve(attachment);
-                            }, function() {})
-                        }
-                    }) //handle link ownder
-                .on('error', function(error) {
-                    reject(error)
-                })
+                        }, function() {})
+                    }
+                }, error(reject))
             }, error(reject))
         });
     }
@@ -76,24 +73,12 @@ module.exports = function() {
     Attachment.prototype.createAttachment = function(data, token, tags, sectionId) {
         return Promise.call(this, function(resolve, reject) {
             var context = this;
-            var createAttachmentReturn = new Stream();
             this.createAttachmentBase(data, token, tags).then(function(results) {
                 context.createRelationShip(results.id, sectionId, 'Attached').then(function() {
                     resolve(results);
                 }, error(reject));
             }, error(reject));
         });
-    }
-
-    Attachment.prototype.deleteAttachment = function(id) {
-        var responseStream = new Stream();
-        var query = ['START link=node(' + id + ')',
-            'SET link.isDeleted = true',
-            'RETURN link'
-        ];
-        var queryStream = this.executeQuery(query.join('\n'), {});
-        ErrorHandler.HandleResponse(queryStream, responseStream, 'DeleteAttachment');
-        return responseStream;
     }
 
     Attachment.prototype.GetCardsAttachments = function(cardId) {
@@ -109,7 +94,7 @@ module.exports = function() {
                 var ret = [];
 
                 for (var i = 0; i < results.length; i++) {
-                  console.log(results[i].attachment);
+                    console.log(results[i].attachment);
                     ret.push(context.FormatObject(results[i].attachment, cardId));
                 }
                 console.log(ret)
@@ -119,7 +104,6 @@ module.exports = function() {
     }
 
     Attachment.prototype.linkOwner = function(attachmentId, sessionToken) {
-        var responseStream = new Stream();
         var query = [
             'START attachment=node(' + attachmentId + ')',
             'MATCH (user:Person)',
@@ -130,9 +114,8 @@ module.exports = function() {
         var variableHash = {
             token: sessionToken
         }
-        var queryStream = this.executeQuery(query.join('\n'), variableHash);
-        ErrorHandler.HandleResponse(queryStream, responseStream, 'LinkAttachmentOwner');
-        return responseStream;
+
+        return this.executeQueryRSVP(query.join('\n'), variableHash);
     }
 
     Attachment.prototype.storeAttachment = function(attachmentType, data) {
@@ -152,28 +135,29 @@ module.exports = function() {
 
     //
     Attachment.prototype.updateAttachment = function(attachment, id) {
-        var responseStream = new Stream();
-        var query = ['START attachment=node(' + id + ') SET'];
-        var variableHash = {
-            date_modified: Date.now()
-        }
-        var counter = 0;
-        for (var key in attachment.data) {
-            counter++;
-            if (attachment.data[key] !== null) {
-                var str = 'attachment.' + key + ' = {' + key + '}';
-                variableHash[key] = attachment.data[key]
-                query.push(str + ',')
+        return Promise.call(this, function(resolve, reject) {
+            var query = ['START attachment=node(' + id + ') SET'];
+            var variableHash = {
+                date_modified: Date.now()
             }
-        }
-        query.push('attachment.date_modified = {date_modified}')
-        query.push('RETURN attachment');
-        ErrorHandler.HandleResponse(this.executeQuery(query.join('\n'), variableHash), responseStream, 'UpdateAttachment');
-        return responseStream;
+            var counter = 0;
+            for (var key in attachment.data) {
+                counter++;
+                if (attachment.data[key] !== null) {
+                    var str = 'attachment.' + key + ' = {' + key + '}';
+                    variableHash[key] = attachment.data[key]
+                    query.push(str + ',')
+                }
+            }
+            query.push('attachment.date_modified = {date_modified}')
+            query.push('RETURN attachment');
+            this.executeQueryRSVP(query.join('\n'), variableHash).then(function(results) {
+                resolve(results);
+            }, error(reject))
+        });
     }
 
     Attachment.prototype.FormatObject = function(dbAtt, cardId) {
-
         var data = {}
         for (var key in dbAtt.data) {
             if (key === 'date_created' || key === 'date_modified') {

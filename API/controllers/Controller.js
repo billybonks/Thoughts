@@ -63,12 +63,11 @@ module.exports = function() {
 
 
     Controller.prototype.deleteEntity = function(id) {
-        var responseStream = new Stream();
         var query = ['START n=node(' + id + ')',
             'SET n.isDeleted = true',
             'RETURN n'
         ];
-        return this.executeQuery(query.join('\n'), {});
+        return this.executeQueryRSVP(query.join('\n'), {});
     };
 
     Controller.prototype.executeQuery = function(query, variableHash) {

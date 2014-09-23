@@ -12,12 +12,11 @@ module.exports = function (app) {
    * ===================================================================================================== */
 
   app.delete('/cards/:id',function (req,res,next){
-    var response = CardController.DeleteCard(req.headers.authorization,req.params.id);
-    response.on('data',function(results){
+    CardController.DeleteCard(req.headers.authorization,req.params.id).then(function(results){
       res.status = 200;
       res.returnData ={}
       next();
-    });
+    });//FIXME: add error handling
   });
 
   app.get('/cards',function (req,res,next){

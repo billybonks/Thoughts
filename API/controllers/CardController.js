@@ -205,8 +205,7 @@ module.exports = function() {
   }
 
   Card.prototype.DeleteCard = function(token, id) {
-    var responseStream = this.deleteEntity(id);
-    return responseStream;
+    return this.deleteEntity(id);
   };
 
   Card.prototype.DuplicateCard = function(baseCard, token, duplicateAttatchments, parentId, variablesToReplace) {
