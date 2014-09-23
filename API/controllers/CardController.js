@@ -93,11 +93,12 @@ module.exports = function() {
           context.GetCardParents.call(context, id)
             .on('data', function(data) {
               card.parents = data;
-              AttachmentController.GetCardsAttachments(id)
-                .on('data', function(data) {
+              console.log('getting attachments')
+              AttachmentController.GetCardsAttachments(id).then(function(attachments) {
+                  console.log('got attachments')
                   card.attachments = {};
-                  for (var i = 0; i < data.length; i++) {
-                    var att = AttachmentController.FormatObject(data[i].attachment, id);
+                  for (var i = 0; i < attachments.length; i++) {
+                    var att = attachments[i];
                     card.attachments[att.id] = att;
                   }
                   responseStream.emit('data', card)
@@ -127,8 +128,6 @@ module.exports = function() {
         var parents = {}
         parents[results[i].parent.id] = results[i].parent;
       }
-      console.log('pareeeeeeeeents')
-      console.log(parents)
       responseStream.emit('data', parents)
     })
     return responseStream;
@@ -144,7 +143,6 @@ module.exports = function() {
     var newCard = 'CREATE (n:Card {data}) RETURN n';
     data.date_created = Date.now();
     data.date_modified = Date.now();
-    console.log(data);
     var newCardHash = {
       data: data
     };
@@ -244,16 +242,13 @@ module.exports = function() {
           card[property] = variablesToReplace[property];
         }
       }
-      console.log(card)
 
       context.CreateCard(token, card, tags).on('data', function(root) {
         TagsController.TagEntity(tags, root.id).then(function(tags) {
-          console.log('tags');
           var tagHash = {};
           for (var tag in tags) {
             tagHash[tags[tag].tag.id] = tags[tag].tag;
           }
-          console.log(tagHash);
           var tempResponse = new Stream();
           var counter = 0;
           if (parentId) {
@@ -274,7 +269,6 @@ module.exports = function() {
               for (var id in attachments) {
                 AttachmentController.createAttachment(attachments[id].data, token, [], root.id).on('data', function(results) {
                   counter++;
-                  console.log(results);
                   var attachment = AttachmentController.FormatObject(results[0].attachment, root.id)
 
                   newAttachments[attachment.id] = attachment;
@@ -330,12 +324,8 @@ module.exports = function() {
                   } else {
                     parentId[parentId] = {};
                   }
-                  console.log(token);
                   context.user.GetUser(token).then(function(user) {
-                    console.log('user')
-                    console.log(results);
                     card = context.FormatObject(user, tagHash, newChildren, card, newAttachments, parentId, newConfiguration);
-                    console.log(card);
                     resultStream.emit('data', card);
                   }) //TODO:throw error)
                 }
@@ -384,7 +374,6 @@ module.exports = function() {
     for (var i = 0; i < results.length; i++) {
 
       var result = results[i];
-      console.log(result);
       card = result.card;
       if (result.child) {
         var parents = {}
@@ -444,8 +433,6 @@ module.exports = function() {
     for (var id in parents) {
       ret.parents.push(id);
     }
-    console.log('was disssssssssssssssssssssssssssssssssss')
-    console.log(tags);
     for (var id in tags) {
       ret.tags.push(id);
     }

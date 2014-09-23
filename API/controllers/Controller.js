@@ -58,7 +58,7 @@ module.exports = function() {
             'CREATE source-[r:' + label + ']->target',
             'RETURN source'
         ].join('\n');
-        return this.executeQuery(query, {});
+        return this.executeQueryRSVP(query, {});
     }
 
 
@@ -91,17 +91,14 @@ module.exports = function() {
 
     Controller.prototype.executeQueryRSVP = function(query, variableHash) {
         return new rsvp.Promise(function(resolve, reject) {
-            console.log('execing QQ')
             neo4j.connect(nconf.get('database'), function(err, graph, done) {
                 graph.query(query, variableHash, function(err, results) {
                     if (err) {
-                        console.log('qq error')
                         reject({
                             type: 'queryError',
                             innerException: err
                         });
                     } else {
-                        console.log('resolving qq')
                         resolve(results);
                     }
                 });

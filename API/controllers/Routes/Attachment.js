@@ -36,9 +36,8 @@ module.exports = function(app) {
     UserController.GetFullUser(req.headers.authorization).then(function(user) {
       Proessor.ProccessAttatchment(body, 'Create', user)
         .then(function(results) {
-          resultStream = AttachmentController.createAttachment(results, req.headers.authorization, [], body.card)
-            .on('data', function(results) {
-              var attachment = AttachmentController.FormatObject(results[0].attachment, body.sectionid)
+          AttachmentController.createAttachment(results, req.headers.authorization, [], body.card).then(function(attachment) {
+              var attachment = AttachmentController.FormatObject(attachment, body.sectionid)
               res.status = 200;
               res.returnData = {
                 attachment: attachment
