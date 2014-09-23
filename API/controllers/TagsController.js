@@ -19,7 +19,7 @@ module.exports = function() {
    * ===================================================================================================== */
   TagsController.prototype.GetTags = function(ids) {
     return Promise.call(this, function(resolve, reject) {
-      this.GetNodes(ids).then(function(results) {
+      this.getNodes(ids).then(function(results) {
         var ret = []
         for (var i = 0; i < results.length; i++) {
           ret.push(Tag.parse(results[i].n));

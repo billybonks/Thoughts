@@ -22,7 +22,7 @@ module.exports = function() {
    * ===================================================================================================== */
 
   Attachment.prototype.getAttachments = function(ids) {
-    return this.GetNodes(ids);
+    return this.getNodes(ids);
   }
 
 

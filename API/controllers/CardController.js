@@ -219,7 +219,7 @@ module.exports = function() {
   }
 
   Card.prototype.DeleteCard = function(token, id) {
-    var responseStream = this.DeleteEntity(id);
+    var responseStream = this.deleteEntity(id);
     return responseStream;
   };
 
