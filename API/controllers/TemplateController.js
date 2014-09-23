@@ -5,7 +5,7 @@ var Template = require('./../models/template')();
 
 module.exports = function() {
     'use strict';
-    needs:['card']
+    
     /* ========================================================================================================
      *
      * Class Setup - Keep in alphabetical order

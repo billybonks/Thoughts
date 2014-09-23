@@ -6,6 +6,7 @@ var ErrorHandler = require('./../lib/Errors.js');
 
 module.exports = function() {
   'use strict';
+  needs:['tag']
   var _responseStream = new Stream();
 
   function Attachment(settings) {

@@ -7,8 +7,10 @@ var AttachmentController = require('./AttachmentController.js')();
 var ConfigurationController = require('./ConfigurationController.js')();
 var ErrorHandler = require('./../lib/Errors.js');
 var Tag = require('./../models/tag')();
+var error = require('./../lib/Errors.js').reject;
 module.exports = function() {
   'use strict';
+  needs:['tag','user','attachment','configuration']
   /* ========================================================================================================
    *
    * Class Setup - Keep in alphabetical order
@@ -71,20 +73,6 @@ module.exports = function() {
     return responseStream;
   };
 
-  /*
-   parent:
-  { id: '121',
-    data:
-     { title: 'asd',
-       tagsIn: [],
-       date_modified: 1399144778595,
-       onMainDisplay: true,
-       date_created: 1399043435028,
-       left: 0,
-       isTemplate: false,
-       type: 'Text_Area',
-       top: 0 } } }
-       */
   Card.prototype.GetCard = function(id) {
     var context = this;
     var query = [
@@ -170,7 +158,7 @@ module.exports = function() {
     ErrorHandler.FowardError(queryStream.on('data', function(results) {
       var cardId = results[0].n.id;
       //LINK CARD TO USER
-      ErrorHandler.FowardError(user.CreatedEntity(token, cardId).on('data', function(results) {
+      user.CreatedEntity(token, cardId).then(function(results) {
         var user = results.user;
         //TAG CARD
         tagger.TagEntity(tags, cardId).then(function(taggingResults) {
@@ -181,7 +169,7 @@ module.exports = function() {
           var card = context.FormatObject(user, tagHash, [], results.entity);
           responseStream.emit('data', card);
         } /**/ );
-      }));
+      },error(reject));
     }))
     return responseStream;
   };

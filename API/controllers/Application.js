@@ -1,7 +1,6 @@
 //require staements
 var controller = require('./Controller.js');
 var error = require('./../lib/Errors.js').reject;
-var Stream = require('stream');
 var rsvp = require('rsvp');
 module.exports = function() {
   'use strict';
