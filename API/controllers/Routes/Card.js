@@ -90,7 +90,7 @@ module.exports = function (app) {
         props.onMainDisplay = false;
       }
       CardController.DuplicateCard(template,req.headers.authorization,true,null,props).on('data',function(root){
-          TagsController.TagEntity(tags,root.id).on('data',function(tagRes){
+          TagsController.TagEntity(tags,root.id).then(function(tagRes){
             for(var i = 0; i < tagRes.length;i++){
              // tagHash[tagRes[i].tag.id]=tagRes[i].tag.data;
               root.tags.push(tagRes[i].tag.id);

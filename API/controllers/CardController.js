@@ -100,23 +100,22 @@ module.exports = function() {
     queryStream.on('data', function(results) {
       if (results.length !== 0) {
         var card = context.FormatNeo4jObject(results);
-        ConfigurationController.GetCardConfigurations(card.card.id)
-          .on('data', function(data) {
-            card.configurations = data;
-            context.GetCardParents.call(context, id)
-              .on('data', function(data) {
-                card.parents = data;
-                AttachmentController.GetCardsAttachments(id)
-                  .on('data', function(data) {
-                    card.attachments = {};
-                    for (var i = 0; i < data.length; i++) {
-                      var att = AttachmentController.FormatObject(data[i].attachment, id);
-                      card.attachments[att.id] = att;
-                    }
-                    responseStream.emit('data', card)
-                  })
-              })
-          });
+        ConfigurationController.GetCardConfigurations(card.card.id).then(function(data) {
+          card.configurations = data;
+          context.GetCardParents.call(context, id)
+            .on('data', function(data) {
+              card.parents = data;
+              AttachmentController.GetCardsAttachments(id)
+                .on('data', function(data) {
+                  card.attachments = {};
+                  for (var i = 0; i < data.length; i++) {
+                    var att = AttachmentController.FormatObject(data[i].attachment, id);
+                    card.attachments[att.id] = att;
+                  }
+                  responseStream.emit('data', card)
+                })
+            })
+        });
       } else {
         ErrorHandler.Handle404(responseStream, 'Card', id);
       }
@@ -152,7 +151,7 @@ module.exports = function() {
    * Write Methods - Keep in alphabetical order
    *
    * ===================================================================================================== */
-   //TODO: JEEZ LOWDY THE ERROR HANDLING HERE BULL SHIT
+  //TODO: JEEZ LOWDY THE ERROR HANDLING HERE BULL SHIT
   Card.prototype.CreateCard = function(token, data, tags) {
     var newCard = 'CREATE (n:Card {data}) RETURN n';
     data.date_created = Date.now();
@@ -175,13 +174,13 @@ module.exports = function() {
         var user = results.user;
         //TAG CARD
         tagger.TagEntity(tags, cardId).then(function(taggingResults) {
-            var tagHash = {};
-            for (var i = 0; i < taggingResults.length; i++) {
-              tagHash[taggingResults[i].tag.id] = taggingResults[i].tag.data;
-            }
-            var card = context.FormatObject(user, tagHash, [], results.entity);
-            responseStream.emit('data', card);
-          }/**/);
+          var tagHash = {};
+          for (var i = 0; i < taggingResults.length; i++) {
+            tagHash[taggingResults[i].tag.id] = taggingResults[i].tag.data;
+          }
+          var card = context.FormatObject(user, tagHash, [], results.entity);
+          responseStream.emit('data', card);
+        } /**/ );
       }));
     }))
     return responseStream;
@@ -310,13 +309,10 @@ module.exports = function() {
                 delete configurations[config].for;
                 delete configurations[config].configures;
                 delete configurations[config].id;
-                ConfigurationController.CreateCardConfiguartion(root.id, parentId, configurations[config])
-                  .on('data', function(results) {
-                    newConfiguration[results.id] = results
-                    tempResponse.emit('configuration', results)
-                  })
-                // }
-                //ConfigurationController.DuplicateConfiguration(configurations[i],parentId,root.id)
+                ConfigurationController.CreateCardConfiguartion(root.id, parentId, configurations[config]).then(function(results) {
+                  newConfiguration[results.id] = results
+                  tempResponse.emit('configuration', results)
+                });
               }
             }
             tempResponse.emit('configuration', {})
@@ -353,7 +349,7 @@ module.exports = function() {
                     card = context.FormatObject(user, tagHash, newChildren, card, newAttachments, parentId, newConfiguration);
                     console.log(card);
                     resultStream.emit('data', card);
-                  })//TODO:throw error)
+                  }) //TODO:throw error)
                 }
               });
             }
