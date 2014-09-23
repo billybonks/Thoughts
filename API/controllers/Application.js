@@ -1,6 +1,6 @@
 //require staements
 var controller = require('./Controller.js');
-var ErrorHandler = require('./../lib/Errors.js');
+var error = require('./../lib/Errors.js').reject;
 var Stream = require('stream');
 var rsvp = require('rsvp');
 module.exports = function() {
@@ -26,12 +26,9 @@ module.exports = function() {
         token: token
       };
       var query = 'START n=node(*) WHERE has (n.session_token) and n.session_token={token} RETURN n';
-      context.executeQuery(query, sessionToken).on('data', function(data) {
+      context.executeQueryRSVP(query, sessionToken).then(function(data) {
         resolve(data);
-      }).on('error', function(error) {
-        //TODO: Reject
-        ErrorHandler.Handle500(responseStream, 'GetApplication', error);
-      })
+      }, error(reject));
     });
   };
 

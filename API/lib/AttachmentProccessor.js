@@ -252,7 +252,7 @@ module.exports = function() {
     var variableHash = {
       title: title
     };
-    return this.executeQuery(query.join('\n'), variableHash);
+    return this.executeQueryRSVP(query.join('\n'), variableHash);
 
   }
 

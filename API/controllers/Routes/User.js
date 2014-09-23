@@ -11,7 +11,7 @@ module.exports = function (app) {
 
   app.get('/users/:id',function (req,res,next){
     var id = req.params.id;
-    User.GetUserById(id).on('data',function(results){
+    User.GetUserById(id).then(function(results){
       res.status = 200;
       res.returnData ={user:User.FormatObject(results[0].user)}
       next();

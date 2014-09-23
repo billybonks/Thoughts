@@ -65,7 +65,7 @@ module.exports = function() {
 
   UserController.prototype.GetUserById = function(id) {
     var query = 'start user=node(' + id + ') return user';
-    return this.executeQuery(query, {});
+    return this.executeQueryRSVP(query, {});
   };
 
   UserController.prototype.CreatedEntity = function(token, id) {
