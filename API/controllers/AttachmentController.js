@@ -1,11 +1,9 @@
 //Require Statements
-var Stream = require('stream');
 var controller = require('./Controller.js');
 var TagsController = require('./TagsController.js')
-var ErrorHandler = require('./../lib/Errors.js');
-var controller = require('./Controller.js');
 var Promise = require('./../lib/promise')
 var error = require('./../lib/Errors.js').reject;
+
 module.exports = function() {
     'use strict';
     needs: ['tag']
