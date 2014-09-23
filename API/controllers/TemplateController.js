@@ -5,7 +5,7 @@ var Template = require('./../models/template')();
 
 module.exports = function() {
     'use strict';
-    
+
     /* ========================================================================================================
      *
      * Class Setup - Keep in alphabetical order
@@ -28,13 +28,6 @@ module.exports = function() {
                 resolve(Template.parseArray(results));
             }, error(reject));
         });
-    };
-
-    TemplateController.prototype.GetObject = function(template) {
-        return {
-            id: template.id,
-            title: template.data.title
-        };
     };
     return new TemplateController();
 };

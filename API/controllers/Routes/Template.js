@@ -16,7 +16,6 @@ module.exports = function (app) {
   });
 
   app.get('/templates',function(req,res,next){
-    var GetObject = TemplateController.GetObject;
     TemplateController.GetTemplates(req.headers.authorization).then(function(templates){
       res.status = 200;
       res.returnData ={templates:templates}
