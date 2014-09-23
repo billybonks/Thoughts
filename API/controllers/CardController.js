@@ -167,7 +167,7 @@ module.exports = function() {
           var card = context.FormatObject(user, tagHash, [], results.entity);
           responseStream.emit('data', card);
         } /**/ );
-      },error(reject));
+      });//,error(reject));
     }))
     return responseStream;
   };
@@ -266,7 +266,7 @@ module.exports = function() {
             }
             if (duplicateAttatchments) {
               for (var id in attachments) {
-                AttachmentController.createAttachment(attachments[id].data, token, [], root.id).on('data', function(results) {
+                AttachmentController.createAttachment(attachments[id].data, token, [], root.id).then(function(results) {
                   counter++;
                   var attachment = AttachmentController.FormatObject(results[0].attachment, root.id)
 

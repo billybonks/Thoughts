@@ -56,17 +56,27 @@ module.exports = function() {
         var context = this;
         data = this.cleanNulls(data);
         return new rsvp.Promise(function(resolve, reject) {
-            var query = 'CREATE (n:' + label + ' {data}) RETURN n';
+            var query = 'CREATE (node:' + label + ' {data}) RETURN node';
             var params = {
                 data: data
             }
-            context.executeQuery(query, params).then(function(results) {
-                results = context.flatten(results[0].n);
+            context.executeQueryRSVP(query, params).then(function(results) {
                 resolve(results);
             }, function(err) {
                 reject(err);
             })
         })
+    }
+
+    Controller.prototype.cleanNulls = function(data) {
+        for (var prop in data) {
+            if (data[prop] !== 0) {
+                if (!data[prop]) {
+                    delete data[prop]
+                }
+            }
+        }
+        return data;
     }
 
     Controller.prototype.updateNode = function(id, data) {

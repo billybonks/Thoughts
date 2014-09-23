@@ -12,6 +12,11 @@ module.exports = function() {
 
     ConfigurationController.prototype = new controller();
 
+    /**
+     * Gets configuration objects based on specified ids
+     * @param {ids} Array configuration id
+     * @return
+     */
     ConfigurationController.prototype.GetConfiguration = function(ids) {
         return Promise.call(this, function(resolve, reject) {
             var ret = {};
@@ -37,6 +42,11 @@ module.exports = function() {
         });
     }
 
+    /**
+     * Gets configuration objects based on card id
+     * @param {cardId} Object cardId
+     * @return
+     */
     ConfigurationController.prototype.GetCardConfigurations = function(cardId) {
         return Promise.call(this, function(resolve, reject) {
             var context = this;
@@ -51,28 +61,39 @@ module.exports = function() {
                     var config = context.FormatNeo4jObject(results[i]);
                     configurations[config.id] = config;
                 }
-                //  console.log('awadads')
-                //  console.log(configurations)
                 resolve(configurations)
             }, error(reject));
         });
     }
 
+    /**
+     * Creates configuration node.
+     * @param {targetId} String Target being configured
+     * @param {bindingCardId} String Card context when configuration applies
+     * @param {configuration} Object Configuration data
+     * @return
+     */
+
     ConfigurationController.prototype.CreateCardConfiguartion = function(targetId, bindingCardId, configuration) {
         return Promise.call(this, function(resolve, reject) {
             var context = this;
-            this.CreateConfiguartionNode(configuration).then(function(data) {
-                var configNodeId = data[0].config.id;
-                context.LinkConfigurationTarget.call(context, targetId, configNodeId).then(function(data) {
-                    context.LinkConfigurationFor.call(context, bindingCardId, configNodeId).then(function(data) {
+              this.createNode(configuration,'Configuration').then(function(data){
+                var configNodeId = data[0].node.id;
+                context.createRelationShip.call(context, configNodeId, targetId, 'Configures').then(function() {
+                    context.createRelationShip.call(context, configNodeId, bindingCardId, 'Targets').then(function() {
                         resolve(data);
-                    }, error(reject));
-                }, error(reject));
+                    }, error(reject))
+                }, error(reject))
             }, error(reject));
         });
     }
-
-
+//  this.CreateConfiguartionNode(configuration).then(function(data) {
+    /**
+     * Creates configuration node.
+     * @param {id} String Configuration id to be updated
+     * @param {data} Object Updated values
+     * @return
+     */
     ConfigurationController.prototype.UpdateConfiguration = function(id, data) {
         return Promise.call(this, function(resolve, reject) {
             var query = ['START configuration=node(' + id + ')',
@@ -82,7 +103,7 @@ module.exports = function() {
             ];
             console.log(data);
             var variableHash = data;
-            this.executeQueryRSVP(query.join('\n'),data).then(function(data) {
+            this.executeQueryRSVP(query.join('\n'), data).then(function(data) {
                 resolve(data);
             }, error(reject))
         });
@@ -97,32 +118,6 @@ module.exports = function() {
             this.executeQueryRSVP(query, variableHash).then(function(data) {
                 resolve(data)
             }, error(reject))
-        });
-    }
-
-    ConfigurationController.prototype.LinkConfigurationTarget = function(targetId, configNodeId) {
-        return Promise.call(this, function(resolve, reject) {
-            var configurationCardRelationShip = [
-                'START config=node(' + configNodeId + '), target=node(' + targetId + ')', ,
-                'CREATE config-[r:Configures]->target',
-                'RETURN config,target'
-            ].join('\n');
-            this.executeQueryRSVP(configurationCardRelationShip, {}).then(function(data) {
-                resolve(data)
-            }, error(reject));
-        });
-    }
-
-    ConfigurationController.prototype.LinkConfigurationFor = function(bindingCard, configNodeId) {
-        return Promise.call(this, function(resolve, reject) {
-            var configurationCardRelationShip = [
-                'START config=node(' + configNodeId + '), target=node(' + bindingCard + ')', ,
-                'CREATE config-[r:Targets]->target',
-                'RETURN config,target'
-            ].join('\n');
-            this.executeQueryRSVP(configurationCardRelationShip, {}).then(function(data) {
-                resolve(data)
-            }, error(reject));
         });
     }
 

@@ -45,10 +45,9 @@ module.exports = function(app) {
         delete config.for;
         delete config.configures;
         ConfigurationController.CreateCardConfiguartion(target, f, config).then(function(data) {
-            config.id = data[0].config.id
+            config.id = data[0].node.id
             config.for = f;
             config.configures = target;
-            console.log(data[0].config.id)
             res.status = 200;
             res.returnData = {
                 configuration: config
