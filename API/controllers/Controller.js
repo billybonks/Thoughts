@@ -52,6 +52,44 @@ module.exports = function() {
         });
     };
 
+    Controller.prototype.createNode = function(data, label) {
+        var context = this;
+        data = this.cleanNulls(data);
+        return new rsvp.Promise(function(resolve, reject) {
+            var query = 'CREATE (n:' + label + ' {data}) RETURN n';
+            var params = {
+                data: data
+            }
+            context.executeQuery(query, params).then(function(results) {
+                results = context.flatten(results[0].n);
+                resolve(results);
+            }, function(err) {
+                reject(err);
+            })
+        })
+    }
+
+    Controller.prototype.updateNode = function(id, data) {
+        var context = this;
+        data = this.cleanNulls(data)
+        return new rsvp.Promise(function(resolve, reject) {
+            var query = ['Start node=node(' + id + ')'];
+            for (var prop in data) {
+                query.push('SET node.' + prop + ' = \'' + data[prop] + '\'');
+            }
+            query.push('RETURN node');
+            query = query.join('\n')
+            var params = {
+                data: data
+            }
+            context.executeQuery(query, params).then(function(results) {
+                resolve(results);
+            }, function(error) {
+                reject(error);
+            });
+        })
+    }
+
     Controller.prototype.createRelationShip = function(source, target, label) {
         var query = [
             'START source=node(' + source + '),target=node(' + target + ')',
