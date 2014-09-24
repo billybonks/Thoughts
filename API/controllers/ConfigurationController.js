@@ -33,7 +33,7 @@ module.exports = function() {
           for (var i = 0; i < results.length; i++) {
             var configuration = new model();
             configuration.parse(results[i]);
-            ret[config.id] = configuration.getJSON();
+            ret[configuration.get('id')] = configuration.getJSON();
           }
           counter++;
           if (counter === ids.length) {
@@ -62,8 +62,10 @@ module.exports = function() {
         for (var i = 0; i < results.length; i++) {
           var configuration = new model();
           configuration.parse(results[i]);
-          configurations[config.id] = configuration.getJSON();
+          configurations[configuration.get('id')] = configuration.getJSON();
         }
+        console.log('resolving')
+        console.log(configurations)
         resolve(configurations)
       }, error(reject));
     });
@@ -109,23 +111,6 @@ module.exports = function() {
         resolve(data);
       }, error(reject))
     });
-  }
-
-  ConfigurationController.prototype.FormatNeo4jObject = function(data) {
-    var target = data.configures.id;
-    var f = data.for.id
-    var config = data.node
-    return this.FormatObject(config, target, f);
-  }
-
-  ConfigurationController.prototype.FormatObject = function(data, target, f) {
-    return {
-      id: data.id,
-      position: data.data.position,
-      'for': f,
-      embedded: data.data.embedded,
-      configures: target
-    }
   }
 
   return new ConfigurationController();

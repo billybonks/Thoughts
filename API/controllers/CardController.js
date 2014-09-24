@@ -7,6 +7,7 @@ var AttachmentController = require('./AttachmentController.js')();
 var ConfigurationController = require('./ConfigurationController.js')();
 var ErrorHandler = require('./../lib/Errors.js');
 var Tag = require('./../models/tag')();
+var Configuration = require('./../models/configuration')();
 var error = require('./../lib/Errors.js').reject;
 module.exports = function() {
   'use strict';
@@ -72,7 +73,14 @@ module.exports = function() {
     }
     return responseStream;
   };
-
+/*
+console.log('adding config')
+var configuration = new Configuration()
+configRaw =configuration.flatten(result.configuration)
+console.log(configRaw)
+configuration.update(configRaw);
+configurations[configuration.id] = configuration;
+*/
   Card.prototype.GetCard = function(id) {
     var context = this;
     var query = [
@@ -88,7 +96,9 @@ module.exports = function() {
     queryStream.on('data', function(results) {
       if (results.length !== 0) {
         var card = context.FormatNeo4jObject(results);
+        console.log('getting configurations')
         ConfigurationController.getCardConfigurations(card.card.id).then(function(data) {
+          console.log(data)
           card.configurations = data;
           context.GetCardParents.call(context, id)
             .on('data', function(data) {
@@ -390,10 +400,11 @@ module.exports = function() {
         var attachment = AttachmentController.FormatObject(result.attachment);
         attachments[attachment.id] = attachment;
       }
-      if (result.configuration) {
+    /*  if (result.configuration) {
+        console.log(result.configuration)
         var configuration = ConfigurationController.FormatObject(result.configuration);
         configurations[configuration.id] = configuration;
-      }
+      }*/
       if (result.for) {
 
       }
