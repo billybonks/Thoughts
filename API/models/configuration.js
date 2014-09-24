@@ -1,39 +1,46 @@
+var model = require('./model')();
+
+
 module.exports = function() {
 
     function Configuration(node) {
-        this.relationships: [{
-            attr: 'for',
-            name: 'Targets',
-            direction: 'out'
-        }, {
-            attr: 'configures',
-            name: 'Configures',
-            direction: 'out'
-        }]
+        this.data = {};
+        this.relationships = ['configures','for']
         if (node) {
-            this.id = node.id;
-            this.position = node.data.position;
-            this.embedded = node.data.embedded;
-            this.for = node.data.for;
-            this.configures = node.data.configures;
+            this.data.id = node.id;
+            this.data.position = node.position;
+            this.data.embedded = node.embedded;
+            this.data.for = node.for;
+            this.data.configures = node.configures;
         }
     }
 
-    Configuration.prototype.toSideload = function() {
-        return this.model;
-    }
+    Configuration.prototype = new model();
 
-    Configuration.parse = function(node) {
-        return new Configuration(node);
+    
+
+    Configuration.prototype.toSideload = function() {
+        return this.data;
     }
 
     Configuration.parseArray = function(node) {
         return new Configuration(node);
     }
 
+
+
     return Configuration;
 }
 /*
+this.relationships= [{
+    attr: 'for',
+    name: 'Targets',
+    direction: 'out'
+}, {
+    attr: 'configures',
+    name: 'Configures',
+    direction: 'out'
+}]
 
 position: DS.attr('number'),
 embedded: DS.attr('boolean'),

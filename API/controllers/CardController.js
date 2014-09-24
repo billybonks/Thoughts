@@ -88,7 +88,7 @@ module.exports = function() {
     queryStream.on('data', function(results) {
       if (results.length !== 0) {
         var card = context.FormatNeo4jObject(results);
-        ConfigurationController.GetCardConfigurations(card.card.id).then(function(data) {
+        ConfigurationController.getCardConfigurations(card.card.id).then(function(data) {
           card.configurations = data;
           context.GetCardParents.call(context, id)
             .on('data', function(data) {
@@ -290,7 +290,7 @@ module.exports = function() {
                 delete configurations[config].for;
                 delete configurations[config].configures;
                 delete configurations[config].id;
-                ConfigurationController.CreateCardConfiguartion(root.id, parentId, configurations[config]).then(function(results) {
+                ConfigurationController.createCardConfiguartion(root.id, parentId, configurations[config]).then(function(results) {
                   newConfiguration[results.id] = results
                   tempResponse.emit('configuration', results)
                 });

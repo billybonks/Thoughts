@@ -1,5 +1,6 @@
 var ConfigurationController = require('./../ConfigurationController')(); //TemplateRoute
 var ErrorHandler = require('./../../lib/Errors.js');
+var model = require('./../../models/configuration')();
 module.exports = function(app) {
     'use strict';
     /* ========================================================================================================
@@ -9,7 +10,7 @@ module.exports = function(app) {
      * ===================================================================================================== */
     app.get('/configurations/:id', function(req, res, next) {
         var ids = [req.params.id]
-        ConfigurationController.GetConfiguration(ids).then(function(data) {
+        ConfigurationController.getConfiguration(ids).then(function(data) {
             var ret = []
             for (var key in data) {
                 ret.push(data[key]);
@@ -24,9 +25,8 @@ module.exports = function(app) {
     });
 
     app.get('/configurations', function(req, res, next) {
-        console.log('getting IDS')
         var ret = []
-        ConfigurationController.GetConfiguration(req.query.ids).then(function(data) {
+        ConfigurationController.getConfiguration(req.query.ids).then(function(data) {
             for (var key in data) {
                 ret.push(data[key]);
             }
@@ -39,18 +39,11 @@ module.exports = function(app) {
     });
 
     app.post('/configurations', function(req, res, next) {
-        var config = req.body.configuration;
-        var f = config.for;
-        var target = config.configures;
-        delete config.for;
-        delete config.configures;
-        ConfigurationController.CreateCardConfiguartion(target, f, config).then(function(data) {
-            config.id = data[0].node.id
-            config.for = f;
-            config.configures = target;
+        var configuration = new model(req.body.configuration);
+        ConfigurationController.createCardConfiguartion(configuration).then(function(configuration) {
             res.status = 200;
             res.returnData = {
-                configuration: config
+                configuration: configuration.data
             }
             next();
         }, ErrorHandler.FowardErrorToBrowser(res, next));
@@ -61,7 +54,7 @@ module.exports = function(app) {
         var config = req.body.configuration;
         delete config.for;
         delete config.configures
-        ConfigurationController.UpdateConfiguration(req.params.id, config).then(function(data) {
+        ConfigurationController.updateConfiguration(req.params.id, config).then(function(data) {
             res.status = 200;
             //  res.returnData = {configuration:data}
             next();

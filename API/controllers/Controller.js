@@ -54,7 +54,7 @@ module.exports = function() {
 
     Controller.prototype.createNode = function(data, label) {
         var context = this;
-        data = this.cleanNulls(data);
+        console.log(this)
         return new rsvp.Promise(function(resolve, reject) {
             var query = 'CREATE (node:' + label + ' {data}) RETURN node';
             var params = {

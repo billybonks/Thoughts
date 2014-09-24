@@ -1,6 +1,7 @@
 var controller = require('./Controller.js');
 var Promise = require('./../lib/promise')
 var error = require('./../lib/Errors.js').reject;
+var model = require('./../models/configuration')();
 module.exports = function() {
     'use strict';
     /* ========================================================================================================
@@ -17,7 +18,7 @@ module.exports = function() {
      * @param {ids} Array configuration id
      * @return
      */
-    ConfigurationController.prototype.GetConfiguration = function(ids) {
+    ConfigurationController.prototype.getConfiguration = function(ids) {
         return Promise.call(this, function(resolve, reject) {
             var ret = {};
             var context = this;
@@ -47,7 +48,7 @@ module.exports = function() {
      * @param {cardId} Object cardId
      * @return
      */
-    ConfigurationController.prototype.GetCardConfigurations = function(cardId) {
+    ConfigurationController.prototype.getCardConfigurations = function(cardId) {
         return Promise.call(this, function(resolve, reject) {
             var context = this;
             var query = ['Start card=node(' + cardId + ')',
@@ -74,27 +75,27 @@ module.exports = function() {
      * @return
      */
 
-    ConfigurationController.prototype.CreateCardConfiguartion = function(targetId, bindingCardId, configuration) {
+    ConfigurationController.prototype.createCardConfiguartion = function(configuration) {
         return Promise.call(this, function(resolve, reject) {
             var context = this;
-              this.createNode(configuration,'Configuration').then(function(data){
-                var configNodeId = data[0].node.id;
-                context.createRelationShip.call(context, configNodeId, targetId, 'Configures').then(function() {
-                    context.createRelationShip.call(context, configNodeId, bindingCardId, 'Targets').then(function() {
-                        resolve(data);
+            this.createNode(configuration.getVectorData(), 'Configuration').then(function(data) {
+                configuration.parse(data[0].node);
+                context.createRelationShip(configuration.get('id'), configuration.get('configures'), 'Configures').then(function() {
+                    context.createRelationShip(configuration.get('id'), configuration.get('for'), 'Targets').then(function() {
+                        resolve(configuration);
                     }, error(reject))
                 }, error(reject))
             }, error(reject));
         });
     }
-//  this.CreateConfiguartionNode(configuration).then(function(data) {
+
     /**
      * Creates configuration node.
      * @param {id} String Configuration id to be updated
      * @param {data} Object Updated values
      * @return
      */
-    ConfigurationController.prototype.UpdateConfiguration = function(id, data) {
+    ConfigurationController.prototype.updateConfiguration = function(id, data) {
         return Promise.call(this, function(resolve, reject) {
             var query = ['START configuration=node(' + id + ')',
                 'SET configuration.embedded = {embedded},',
@@ -105,18 +106,6 @@ module.exports = function() {
             var variableHash = data;
             this.executeQueryRSVP(query.join('\n'), data).then(function(data) {
                 resolve(data);
-            }, error(reject))
-        });
-    }
-
-    ConfigurationController.prototype.CreateConfiguartionNode = function(configuration) {
-        return Promise.call(this, function(resolve, reject) {
-            var query = 'CREATE (config:Configuration {data}) RETURN config';
-            var variableHash = {
-                data: configuration
-            };
-            this.executeQueryRSVP(query, variableHash).then(function(data) {
-                resolve(data)
             }, error(reject))
         });
     }
