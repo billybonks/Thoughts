@@ -1,9 +1,8 @@
 var Stream = require('stream');
 var crypto = require('crypto');
 var controller = require('./Controller.js');
-var db = require('./../lib/Database')
-var ErrorHandler = require('./../lib/Errors.js');
-
+var error = require('./../lib/Errors.js').reject;
+var Promise = require('./../lib/promise');
 module.exports = function(){
   'use strict';
   /* ========================================================================================================
@@ -21,15 +20,7 @@ module.exports = function(){
   AccountRouteBase.prototype.RefreshAccessToken= function(refreshToken,userId){
     var responseStream = new Stream();
     var context = this;
-    /*
-        var access_token = user.accounts.Google.access_token;
-    var expiry = user.accounts.Google.expires_in;
-    var dateModified = user.accounts.Google.date_modified;
-    if((dateModified +expiry)>Date.now()){
-
-    }
-    */
-    this.GetAccessToken(refreshToken).on('data',function(result){
+    this.GetAccessToken(refreshToken).then(function(result){
       context.ReplaceAccessToken(context.accountType,userId,result.access_token,result.expires_in).on('data',function(results){
         responseStream.emit('data',results[0].account.data.access_token);
       });
@@ -37,12 +28,13 @@ module.exports = function(){
     return responseStream;
   }
 
-
+ //FIXME:some sort of error handling here
+ //FIXME:Merge this get user with user controller get user
   AccountRouteBase.prototype.OnAccessToken = function(accessToken, refreshToken,params, profile, done){
     var context = this;
     var GetUser = this.GetUser;
 
-    this.GetOAuthUser(accessToken,refreshToken,params).on('data',function(results){
+    this.GetOAuthUser(accessToken,refreshToken,params).then(function(results){
       console.log(accountNode);
       var OAuthuser = results.user;
       var accountNode = results.account;

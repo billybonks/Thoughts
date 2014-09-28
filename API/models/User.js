@@ -1,28 +1,20 @@
+var model = require('./model')();
 module.exports = function() {
   function User(node) {
-    console.log(node)
-      this.id = node.id;
-      this.first_name = node.data.first_name;
-      this.last_name = node.data.last_name;
-      this.email = node.data.email;
-      this.profileImg = node.data.profileImg;
-      this.locale = node.data.locale;
-      this.gender = node.data.gender;
-      this.session_token = node.data.session_token;
+    this.data ={};
+    if(node){
+      this.data.id = node.id;
+      this.data.first_name = node.data.first_name;
+      this.data.last_name = node.data.last_name;
+      this.data.email = node.data.email;
+      this.data.profileImg = node.data.profileImg;
+      this.data.locale = node.data.locale;
+      this.data.gender = node.data.gender;
+      this.data.session_token = node.data.session_token;
+    }
   }
 
-  User.prototype.toSideload = function() {
-    return this.model;
-  }
+  User.prototype = new model();
 
-  User.parse = function(node) {
-    console.log(node)
-    return new User(node);
-  }
-
-  User.parseArray = function(node) {
-    return new User(node);
-  }
-  console.log('ret user class')
   return User;
 }

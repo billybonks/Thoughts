@@ -20,9 +20,9 @@ module.exports = function() {
                 id: 0
             };
             var context = this;
-            settings.first_name = user.first_name;
+            settings.first_name = user.get('first_name');
             console.log('getting accounts')
-            this.GetUserLinkedAccounts.call(context, user.id).then(function(accounts) {
+            this.GetUserLinkedAccounts.call(context, user.get('id')).then(function(accounts) {
               console.log('got accounts')
                 for (var i = 0; i < accounts.length; i++) {
                     var label = accounts[i]['labels(account)'][0];

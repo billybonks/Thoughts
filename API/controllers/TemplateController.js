@@ -25,6 +25,7 @@ module.exports = function() {
                 'return template'
             ];
             return this.executeQueryRSVP(query.join('\n'), {}).then(function(results) {
+              
                 resolve(Template.parseArray(results));
             }, error(reject));
         });

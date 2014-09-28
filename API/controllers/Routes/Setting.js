@@ -9,16 +9,14 @@ module.exports = function(app) {
    *
    * ===================================================================================================== */
   app.get('/settings/:id', function(req, res, next) {
-    UserController.GetUser(req.headers['authorization']).then(function(user) {
       console.log(  SettingsController.GetSettings)
-      SettingsController.GetSettings(user).then(function(settings) {
+      SettingsController.GetSettings(req.user).then(function(settings) {
         res.status = 200;
         res.returnData = {
           settings: settings
         }
         next();
       },ErrorHandler.FowardErrorToBrowser(res, next));
-    },ErrorHandler.FowardErrorToBrowser(res, next));
   });
 
 };

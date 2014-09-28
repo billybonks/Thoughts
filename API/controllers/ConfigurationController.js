@@ -1,5 +1,5 @@
 var controller = require('./Controller.js');
-var Promise = require('./../lib/promise')
+var Promise = require('./../lib/promise');
 var error = require('./../lib/Errors.js').reject;
 var model = require('./../models/configuration')();
 module.exports = function() {
@@ -73,12 +73,9 @@ module.exports = function() {
 
   /**
    * Creates configuration node.
-   * @param {targetId} String Target being configured
-   * @param {bindingCardId} String Card context when configuration applies
    * @param {configuration} Object Configuration data
    * @return
    */
-
   ConfigurationController.prototype.createCardConfiguartion = function(configuration) {
     return Promise.call(this, function(resolve, reject) {
       var context = this;

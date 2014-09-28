@@ -12,7 +12,7 @@ module.exports = function (app) {
    * ===================================================================================================== */
 
   app.delete('/cards/:id',function (req,res,next){
-    CardController.DeleteCard(req.headers.authorization,req.params.id).then(function(results){
+    CardController.DeleteCard(req.params.id).then(function(results){
       res.status = 200;
       res.returnData ={}
       next();
@@ -43,8 +43,8 @@ module.exports = function (app) {
       }
     }else{
       var ret= [];
-      CardController.GetAllCards(req.headers.authorization)
-      .on('data',function(results){
+      CardController.getAllCards(req.user)
+      .then('data',function(results){
         for(var i = 0; i < results.length;i++){
           var card = results[i];
           card = cardController.FormatObject(card.user,card.tags,card.children,card.card,card.attachments,card.parents,card.configurations);

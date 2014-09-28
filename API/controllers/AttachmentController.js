@@ -20,13 +20,20 @@ module.exports = function() {
      * Read Methods - Keep in alphabetical order
      *
      * ===================================================================================================== */
-
+    /**
+     * gets list of attachment based on ids.
+     * @param {id} Array  array of  attachment ids to retrive
+     * @return
+     */
     Attachment.prototype.getAttachments = function(ids) {
         return this.getNodes(ids);
     }
 
-
-
+    /**
+     * gets attachment based on id.
+     * @param {id} String id of attachment to retrive
+     * @return
+     */
     Attachment.prototype.getAttachment = function(id) {
         return Promise.call(this, function(resolve, reject) {
             var query = [
@@ -45,40 +52,43 @@ module.exports = function() {
      *
      * ===================================================================================================== */
 
-
-    Attachment.prototype.createAttachmentBase = function(data, token, tags) {
+    /**
+     * Creates attachment node.
+     * @param {attachment} Object vector data
+     * @return
+     */
+    //FIXME: replace paramters with attachment object
+    //FIXME: use attachment model
+    Attachment.prototype.createAttachment = function(data, id, tags, cardId) {
         var attachment = null;
         var context = this;
         var tagger = this.tags;
         return Promise.call(this, function(resolve, reject) {
-            this.storeAttachment('Attachment', data).then(function(results) {
-                var attachmentId = results[0].n.id;
-                attachment = results[0].n;
-                context.linkOwner.call(context, attachmentId, token).then(function(results) {
+            this.createNode(data, 'Attachment').then(function(data) {
+                var attachmentId = results[0].node.id;
+                attachment = results[0].node;
+                context.createRelationShip(id, attachmentId, 'Created').then(function(results) {
                     console.log('owner linked')
                     if (tags.length === 0) {
                         resolve(attachment);
                     } else {
                         tagger.TagEntity(attachmentId, tags).then(function(results) {
-                            resolve(attachment);
-                        }, function() {})
+                            context.createRelationShip(results.id, cardId, 'Attached').then(function() {
+                                var attachment = AttachmentController.FormatObject(attachment, cardId)
+                                resolve(attachment);
+                            }, error(reject));
+                        }, error(reject))
                     }
                 }, error(reject))
             }, error(reject))
         });
     }
 
-    Attachment.prototype.createAttachment = function(data, token, tags, sectionId) {
-        return Promise.call(this, function(resolve, reject) {
-            var context = this;
-            this.createAttachmentBase(data, token, tags).then(function(results) {
-                context.createRelationShip(results.id, sectionId, 'Attached').then(function() {
-                    resolve(results);
-                }, error(reject));
-            }, error(reject));
-        });
-    }
-
+    /**
+     * Gets attachments attached to card.
+     * @param {cardId} String id of target card
+     * @return
+     */
     Attachment.prototype.GetCardsAttachments = function(cardId) {
         return Promise.call(this, function(resolve, reject) {
             var context = this;
@@ -101,37 +111,12 @@ module.exports = function() {
         });
     }
 
-    Attachment.prototype.linkOwner = function(attachmentId, sessionToken) {
-        var query = [
-            'START attachment=node(' + attachmentId + ')',
-            'MATCH (user:Person)',
-            'WHERE user.session_token = {token}',
-            'CREATE user-[r:Created]->attachment',
-            'RETURN attachment'
-        ];
-        var variableHash = {
-            token: sessionToken
-        }
-
-        return this.executeQueryRSVP(query.join('\n'), variableHash);
-    }
-
-    Attachment.prototype.storeAttachment = function(attachmentType, data) {
-        return Promise.call(this, function(resolve, reject) {
-            var query = 'CREATE (n:' + attachmentType + ' {data}) RETURN n';
-            data.date_created = Date.now();
-            data.date_modified = Date.now();
-            var variableHash = {
-                data: data
-            };
-            this.executeQueryRSVP(query, variableHash).then(function(results) {
-                resolve(results);
-            }, error(reject))
-        });
-    }
-
-
-    //
+    /**
+     * Updates attachment .
+     * @param {attachment} Object vector data
+     * @param {id} String id of target attachment
+     * @return
+     */
     Attachment.prototype.updateAttachment = function(attachment, id) {
         return Promise.call(this, function(resolve, reject) {
             var query = ['START attachment=node(' + id + ') SET'];
@@ -155,6 +140,7 @@ module.exports = function() {
         });
     }
 
+    //FIXME: delete once attachment object is created
     Attachment.prototype.FormatObject = function(dbAtt, cardId) {
         var data = {}
         for (var key in dbAtt.data) {

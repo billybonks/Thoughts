@@ -1,7 +1,7 @@
 var controller = require('./Controller.js');
 var error = require('./../lib/Errors.js').reject;
 var Promise = require('./../lib/promise')
-var User = require('./../models/user')();
+var Model = require('./../models/user')();
 module.exports = function() {
     'use strict';
     /* ========================================================================================================
@@ -18,13 +18,15 @@ module.exports = function() {
      * Read Methods - Keep in alphabetical order
      *
      * ===================================================================================================== */
-
+     //application
     UserController.prototype.GetUser = function(token) {
         return Promise.call(this, function(resolve, reject) {
+          if(token){
             var query = 'Match (node:Person) where node.session_token = {token} return node';
             this.executeQueryRSVP(query, {
                 token: token
             }).then(function(results) {
+                console.log('Got UUU')
                 if (results.length === 0) {
                     console.log('t')
                     reject({
@@ -32,14 +34,20 @@ module.exports = function() {
                         statusCode: 404
                     });
                 }
-                console.log(new User(results[0].node).id);
-                var user = User.parse(results[0].node)
-                console.log('resolving')
+                var user = new Model();
+                user.parse(results[0])
                 resolve(user)
             }, error(reject));
+          }else{
+            reject({
+                message: 'notfound',
+                statusCode: 404
+            })
+          }
+
         });
     };
-
+    //attachment
     UserController.prototype.GetFullUser = function(token) {
         var context = this;
         return Promise.call(this, function(resolve, reject) {
@@ -52,6 +60,12 @@ module.exports = function() {
                 token: token
             }).then(function(results) {
                 //TODO:Add to user model
+                if (results.length === 0) {
+                    reject({
+                        message: 'notfound',
+                        statusCode: 404
+                    });
+                }
                 var accounts = {}
                 var user = context.FormatObject(results[0].user);
                 for (var i = 0; i < results.length; i++) {
@@ -67,7 +81,7 @@ module.exports = function() {
         var query = 'start user=node(' + id + ') return user';
         return this.executeQueryRSVP(query, {});
     };
-
+    //FIXME:this needs to be removed
     UserController.prototype.CreatedEntity = function(token, id) {
         var cardPersonRelationShip = [
             'START entity=node(' + id + ')',

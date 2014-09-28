@@ -1,6 +1,7 @@
 'use strict';
 var express = require('express'),
     allowCrossDomain = require('./lib/AllowCrossDomain'),
+    getUser = require('./lib/GetUser'),
     requestid = require('./lib/RequestId'),
     kraken = require('kraken-js'),
     secrets = require('./controllers/Routes/secrets.js'),
@@ -21,6 +22,7 @@ app.requestStart = function requestStart(server) {
   server.use(express.bodyParser());
   server.use(express.methodOverride());
   server.use(allowCrossDomain());
+  server.use(getUser());
 };
 
 
