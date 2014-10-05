@@ -6,7 +6,7 @@
     "main": "index.js",
     "scripts": {
         "test": "grunt test",
-        "start": "node index.js"
+        "start": "node --debug index.js"
     },
     "engines": {
         "node": ">=0.10.0"

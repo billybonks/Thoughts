@@ -16,21 +16,18 @@ App.ListMainComponent = App.BaseSectionComponent.extend({
       if(this.urlIsWellFormed(href)){
         data =
           {
-            link : href,
-            type:'List'
+            link : href
           }
 
       }else if(href.indexOf('card:') ===0){
         data =
           {
-            card : href,
-            type:'List'
+            card : href
           }
       }else{
         data =
           {
-            title : href,
-            type:'List'
+            title : href
           }
       }
       this.submitAttachment(data);

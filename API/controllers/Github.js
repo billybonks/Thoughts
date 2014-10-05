@@ -4,27 +4,11 @@ var fbgraph = require('fbgraph');
 var GitHubApi = require("github");
 var error = require('./../lib/Errors.js').reject;
 var Promise = require('./../lib/promise');
-var AccountRouteBase = require('./AccountController.js');
-module.exports = function() {
-    'use strict';
-    /* ========================================================================================================
-     *
-     * Class Setup - Keep in alphabetical order
-     *
-     * ===================================================================================================== */
-    function GithubController() {
-        this.accountType = 'GitHub';
-    }
+var AccountController = require('./AccountController.js');
 
-    GithubController.prototype = new AccountRouteBase();
-
-    /* ========================================================================================================
-     *
-     * Helper Methods - Keep in alphabetical order
-     *
-     * ===================================================================================================== */
-
-    GithubController.prototype.GetOAuthUser = function(accessToken, refreshToken, params) {
+module.exports = AccountController.extend({
+    accountType: 'Github',
+    GetOAuthUser: function(accessToken, refreshToken, params) {
         return Promise.call(this, function(resolve, reject) {
             var github = new GitHubApi({
                 // required
@@ -49,9 +33,8 @@ module.exports = function() {
                 });
             });
         });
-    }
-
-    GithubController.prototype.OAuthUserToDBUser = function(body) {
+    },
+    OAuthUserToDBUser: function(body) {
         var gravatar = this.GetGravatarImage(body.email);
         var nameArr = body.name.split(' ')
         var firstName = nameArr[0];
@@ -67,16 +50,13 @@ module.exports = function() {
             location: body.locale,
             profileImg: gravatar
         };
-    };
-
-    GithubController.prototype.GetLinkedAccountNodeData = function(body, accessToken) {
+    },
+    GetLinkedAccountNodeData: function(body, accessToken) {
         return {
             username: body.login,
             uid: body.id,
-            access_token: accessToken
+            access_token: accessToken,
+            expires_in:''
         };
-    };
-
-
-    return new GithubController();
-};
+    }
+});

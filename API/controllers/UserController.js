@@ -1,14 +1,109 @@
-var controller = require('./Controller.js');
+var Controller = require('./controller.js');
 var error = require('./../lib/Errors.js').reject;
 var Promise = require('./../lib/promise')
-var Model = require('./../models/user')();
+var Model = require('./../models/user');
+var Account = require('./../models/model');
+
+module.exports = Controller.extend({
+    //FIXME:reject is written in two places
+    GetUser: function(token) {
+        var context = this;
+        return Promise.call(this, function(resolve, reject) {
+            var query = ['Match (node:Person)',
+                'Match (node)-[:Linked]->(account)',
+                ' where node.session_token = {token}',
+                ' return node,account,Labels(account)'
+            ];
+            if (!token) {
+                reject({
+                    message: 'notfound',
+                    statusCode: 404
+                });
+            }
+            this.executeQuery(query.join('\n'), {
+                token: token
+            }).then(function(results) {
+                if (results.length === 0) {
+                    reject({
+                        message: 'notfound',
+                        statusCode: 404
+                    });
+                }
+                var accounts = {}
+                var user = new Model();
+                user.parse(results[0]);
+                for (var i = 0; i < results.length; i++) {
+                    var account = new Account();
+                    var data = account.flatten(results[i].account)
+                    account.update(data)
+                    accounts[results[i]['Labels(account)'][0]] = account;
+                }
+                user.accounts = accounts;
+                resolve(user);
+            }, error(reject));
+        });
+    },
+    getUserByEmail: function(email) {
+        var query = 'START node=node(*) WHERE has (node.email) and node.email={email} Match (node)-[:Linked]->(account) RETURN node,account,Labels(account)';
+        return Promise.call(this, function(resolve, reject) {
+            var variableHash = {
+                email: email
+            };
+            this.executeQuery(query, variableHash).then(function(results) {
+                if (results.length === 0) {
+                    reject({
+                        message: 'notfound',
+                        statusCode: 404
+                    });
+                } else {
+                    var user = new Model();
+                    user.parse(results[0]);
+                    var accounts = {}
+                    //FIXME:this for loop needs to be moved to user model
+                    for (var i = 0; i < results.length; i++) {
+                        var account = new Account();
+                        var data = account.flatten(results[i].account)
+                        account.update(data)
+                        accounts[results[i]['Labels(account)'][0]] = account;
+                    }
+                    user.accounts = accounts;
+                    resolve(user);
+                }
+            },error(reject));
+        });
+    },
+    getUserById: function(id) {
+        return Promise.call(this, function(resolve, reject) {
+            var query = 'start node=node(' + id + ') return node';
+            this.executeQuery(query, {}).then(function(results) {
+                var user = new Model();
+                user.parse(results[0]);
+                resolve(user);
+            }, error(reject));
+        });
+    },
+    CreateUser : function(user) {
+        return Promise.call(this, function(resolve, reject) {
+            var newUser = 'CREATE (node:Person {data}) RETURN n';
+            var newUserHash = {
+                data: user
+            };
+            this.createNode(user, 'Person').then(function(results) {
+              var user = new Model();
+              user.parse(results[0]);
+              resolve(user);
+            });
+        });
+    }
+})
+/*
 module.exports = function() {
     'use strict';
     /* ========================================================================================================
      *
      * Class Setup - Keep in alphabetical order
      *
-     * ===================================================================================================== */
+     * =====================================================================================================
     function UserController() {}
 
     UserController.prototype = new controller();
@@ -17,113 +112,16 @@ module.exports = function() {
      *
      * Read Methods - Keep in alphabetical order
      *
-     * ===================================================================================================== */
-     //application
-    UserController.prototype.GetUser = function(token) {
-        return Promise.call(this, function(resolve, reject) {
-          if(token){
-            var query = 'Match (node:Person) where node.session_token = {token} return node';
-            this.executeQueryRSVP(query, {
-                token: token
-            }).then(function(results) {
-                console.log('Got UUU')
-                if (results.length === 0) {
-                    console.log('t')
-                    reject({
-                        message: 'notfound',
-                        statusCode: 404
-                    });
-                }
-                var user = new Model();
-                user.parse(results[0])
-                resolve(user)
-            }, error(reject));
-          }else{
-            reject({
-                message: 'notfound',
-                statusCode: 404
-            })
-          }
+     * =====================================================================================================
+    UserController.prototype.GetUser =
 
-        });
-    };
-    //attachment
-    UserController.prototype.GetFullUser = function(token) {
-        var context = this;
-        return Promise.call(this, function(resolve, reject) {
-            var query = ['Match (user:Person)',
-                'Match (user)-[:Linked]->(account)',
-                ' where user.session_token = {token}',
-                ' return user,account,Labels(account)'
-            ];
-            this.executeQueryRSVP(query.join('\n'), {
-                token: token
-            }).then(function(results) {
-                //TODO:Add to user model
-                if (results.length === 0) {
-                    reject({
-                        message: 'notfound',
-                        statusCode: 404
-                    });
-                }
-                var accounts = {}
-                var user = context.FormatObject(results[0].user);
-                for (var i = 0; i < results.length; i++) {
-                    accounts[results[i]['Labels(account)']] = context.FormatAccount(results[i].account);
-                }
-                user.accounts = accounts;
-                resolve(user);
-            }, error(reject));
-        });
-    }
-
-    UserController.prototype.GetUserById = function(id) {
-        var query = 'start user=node(' + id + ') return user';
-        return this.executeQueryRSVP(query, {});
-    };
-    //FIXME:this needs to be removed
-    UserController.prototype.CreatedEntity = function(token, id) {
-        var cardPersonRelationShip = [
-            'START entity=node(' + id + ')',
-            'MATCH (user:Person)',
-            'WHERE user.session_token = {token}',
-            'CREATE user-[r:Created]->entity',
-            'RETURN user,entity'
-        ];
-        var cardRelHash = {
-            token: token
-        };
-        return Promise.call(this, function(resolve, reject) {
-            this.executeQueryRSVP(cardPersonRelationShip.join('\n'), cardRelHash).then(function(results) {
-                resolve(results[0]);
-            },error(reject));
-        });
-    };
-
-    UserController.prototype.FormatObject = function(object) {
-        return {
-            id: object.id,
-            name: object.data.name,
-            email: object.data.email
-        };
-    };
-
-    UserController.prototype.FormatAccount = function(object) {
-        return {
-            uid: object.data.uid,
-            access_token: object.data.access_token,
-            username: object.data.username,
-            refresh_token: object.data.refresh_token,
-            date_modified: object.data.date_modified,
-            expires_in: object.data.expires_in,
-            date_created: object.data.date_created
-        };
-    };
+    UserController.prototype.GetUserById =
 
     /* ========================================================================================================
      *
      * Write Methods - Keep in alphabetical order
      *
-     * ===================================================================================================== */
+     * =====================================================================================================
     return new UserController();
 };
+*/

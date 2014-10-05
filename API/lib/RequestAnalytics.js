@@ -18,8 +18,10 @@ module.exports = function (config) {
   Analytics.prototype.requestStart = function(){
     var client = this.client;
     function Log(req, res, next) {
+      /*
       req.startTimeStamp = Date.now();
-      next();
+      */next();
+
     };
     return Log;
   };
@@ -27,6 +29,7 @@ module.exports = function (config) {
   Analytics.prototype.logErrors = function(){
     var client = this.client;
     function Log(req, res, next) {
+      /*
       var timeStamp = Date.now();
       if(res.error){
         console.log(res.error);
@@ -41,7 +44,8 @@ module.exports = function (config) {
             console.log(result);
         });
       }
-      next();
+      */next();
+
     };
     return Log;
   };
@@ -49,6 +53,7 @@ module.exports = function (config) {
   Analytics.prototype.requestEnd = function(){
     var client = this.client;
     function Log(req, res, next) {
+      /*
       if(req.method !=='OPTIONS'){
         var timeStamp = Date.now();
         var logEntry= {
@@ -68,6 +73,7 @@ module.exports = function (config) {
             console.log(result);
         });
       }
+      */
       next();
     };
     return Log;

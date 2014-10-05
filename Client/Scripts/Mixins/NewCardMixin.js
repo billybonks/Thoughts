@@ -155,7 +155,6 @@ App.NewCardMixin = Ember.Mixin.create({
       var card = context.store.createRecord('card', {
         left:0,
         top:0,
-        tagsIn : qTags,//tags
         onMainDisplay:onMainDisplay,
       });
       cardPackage.parent = parent;

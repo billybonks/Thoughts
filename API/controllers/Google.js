@@ -5,27 +5,11 @@ var OauthVars = require('./Routes/secrets')
 var refresh = require('google-refresh-token');
 var error = require('./../lib/Errors.js').reject;
 var Promise = require('./../lib/promise');
-var AccountRouteBase = require('./AccountController.js');
-module.exports = function() {
-    'use strict';
-    /* ========================================================================================================
-     *
-     * Class Setup - Keep in alphabetical order
-     *
-     * ===================================================================================================== */
-    function GoogleController() {
-        this.accountType = 'Google';
-    }
+var AccountController = require('./AccountController.js');
 
-    GoogleController.prototype = new AccountRouteBase();
-
-    /* ========================================================================================================
-     *
-     * Helper Methods - Keep in alphabetical order
-     *
-     * ===================================================================================================== */
-
-    GoogleController.prototype.GetOAuthUser = function(accessToken, refreshToken, params) {
+module.exports = AccountController.extend({
+    accountType: 'Google',
+    GetOAuthUser: function(accessToken, refreshToken, params) {
         return Promise.call(this, function(resolve, reject) {
             var context = this;
             var authValue = 'Bearer ' + accessToken;
@@ -45,14 +29,13 @@ module.exports = function() {
                         user: user,
                         account: account
                     });
-                }else if(err){
-                  reject(error)
+                } else if (err) {
+                    reject(error)
                 }
             });
         });
-    }
-
-    GoogleController.prototype.OAuthUserToDBUser = function(body) {
+    },
+    OAuthUserToDBUser: function(body) {
         return {
             email: body.email,
             name: body.name,
@@ -61,9 +44,8 @@ module.exports = function() {
             location: body.locale,
             profileImg: body.picture
         };
-    };
-
-    GoogleController.prototype.GetLinkedAccountNodeData = function(body, accessToken, refreshToken, params) {
+    },
+    GetLinkedAccountNodeData: function(body, accessToken, refreshToken, params) {
         return {
             username: body.email,
             uid: body.id,
@@ -71,29 +53,26 @@ module.exports = function() {
             refresh_token: refreshToken,
             expires_in: params.expires_in
         };
-    };
-
-    GoogleController.prototype.GetAccessToken = function(refreshToken) {
+    },
+    GetAccessToken: function(refreshToken) {
         return Promise.call(this, function(resolve, reject) {
-        refresh(refreshToken, OauthVars.google.client_id, OauthVars.google.client_secret, function(err, json, res) {
-            console.log(json)
-            if (err) reject(error)
-            if (json.error) reject(json.error)
+            refresh(refreshToken, OauthVars.google.client_id, OauthVars.google.client_secret, function(err, json, res) {
+                console.log(json)
+                if (err) reject(error)
+                if (json.error) reject(json.error)
 
-            var newAccessToken = json.accessToken;
-            if (!newAccessToken) {
-                console.log('no access token')
-            }
-            if (newAccessToken) {
-                console.log('returning')
-                resolve({
-                    access_token: newAccessToken,
-                    expires_in: json.expiresIn
-                })
-            }
+                var newAccessToken = json.accessToken;
+                if (!newAccessToken) {
+                    console.log('no access token')
+                }
+                if (newAccessToken) {
+                    console.log('returning')
+                    resolve({
+                        access_token: newAccessToken,
+                        expires_in: json.expiresIn
+                    })
+                }
+            });
         });
-      });
-    };
-
-    return new GoogleController();
-};
+    },
+});

@@ -6,7 +6,7 @@ App = Ember.Application.create({
       $.cookie(AppSettings.CookieName, token);
       window.location = 'http://' + AppSettings.domain + '/'
     }
-    token = 'cfcd208495d565ef66e7dff9f98764da'//$.cookie(AppSettings.CookieName);
+    token = $.cookie(AppSettings.CookieName);
     if (!token) {
       $.cookie(AppSettings.CookieName, 'Guest');
     }

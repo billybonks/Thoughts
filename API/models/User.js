@@ -1,4 +1,14 @@
-var model = require('./model')();
+'use strict';
+var DS = require('./../lib/ds');
+
+module.exports = DS.Model.extend({
+  name: DS.attr('string'),
+  email: DS.attr('string'),
+  profileImg: DS.attr('string'),
+  firstname: DS.attr('string')
+});
+
+/*var model = require('./model')();
 module.exports = function() {
   function User(node) {
     this.data ={};
@@ -17,4 +27,4 @@ module.exports = function() {
   User.prototype = new model();
 
   return User;
-}
+}*/

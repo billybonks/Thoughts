@@ -1,502 +1,156 @@
 //var UserRoute = require('./UserRoute.js')
-var Stream = require('stream');
-var TagsController = require('./TagsController.js')();
+'use strict';
+var TagsController = require('./TagsController.js');
 var UserController = require('./UserController.js');
-var controller = require('./Controller.js');
-var AttachmentController = require('./AttachmentController.js')();
-var ConfigurationController = require('./ConfigurationController.js')();
+var Controller = require('./controller.js');
+var AttachmentController = require('./AttachmentController.js');
+var ConfigurationController = require('./ConfigurationController.js');
 var ErrorHandler = require('./../lib/Errors.js');
-var Tag = require('./../models/tag')();
-var Configuration = require('./../models/configuration')();
 var error = require('./../lib/Errors.js').reject;
-var Promise = require('./../lib/promise')
+var Promise = require('./../lib/promise');
+var RSVP = require('rsvp');
+var Model = require('./../models/card')
 
-module.exports = function() {
-    'use strict';
-    needs: ['tag', 'user', 'attachment', 'configuration']
-    /* ========================================================================================================
-     *
-     * Class Setup - Keep in alphabetical order
-     *
-     * ===================================================================================================== */
-    function Card() {
-        this.user = new UserController();
-        this.counter = 0;
-    }
-
-    Card.prototype = new controller();
-
-
-    /* ========================================================================================================
-     *
-     * Read Methods - Keep in alphabetical order
-     *
-     * ===================================================================================================== */
-    Card.prototype.GetAllCards = function(user) {
-        console.log('GET CARDS')
-        console.log(user)
-        var query = [
-            'MATCH (user:Person)-[Created]->(card:Card)',
-            'WHERE user.id = {id}',
-            'AND not(has(card.isDeleted))',
-            'AND not(card-[:Is]->())',
-            'AND card.onMainDisplay = true',
-            'RETURN card',
-            'ORDER BY card.date_created'
-        ];
-        var context = this;
-        var responseStream = new Stream();
-        var variablehash = {
-            id: user.get('id')
-        };
-        if (user != null) {
-            var queryStream = this.executeQuery(query.join('\n'), variablehash);
-            queryStream.on('data', function(results) {
-
-                var cardsCount = results.length;
-                if (cardsCount === 0) {
-                    responseStream.emit('data', []);
-                }
-                var counter = 0;
-                var ret = [];
-                for (var c = 0; c < cardsCount; c++) {
-                    var id = results[c].card.id;
-                    var resultStream = context.GetCard.call(context, id);
-                    resultStream.on('data', function(card) {
-                        ret.push(card);
-                        counter++;
-                        if (cardsCount == counter) {
-                            responseStream.emit('data', ret);
-                        }
-                    });
-                }
-            });
-        } else {
-            console.log('505')
-            ErrorHandler.Handle505(responseStream, 'GetAllCards');
-        }
-        return responseStream;
-    };
-
-    Card.prototype.getAllDeletedCards = function(user) {
+module.exports = Controller.extend({
+    needs: ['tag', 'user', 'attachment', 'configuration'],
+    user: new UserController(),
+    config: new ConfigurationController(),
+    tagController: new TagsController(),
+    attachmentController: new AttachmentController(),
+    //FIXME:unauthenticated error must be in preroute
+    getAllCards: function(user) {
         return Promise.call(this, function(resolve, reject) {
             var query = [
+                'START user=node(0)',
                 'MATCH (user:Person)-[Created]->(card:Card)',
-                'WHERE user.id = {id}',
-                'AND has(card.isDeleted)',
+                'WHERE not(has(card.isDeleted))',
                 'AND not(card-[:Is]->())',
                 'AND card.onMainDisplay = true',
                 'RETURN card',
                 'ORDER BY card.date_created'
             ];
             var context = this;
-            var variablehash = {
-                id: user.get('id')
-            };
             if (user != null) {
-                var queryStream = this.executeQuery(query.join('\n'), variablehash);
-                queryStream.on('data', function(results) {
-
-                    var cardsCount = results.length;
-                    if (cardsCount === 0) {
-                        responseStream.emit('data', []);
-                    }
-                    var counter = 0;
-                    var ret = [];
-                    for (var c = 0; c < cardsCount; c++) {
+              var variablehash = {
+                  id: user.get('id')
+              };
+                var queryStream = this.executeQuery(query.join('\n'), {}).then(function(results) {
+                    if (results.length === 0) {
+                        resolve([])
+                    } //
+                    var promises = []
+                    for (var c = 0; c < results.length; c++) {
                         var id = results[c].card.id;
-                        var resultStream = context.GetCard.call(context, id);
-                        resultStream.on('data', function(card) {
-                            ret.push(card);
-                            counter++;
-                            if (cardsCount == counter) {
-                              resolve(ret);
-                            }
-                        });
+                        promises.push(context.getCard.call(context, id));
                     }
-                });
+                    RSVP.Promise.all(promises).then(function(cards) {
+                        resolve(cards);
+                    })
+                }, error(reject));
             } else {
-                console.log('505')
-                ErrorHandler.Handle505(responseStream, 'GetAllCards');
+              resolve([])
+              /*fixme: error breaks site so resolving
+                reject({
+                    statusCode: 500,
+                    message: 'unauthenticated'
+                })*/
             }
         });
-    };
-    /*
-console.log('adding config')
-var configuration = new Configuration()
-configRaw =configuration.flatten(result.configuration)
-console.log(configRaw)
-configuration.update(configRaw);
-configurations[configuration.id] = configuration;
-*/
-    Card.prototype.GetCard = function(id) {
-        var context = this;
-        var query = [
-            'Start card=node(' + id + ')',
-            'MATCH (user:Person)-[Created]->(card:Card)',
-            'OPTIONAL MATCH  (tag)-[t:Tagged]->(card)',
-            'OPTIONAL MATCH  (child)<-[h:Has]-(card)',
-            'WHERE not(has(child.isDeleted))',
-            'RETURN card,user,child,tag' //user,card,attachment'
-        ];
-        var queryStream = this.executeQuery(query.join('\n'), {});
-        var responseStream = new Stream();
-        queryStream.on('data', function(results) {
-            if (results.length !== 0) {
-                var card = context.FormatNeo4jObject(results);
-                console.log('getting configurations')
-                ConfigurationController.getCardConfigurations(card.card.id).then(function(data) {
-                    console.log(data)
-                    card.configurations = data;
-                    context.GetCardParents.call(context, id)
-                        .on('data', function(data) {
-                            card.parents = data;
-                            console.log('getting attachments')
-                            AttachmentController.GetCardsAttachments(id).then(function(attachments) {
-                                console.log('got attachments')
-                                card.attachments = {};
-                                for (var i = 0; i < attachments.length; i++) {
-                                    var att = attachments[i];
-                                    card.attachments[att.id] = att;
-                                }
-                                responseStream.emit('data', card)
-                            })
-                        })
-                });
-            } else {
-                ErrorHandler.Handle404(responseStream, 'Card', id);
-            }
-        });
-        queryStream.on('error', function(error) {
-            ErrorHandler.Handle500(responseStream, "GetCard", error)
-        })
-        return responseStream;
-    };
-
-    Card.prototype.GetCardParents = function(id) {
-        var responseStream = new Stream();
-        var context = this;
-        var query = [
-            'Start card=node(' + id + ')',
-            'MATCH  (card)<-[h:Has]-(parent)',
-            'RETURN parent' //user,card,attachment'
-        ];
-        this.executeQuery(query.join('\n'), {}).on('data', function(results) {
-            for (var i = 0; i < results.length; i++) {
-                var parents = {}
-                parents[results[i].parent.id] = results[i].parent;
-            }
-            responseStream.emit('data', parents)
-        })
-        return responseStream;
-    }
-
-    /* ========================================================================================================
-     *
-     * Write Methods - Keep in alphabetical order
-     *
-     * ===================================================================================================== */
-    //TODO: JEEZ LOWDY THE ERROR HANDLING HERE BULL SHIT
-    Card.prototype.CreateCard = function(token, data, tags) {
-        var newCard = 'CREATE (n:Card {data}) RETURN n';
-        data.date_created = Date.now();
-        data.date_modified = Date.now();
-        var newCardHash = {
-            data: data
-        };
-        var user = this.user;
-        var responseStream = new Stream();
-        var tagger = TagsController;
-        delete newCardHash.data.user;
-        var context = this;
-        var queryStream = this.executeQuery(newCard, newCardHash);
-        //Create Card Query Execute
-        ErrorHandler.FowardError(queryStream.on('data', function(results) {
-            var cardId = results[0].n.id;
-            //LINK CARD TO USER
-            user.CreatedEntity(token, cardId).then(function(results) {
-                var user = results.user;
-                //TAG CARD
-                tagger.TagEntity(tags, cardId).then(function(taggingResults) {
-                    var tagHash = {};
-                    for (var i = 0; i < taggingResults.length; i++) {
-                        tagHash[taggingResults[i].tag.id] = taggingResults[i].tag.data;
-                    }
-                    var card = context.FormatObject(user, tagHash, [], results.entity);
-                    responseStream.emit('data', card);
-                } /**/ );
-            }); //,error(reject));
-        }))
-        return responseStream;
-    };
-
-    Card.prototype.LinkChild = function(childId, parentId) {
-        var response;
-        var returnStream = new Stream();
-        var context = this;
-        var query = ['Start child=node(' + childId + ') , parent=node(' + parentId + ')',
-            'CREATE parent-[r:Has]->child',
-            'return child'
-        ]
-        context.executeQuery(query.join('\n'), {}).on('data', function(data) {
-            returnStream.emit('data', data);
-        }).on('error', function(error) {
-            ErrorHandler.Handle500(returnStream, 'Link Child', error)
-        })
-        return returnStream;
-    };
-
-
-    Card.prototype.LinkParentToChild = function(childId, parentId) {
-        var returnStream = new Stream();
-        var query = ['Start child=node(' + childId + ') , parent=node(' + parentId + ')',
-            'CREATE parent-[r:Has]->child',
-            'return child'
-        ]
-        this.executeQuery(query.join('\n'), {})
-            .on('data', function(data) {
-                returnStream.emit('data', data);
-            }).on('error', function(error) {
-                ErrorHandler.Handle500(returnStream, 'Link Child', error)
-            })
-        return returnStream;
-    }
-
-    Card.prototype.DeleteCard = function(id) {
-        return this.deleteEntity(id);
-    };
-
-    //FIXME: replace counters with promise aggregator
-    Card.prototype.DuplicateCard = function(baseCard, token, duplicateAttatchments, parentId, variablesToReplace) {
-        var resultStream = new Stream();
-        var context = this;
-
-        this.GetCard(baseCard).on('data', function(payload) {
-
-            var children = payload.children;
-            var attachments = payload.attachments;
-            var configurations = payload.configurations;
-
-
-            var card = context.FormatObject(payload.user, payload.tags, payload.children, payload.card, payload.attachments, payload.parents, payload.configurations)
-            var attLength = card.attachments.length;
-            var childLength = card.children.length;
-            var tags = card.tags;
-
-            delete card.user;
-            delete card.id;
-            delete card.configurations;
-            delete card.attachments;
-            delete card.children;
-            delete card.parents;
-            delete card.tags;
-
-            var newAttachments = {};
-            var newChildren = {};
-            var newConfiguration = {};
-
-            for (var property in variablesToReplace) {
-                if (card.hasOwnProperty(property)) {
-                    card[property] = variablesToReplace[property];
+    },
+    //FIXME Added quick fix to turn tags into array
+    getCard: function(id) {
+        return Promise.call(this, function(resolve, reject) {
+            var context = this;
+            var query = [
+                'Start node=node(' + id + ')',
+                'MATCH (user:Person)-[Created]->(node:Card)',
+                'OPTIONAL MATCH  (tags)-[t:Tagged]->(node)',
+                'OPTIONAL MATCH  (children)<-[h:Has]-(node)',
+                'WHERE not(has(children.isDeleted))',
+                'RETURN node,user,children,tags'
+            ];
+            this.executeQuery(query.join('\n'), {}).then(function(results) {
+                if (results.length !== 0) {
+                    var card = new Model();
+                    card.parseArray(results);
+                    context.config.getCardConfigurations(card.get('id')).then(function(configurations) {
+                        card.set('configurations', configurations);
+                        context.getCardParents.call(context, card.get('id')).then(function(parents) {
+                            card.set('parents', parents);
+                            context.attachmentController.GetCardsAttachments(card.get('id')).then(function(attachments) {
+                                card.set('attachments', attachments);
+                                resolve(card);
+                            }, error(reject))
+                        }, error(reject))
+                    }, error(reject));
+                } else {
+                    reject({
+                        statusCode: 404,
+                        message: 'unauthenticated'
+                    })
                 }
-            }
-
-            context.CreateCard(token, card, tags).on('data', function(root) {
-                TagsController.TagEntity(tags, root.id).then(function(tags) {
-                    var tagHash = {};
-                    for (var tag in tags) {
-                        tagHash[tags[tag].tag.id] = tags[tag].tag;
-                    }
-                    var tempResponse = new Stream();
-                    var counter = 0;
-                    if (parentId) {
-                        context.LinkParentToChild(root.id, parentId).on('data', function(data) {
-                            tempResponse.emit('CardCreated', root);
-                        });
-                    } else {
-                        setTimeout(function() {
-                            tempResponse.emit('CardCreated', root);
-                        }, 100, tempResponse);
-                    }
-                    tempResponse.on('CardCreated', function(CCret) {
-                        var counter = 0;
-                        if (attLength === 0) {
-                            tempResponse.emit('attachments', root);
-                        }
-                        if (duplicateAttatchments) {
-                            for (var id in attachments) {
-                                //FIXME: this takes user id now not token
-                                AttachmentController.createAttachment(attachments[id].data, token, [], root.id).then(function(attachment) {
-                                    counter++;
-                                    newAttachments[attachment.id] = attachment;
-                                    if (counter == attLength) {
-                                        tempResponse.emit('attachments', root)
-                                    }
-                                });
-                            }
+            }, error(reject));
+        })
+    },
+    getCardParents: function(id) {
+        return Promise.call(this, function(resolve, reject) {
+            var context = this;
+            var query = [
+                'Start card=node(' + id + ')',
+                'MATCH  (card)<-[h:Has]-(node)',
+                'RETURN node' //user,card,attachment'
+            ];
+            this.executeQuery(query.join('\n'), {}).then(function(results) {
+                var parents = [];
+                for (var i = 0; i < results.length; i++) {
+                    var card = new Model();
+                    card.parse(results[i]);
+                    parents.push(card);
+                }
+                resolve(parents);
+            }, error(reject))
+        })
+    },
+    createCard : function(user, model) {
+        var context = this;
+        return Promise.call(this, function(resolve, reject) {
+            model.set('date_created', Date.now());
+            model.set('date_modified', Date.now());
+            this.createNode(model.getVectorData(), 'Card').then(function(results) {
+                model.set('id', results[0].node.id);
+                context.createRelationShip(user.get('id'), model.get('id'), 'Created').then(function() {
+                    context.tagController.tagEntity(model.get('tags'), model.get('id')).then(function(tags) {
+                        model.set('tags', tags)
+                        if (model.get('parents').length > 0) {
+                            context.createRelationShip(model.get('parents')[0], model.get('id'), 'Has').then(function() {
+                                resolve(model);
+                            }, error(reject))
                         } else {
-                            tempResponse.emit('attachments', root);
+                            resolve(model);
                         }
-                    });
-                    tempResponse.on('attachments', function(attRet) {
-                        var deepDiving = false;
-                        if (parentId) {
-                            for (var config in configurations) {
-                                //if(parentId == config.for){
-                                deepDiving = true;
-                                var configures = configurations[config].configures;
-                                delete configurations[config].for;
-                                delete configurations[config].configures;
-                                delete configurations[config].id;
-                                ConfigurationController.createCardConfiguartion(root.id, parentId, configurations[config]).then(function(results) {
-                                    newConfiguration[results.id] = results
-                                    tempResponse.emit('configuration', results)
-                                });
-                            }
-                        }
-                        tempResponse.emit('configuration', {})
-                    });
-
-                    tempResponse.on('configuration', function(ConfigRet) {
-                        if (childLength === 0) {
-                            resultStream.emit('data', root);
-                        }
-                        for (var child in children) {
-                            context.DuplicateCard.call(context, child, token, true, root.id, {
-                                isTemplate: false,
-                                onMainDisplay: false
-                            }).on('data', function(results) {
-                                counter++;
-                                newChildren[results.id] = results;
-
-                                if (counter == childLength) {
-                                    var card = {
-                                        id: root.id
-                                    };
-                                    delete root.id;
-
-                                    card.data = root;
-                                    if (parentId == null) {
-                                        parentId = {};
-                                    } else {
-                                        parentId[parentId] = {};
-                                    }
-                                    context.user.GetUser(token).then(function(user) {
-                                        card = context.FormatObject(user, tagHash, newChildren, card, newAttachments, parentId, newConfiguration);
-                                        resultStream.emit('data', card);
-                                    }) //TODO:throw error)
-                                }
-                            });
-                        }
-                    });
-                });
-            });
-        })
-        return resultStream;
-    };
-
-    Card.prototype.UpdateCard = function(data, id) {
-        var query = ['START card=node(' + id + ')',
-            'SET card.title = {title},',
-            'card.top = {top},',
-            'card.left = {left},',
-            'card.date_modified = {date_modified}',
-            'RETURN card'
-        ];
-        data.date_modified = Date.now();
-        var responseStream = new Stream();
-        var variableHash = data;
-        delete variableHash.user;
-        var queryStream = this.executeQuery(query.join('\n'), variableHash);
-        queryStream.on('data', function(results) {
-            responseStream.emit('data', results);
-        }).on('error', function(error) {
-            ErrorHandler.Handle500(returnStream, 'Link Child', error)
-        })
-        return responseStream;
-    };
-
-    /* ========================================================================================================
-     *
-     * Helper Methods - Keep in alphabetical order
-     *
-     * ===================================================================================================== */
-    Card.prototype.FormatNeo4jObject = function(results) {
-        var card;
-        var children = {};
-        var user;
-        var tags = {};
-        var attachments = {}
-        var configurations = {}
-        for (var i = 0; i < results.length; i++) {
-
-            var result = results[i];
-            card = result.card;
-            if (result.child) {
-                var parents = {}
-                parents[card.id] = card;
-                var child = this.FormatObject({
-                    id: null
-                }, [], [], result.child, parents);
-                children[child.id] = child;
-            }
-            if (result.tag) {
-                var tag = Tag.parse(result.tag);
-                tags[tag.id] = tag;
-            }
-            if (result.attachment) {
-                var attachment = AttachmentController.FormatObject(result.attachment);
-                attachments[attachment.id] = attachment;
-            }
-            user = result.user;
-        }
-        card = {
-            user: user,
-            card: card,
-            tags: tags,
-            attachments: attachments,
-            configurations: [],
-            parents: [],
-            children: children
-        }
-        //card = this.FormatObject(user,tags,children,card,attachments,[]);//configurations);
-        return card;
-    };
-
-    Card.prototype.FormatObject = function(user, tags, children, card, attachments, parents, configurations) {
-        var ret = {
-            id: card.id,
-            title: card.data.title,
-            description: card.data.description,
-            left: card.data.left,
-            top: card.data.top,
-            user: user.id,
-            tags: [],
-            children: [],
-            onMainDisplay: card.data.onMainDisplay,
-            isTemplate: card.data.isTemplate,
-            type: card.data.type,
-            attachments: [],
-            configurations: [],
-            parents: []
-        };
-        for (var id in parents) {
-            ret.parents.push(id);
-        }
-        for (var id in tags) {
-            ret.tags.push(id);
-        }
-        for (id in children) {
-            ret.children.push(id);
-        }
-        for (id in attachments) {
-            ret.attachments.push(id);
-        }
-        for (id in configurations) {
-            ret.configurations.push(id);
-        }
-        return ret;
-    };
-
-    return new Card();
-};
+                    }, error(reject));
+                }, error(reject));
+            }, error(reject));
+        });
+    },
+    deleteCard: function(id) {
+        return this.deleteEntity(id);
+    },
+    updateCard : function(data, id) {
+        return Promise.call(this, function(resolve, reject) {
+            var query = ['START card=node(' + id + ')',
+                'SET card.title = {title},',
+                'card.top = {top},',
+                'card.left = {left},',
+                'card.date_modified = {date_modified}',
+                'RETURN card'
+            ];
+            data.date_modified = Date.now();
+            var variableHash = data;
+            delete variableHash.user;
+            this.executeQuery(query.join('\n'), variableHash).then(function(results) {
+                resolve(results);
+            })
+        });
+    }
+});

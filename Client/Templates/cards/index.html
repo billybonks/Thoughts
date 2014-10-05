@@ -7,6 +7,9 @@
   <div class="col-md-2">
     View:{{view Ember.Select content=views selectionBinding=selectedView}}
   </div>
+  <div class="col-md-1">
+    {{view App.DropCube store=store}}
+  </div>
 </div>
 <div >
   {{#each item in model itemController="card"}}

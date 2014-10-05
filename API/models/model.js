@@ -1,84 +1,142 @@
-module.exports = function() {
+var neo4j = require('neo4j-js');
+var nconf = require('nconf');
+//var ember = require('ember');
+var Promise = require('./../lib/promise')
+var error = require('./../lib/Errors').reject;
+var adapter = require('./../lib/adapter');
+var CoreObject = require('./../lib/core_object');
+var utils = require('./../lib/utils');
 
-    function Model() {
-        this.relationships = []
-    }
-
-    Model.prototype.update = function(node) {
+module.exports = CoreObject.extend({
+    init: function(node) {
+        this.data = {};
+        this.relationships = [];
+        this.attrIndex = [];
+        this.relationshipIndex = [];
+        for (var key in this) {
+            if (this[key].direction) {
+                //console.log('found attr');
+                //  console.log(key);
+                this[key].name = key
+                if (this[key].direction == 'attr') {
+                    //  console.log('pushing to attr index')
+                    this.attrIndex.push(key);
+                } else {
+                    //  console.log('pushing rel attr index')
+                    this.relationshipIndex.push(key);
+                }
+            }
+        }
+    },
+    update: function(node) {
         for (var key in node) {
             this.data[key] = node[key];
         }
-    }
-    Model.prototype.flatten = function(node) {
+    },
+    flatten: function(node) {
         var ret = this._clone(node.data);
         ret.id = node.id;
         return ret;
-    }
-
-    Model.prototype.parse = function(data) {
+    },
+    parseArray: function(arr) {
+        for (var i = 0; i < arr.length; i++) {
+            if (i === 0) {
+              this.update(this.flatten(arr[0].node));
+            }
+            for (var j = 0; j < this.relationshipIndex.length; j++) {
+                relatedVector = arr[i][this.relationshipIndex[j]];
+                if (relatedVector) {
+                  this.parseRelatedVector(this.relationshipIndex[j],relatedVector)
+                }
+            }
+        }
+    },
+    parseRelatedVector: function(relationship,relatedVector) {
+        var definition = this[relationship]
+        if (definition.amount === 'single') {
+            this.set(relationship, this.parseRelatedModel(relationship,relatedVector))
+        } else {
+            if (!this.get(relationship))
+                this.set(relationship, []);
+            this.get(relationship).push(this.parseRelatedModel(relationship,relatedVector));
+        }
+    },
+    //FIXME:some of this code is duplicated with parseArray
+    parse: function(data,parseRel) {
         var vector = data.node;
         this.update(this.flatten(vector));
-        for (var i = 0; i < this.relationships.length; i++) {
-            relatedVector = data[this.relationships[i].name];
+        for (var i = 0; i < this.relationshipIndex.length; i++) {
+            relatedVector = data[this.relationshipIndex[i]];
             if (relatedVector) {
-                var model = this.getRelationshipModel(this.relationships[i].type);
-                model = new model();
-                relatedVector = this.flatten(relatedVector)
-                model.update(relatedVector);
-                this.set(this.relationships[i].name,model)
+              this.parseRelatedVector(this.relationshipIndex[i],relatedVector)
             }
         }
 
-    }
-    Model.prototype.getRelationshipModel = function(type) {
-      return require('./'+type)();
-    }
-
-    Model.prototype.getVectorData = function(node) {
+    },
+    parseRelatedModel: function(relationship,relatedVector) {
+        var model = this.getRelationshipModel(this[relationship].type);
+        model = new model();
+        relatedVector = this.flatten(relatedVector)
+        model.update(relatedVector);
+        return model;
+    },
+    getRelationshipModel: function(type) {
+        return require('./' + type);
+    },
+    getVectorData: function(node) {
         var data = this._clone(this.data);
         data = this.clearRelationships(data);
+        delete data.id;
         return this.cleanNulls(data)
-    }
-
-    Model.prototype.getJSON = function(node) {
+    },
+    //FIXME: this needs to work of relationshipindex and attrindex
+    getJSON: function(node) {
         var ret = {};
-        for(var key in this.data){
-          if(this.data[key].getJSON){
-            ret[key] = this.data[key].get('id');
-          }else{
-            ret[key] = this.data[key];
-          }
+        for (var key in this.data) {
+            if (this.data[key]) {
+                if (this.data[key].getJSON) {
+                    ret[key] = this.data[key].get('id');
+                } else if (this.data[key] instanceof Array) {
+                    var tempArr = []
+                    for (var i = 0; i < this.data[key].length; i++) {
+                        if (this.data[key][i].getJSON)
+                            tempArr.push(this.data[key][i].get('id'))
+                        else
+                            tempArr.push(this.data[key][i])
+                    }
+                    ret[key] = tempArr;
+                } else
+                    ret[key] = this.data[key];
+            } else {
+                ret[key] = null;
+            }
         }
-        console.log(ret)
         return ret;
-    }
-
-    Model.prototype.get = function(attribute) {
+    },
+    get: function(attribute) {
         return this.data[attribute];
-    }
-
-    Model.prototype.set = function(attribute,data) {
+    },
+    set: function(attribute, data) {
         this.data[attribute] = data;
-    }
-
-    Model.prototype._clone = function(data) {
+    },
+    _clone: function(data) {
         var clone = {}
         for (var key in data) {
             clone[key] = data[key];
         }
         return clone;
-    }
-
-    Model.prototype.clearRelationships = function(data) {
-        for (var i = 0; i < this.relationships.length; i++) {
-            delete data[this.relationships[i].name];
+    },
+    clearRelationships: function(data) {
+        for (var i = 0; i < this.relationshipIndex.length; i++) {
+            delete data[this.relationshipIndex[i]];
         }
         return data;
-    }
-
-    Model.prototype.cleanNulls = function(data) {
+    },
+    cleanNulls: function(data) {
         for (var prop in data) {
             if (data[prop] !== 0) {
+                if (data[prop] === false)
+                    continue;
                 if (!data[prop]) {
                     delete data[prop]
                 }
@@ -86,22 +144,4 @@ module.exports = function() {
         }
         return data;
     }
-
-    Model.prototype.hasMany = function(name, type) {
-        this.relationships.push({
-            name: name,
-            type: type,
-            direction: 'in'
-        })
-    }
-
-    Model.prototype.belongsTo = function(name, type) {
-        this.relationships.push({
-            name: name,
-            type: type,
-            direction: 'out'
-        })
-    }
-
-    return Model;
-}
+});

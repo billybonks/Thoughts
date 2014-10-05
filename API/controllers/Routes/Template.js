@@ -1,7 +1,9 @@
-var TemplateController = require('./../TemplateController')();//TemplateRoute
+var TemplateController = require('./../TemplateController');//TemplateRoute
+var controller = new TemplateController();
+
 var CardController = require('./../CardController')();//TemplateRoute
 var ErrorHandler = require('./../../lib/Errors.js');
-
+var utils = require('./../../lib/utils.js');
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -10,25 +12,22 @@ module.exports = function (app) {
    *
    * ===================================================================================================== */
   app.get('/templates/:id',function(req,res,next){
-    var template = req.body.template;
-    template.isTempalte = true;
     //TODO:This route hasnt been built
+    //res.returnData ={templates:utils.arrayToJSON(templates)}
   });
 
   app.get('/templates',function(req,res,next){
     console.log('getting templates')
-    TemplateController.GetTemplates(req.headers.authorization).then(function(templates){
-      console.log('got templates');
-      res.status = 200;
-      res.returnData ={templates:templates}
+    controller.GetTemplates(req.user).then(function(templates){
+      res.payload = templates;
       next();
-    },ErrorHandler.FowardErrorToBrowser(res,next))
+    },ErrorHandler.error(res,next))
   });
 
-  //FIXME: this stuff needs to be moved into a model
+  //FIXME: Work here after get card done
   app.post('/templates',function(req,res,next){
     var baseCard = req.body.template.basedOff;
-    CardController.GetCard(baseCard).on('data',function(card){
+    CardController.getCard(baseCard).then(function(card){
       var children = card.children;
       var attachments = card.attachments;
       var tags = card.tags;
@@ -44,16 +43,12 @@ module.exports = function (app) {
       card.isTemplate = true;
       card.onMainDisplay = false;
 
-
-      console.log(req.headers.authorization);
-      CardController.DuplicateCard(baseCard,req.headers.authorization,true,null,{isTemplate:true,onMainDisplay:true}).on('data',function(data){
-        console.log('return INFO is')
-        console.log(data);
+      CardController.duplicateCard(baseCard,req.user,true,null,{isTemplate:true,onMainDisplay:true}).then(function(data){
         res.status = 200;
         res.returnData={card:data};
         next();
-      }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
-    }).on('error',ErrorHandler.FowardErrorToBrowser(res,next));
+      });
+    }).on('error',ErrorHandler.error(res,next));
   });
 
 

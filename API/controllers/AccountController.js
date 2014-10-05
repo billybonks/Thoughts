@@ -1,209 +1,134 @@
-var Stream = require('stream');
+'use strict';
 var crypto = require('crypto');
-var controller = require('./Controller.js');
 var error = require('./../lib/Errors.js').reject;
 var Promise = require('./../lib/promise');
-module.exports = function(){
-  'use strict';
-  /* ========================================================================================================
-   *
-   * Class Setup - Keep in alphabetical order
-   *
-   * ===================================================================================================== */
-  function AccountRouteBase(){
-    this.responseStream = new Stream();
-    this.word ='fart'
-  }
+var UserController = require('./UserController.js');
+var Controller = require('./controller.js');
 
-  AccountRouteBase.prototype = new controller();
-
-  AccountRouteBase.prototype.RefreshAccessToken= function(refreshToken,userId){
-    var responseStream = new Stream();
-    var context = this;
-    this.GetAccessToken(refreshToken).then(function(result){
-      context.ReplaceAccessToken(context.accountType,userId,result.access_token,result.expires_in).on('data',function(results){
-        responseStream.emit('data',results[0].account.data.access_token);
-      });
-    });
-    return responseStream;
-  }
-
- //FIXME:some sort of error handling here
- //FIXME:Merge this get user with user controller get user
-  AccountRouteBase.prototype.OnAccessToken = function(accessToken, refreshToken,params, profile, done){
-    var context = this;
-    var GetUser = this.GetUser;
-
-    this.GetOAuthUser(accessToken,refreshToken,params).then(function(results){
-      console.log(accountNode);
-      var OAuthuser = results.user;
-      var accountNode = results.account;
-      accountNode.date_created = Date.now();
-      accountNode.date_modified = Date.now();
-      context.GetUser.call(context,OAuthuser)
-      .on('data',function(results){
-        var user;
-        if(results !== null){
-          user = results.user;
-          var accounts = results.accounts;
-          console.log(results.accounts);
-          var accountExists = false;
-          for(var i =0;i<accounts.length;i++){
-            if(context.accountType === accounts[i]){
-              accountExists = true;
-              break;
-            }
-          }
-        }
-        if(results === null){
-          var createUserStream = context.CreateUser.call(context,OAuthuser)
-          .on('data',function(dbUser){
-            context.CreateOAuthAccount.call(context,context.accountType,accountNode,dbUser.id)
-            .on('data',function(results){
-              context.CreateSession.call(context,dbUser)
-              .on('data',function(results){
-                done(null, results.data, 'info');
-              });
+module.exports = Controller.extend({
+    userController: new UserController(),
+    RefreshAccessToken: function(refreshToken, userId) {
+        return Promise.call(this, function(resolve, reject) {
+            var context = this;
+            this.GetAccessToken(refreshToken).then(function(result) {
+                context.ReplaceAccessToken(context.accountType, userId, result.access_token, result.expires_in).then(function(results) {
+                    resolve(results[0].account.data.access_token);
+                });
             });
-          });
-        }else if(accountExists===false){
-          context.CreateOAuthAccount.call(context,context.accountType,accountNode,user.id)
-          .on('data',function(data){
-            if(!user.data.session_token){
-              context.CreateSession.call(context,user)
-              .on('data',function(results){
-                done(null, results.data, 'info');
-              });
-            }else{
-              done(null, user.data, 'info');
-            }
-          })
-        }else{
-          context.ReplaceAccessToken.call(context,context.accountType,user.id,accessToken,accountNode.expires_in).on('data',function(data){
-            if(!user.data.session_token){
-              context.CreateSession.call(context,user)
-              .on('data',function(results){
-                done(null, results.data, 'info');
-              });
-            }else{
-              done(null, user.data, 'info');
-            }
-          });
-        }
-      })
-    });
-  };
+        });
+    },
+    //FIXME:some sort of error handling here
+    //FIXME:Merge this get user with user controller get user
+    OnAccessToken: function(accessToken, refreshToken, params, profile, done) {
+        var context = this;
+        this.GetOAuthUser(accessToken, refreshToken, params).then(function(results) {
+            var OAuthuser = results.user;
+            var accountNode = results.account;
+            accountNode.date_created = Date.now();
+            accountNode.date_modified = Date.now();
+            context.userController.getUserByEmail(results.user.email).then(function(user) {
+                //if user exists but new oauth account
+                if (!user.accounts[context.accountType]) {
+                    context.CreateOAuthAccount.call(context, context.accountType, accountNode, user.get('id')).then(function(data) {
+                        if (!user.get('session_token')) {
+                            context.CreateSession.call(context, user).then(function(results) {
+                                done(null, results.data, 'info');
+                            }, error(reject));
+                        } else {
+                            done(null, user.data, 'info');
+                        }
+                    })
+                } else {
+                    //if user exists and oauthaccount exists
+                    context.ReplaceAccessToken.call(context, context.accountType, user.get('id'), accessToken, accountNode.expires_in).then(function(data) {
+                        if (!user.get('session_token')) {
+                            context.CreateSession.call(context, user).then(function(results) {
+                                done(null, results.data, 'info');
+                            }, error(reject));
+                        } else {
+                            done(null, user.data, 'info');
+                        }
+                    }, function(error){
+                      var ass ='asd'
+                    });
+                }
+            }, function(error) {
+                //user doesnt exist
+                if (error.statusCode === 404) {
+                    context.userController.CreateUser.call(context, OAuthuser).then(function(user) {
+                        context.CreateOAuthAccount.call(context, context.accountType, accountNode, user.get('id')).then(function(results) {
+                            context.CreateSession.call(context, user).then(function(results) {
+                                done(null, results.data, 'info');
+                            });
+                        });
+                    });
+                } else {
 
+                }
 
-  /* ========================================================================================================
-   *
-   * Write Methods - Keep in alphabetical order
-   *
-   * ===================================================================================================== */
-  AccountRouteBase.prototype.CreateSession =function (userRec) {
-    var resultStream = new Stream();
-    var md5sum = crypto.createHash('md5');
-    var user = userRec.data;
-    if(!user.session_token){
-      md5sum.update(userRec.id);
-      var session = md5sum.digest('hex');
-      var query = 'START n=node('+userRec.id+') SET n.session_token = {session} RETURN n';
-      var variableHash = {session:session};
-      var queryStream = this.executeQuery(query,variableHash);
-      queryStream.on('data', function (results) {
-        resultStream.emit('data', results[0].n);
-      });
-    }else{
-      resultStream.emit('data', user.data);
+            })
+        });
+    },
+    CreateSession: function(user) {
+        return Promise.call(this, function(resolve, reject) {
+            var md5sum = crypto.createHash('md5');
+            if (!user.get('session_token')) {
+                md5sum.update(user.get('id'));
+                var session = md5sum.digest('hex');
+                var query = 'START n=node(' + user.get('id') + ') SET n.session_token = {session} RETURN n';
+                var variableHash = {
+                    session: session
+                };
+                this.executeQuery(query, variableHash).then(function(results) {
+                    resolve(results[0].n)
+                });
+            } else {
+                resolve(user)
+            }
+        });
+    },
+    ReplaceAccessToken: function(accountLabel, userId, token, expiresIn) {
+        var query = ['Start user=node(' + userId + ')',
+            'Match user-[:Linked]->(account:' + accountLabel + ')',
+            'Set account.access_token = {access_token},',
+            'account.date_modified = {date_modified},',
+            'account.expires_in = {expires_in}',
+            'return account'
+        ]
+        var variableHash = {
+            access_token: token,
+            expires_in: expiresIn,
+            date_modified: Date.now()
+        };
+        return this.executeQuery(query.join('\n'), variableHash);
+    },
+    CreateOAuthAccount: function(accountLabel, accountData, userId) {
+        var context = this;
+        return Promise.call(this, function(resolve, reject) {
+            var newUser = 'CREATE (n:' + accountLabel + ' {data}) RETURN n';
+            var newUserHash = {
+                data: accountData
+            };
+            this.executeQuery(newUser, newUserHash).then(function(account) {
+                var accountId = account[0].n.id;
+                var query = [
+                    'START account=node(' + accountId + '),user=node(' + userId + ')',
+                    'CREATE user-[r:Linked]->account',
+                    'RETURN account'
+                ];
+                context.executeQuery(query.join('\n'), {}).then(function(results) {
+                    resolve(null);
+                });
+            });
+        });
+    },
+    GetGravatar: function(email) {
+        var md5sum = crypto.createHash('md5');
+    },
+    GetGravatarImage: function(email) {
+        var md5sum = crypto.createHash('md5');
+        md5sum.update(email.trim().toLowerCase());
+        var gravatarID = md5sum.digest('hex');
+        return 'http://www.gravatar.com/avatar/' + gravatarID;
     }
-    return resultStream;
-  };
-
-  AccountRouteBase.prototype.ReplaceAccessToken=function(accountLabel,userId,token,expiresIn){
-    var query = ['Start user=node('+userId+')',
-                 'Match user-[:Linked]->(account:'+accountLabel+')',
-                 'Set account.access_token = {access_token},',
-                 'account.date_modified = {date_modified},',
-                 'account.expires_in = {expires_in}',
-                 'return account']
-    var variableHash = {access_token:token,expires_in:expiresIn,date_modified:Date.now()};
-    return this.executeQuery(query.join('\n'),variableHash);
-  }
-
-  AccountRouteBase.prototype.CreateUser = function(user){
-    var newUser = 'CREATE (n:Person {data}) RETURN n';
-    var newUserHash = {data:user};
-    var queryStream = this.executeQuery(newUser,newUserHash);
-    var resultStream = new Stream();
-    queryStream.on('data', function (results) {
-      resultStream.emit('data',results[0].n);
-    });
-    return resultStream;
-  };
-
-  AccountRouteBase.prototype.CreateOAuthAccount = function(accountLabel,accountData,userId){
-    var newUser = 'CREATE (n:'+accountLabel+' {data}) RETURN n';
-    var newUserHash = {data:accountData};
-    var queryStream = this.executeQuery(newUser,newUserHash);
-    var context = this;
-    var returnStream = new Stream();
-    queryStream.on('data', function (account) {
-      var accountId = account[0].n.id;
-      var query =  [
-        'START account=node('+accountId+'),user=node('+userId+')',
-        'CREATE user-[r:Linked]->account',
-        'RETURN account'
-      ];
-      var queryStream = context.executeQuery(query.join('\n'),{});
-      queryStream.on('data',function(results){
-        returnStream.emit('data',null);
-      });
-    });
-    return returnStream;
-  };
-
-
-
-  /* ========================================================================================================
-   *
-   * Get Methods - Keep in alphabetical order
-   *
-   * ===================================================================================================== */
-  AccountRouteBase.prototype.GetUser = function (user) {
-    var query = 'START n=node(*) WHERE has (n.email) and n.email={email} Match (user)-[:Linked]->(account) RETURN n,Labels(account)';
-    var resultStream = new Stream();
-    var variableHash = { email: user.email };
-    var queryStream = this.executeQuery(query,variableHash);
-    queryStream.on('data', function (results) {
-      if (results.length === 0) {
-        resultStream.emit('data',null);
-      }else{
-        var user = results[0].n;
-        var accounts = []
-        for(var i = 0; i<results.length;i++){
-          accounts.push(results[i]['Labels(account)'][0]);
-        }
-        var ret = {user:user,accounts:accounts};
-        resultStream.emit('data',ret);
-      }
-    });
-    return resultStream;
-  };
-
-  AccountRouteBase.prototype.GetGravatar= function(email){
-    var md5sum = crypto.createHash('md5');
-  };
-  /* ========================================================================================================
-   *
-   * Helper Methods - Keep in alphabetical order
-   *
-   * ===================================================================================================== */
-  AccountRouteBase.prototype.GetGravatarImage = function (email) {
-    var md5sum = crypto.createHash('md5');
-    md5sum.update(email.trim().toLowerCase());
-    var gravatarID = md5sum.digest('hex');
-    return 'http://www.gravatar.com/avatar/'+gravatarID;
-  };
-
-  return new AccountRouteBase();
-};
+});

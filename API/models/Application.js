@@ -1,15 +1,8 @@
-var user = require('./User');
-module.exports = function(data) {
-  function Application(data) {
-    this.model.id= data.session_token,
-    this.model.token= data.session_token,
-    this.model.name= data.first_name,
-    this.user=user(data);
-  }
+'use strict';
+var DS = require('./../lib/ds');
 
-  Application.prototype.toSideload = function() {
-    return this.model;
-  }
-
-  return new Application(data)
-}
+module.exports = DS.Model.extend({
+   token: DS.attr('string'),
+   name: DS.attr('string'),
+   user: DS.belongsTo('user'),
+});

@@ -1,63 +1,44 @@
-var ConfigurationController = require('./../ConfigurationController')(); //TemplateRoute
+var ConfigurationController = require('./../ConfigurationController');
+var controller = new ConfigurationController();
 var ErrorHandler = require('./../../lib/Errors.js');
-var model = require('./../../models/configuration')();
+var model = require('./../../models/configuration');
+var utils = require('./../../lib/utils.js');
 module.exports = function(app) {
     'use strict';
     /* ========================================================================================================
      *
-     * Template Methods - Keep in alphabetical order
+     * Configuration Methods - Keep in alphabetical order
      *
      * ===================================================================================================== */
     app.get('/configurations/:id', function(req, res, next) {
         var ids = [req.params.id]
-        ConfigurationController.getConfiguration(ids).then(function(data) {
-            var ret = []
-            for (var key in data) {
-                ret.push(data[key]);
-            }
-            res.status = 200;
-            res.returnData = {
-                configuration: ret
-            }
+        controller.getConfiguration(ids).then(function(configurations) {
+            res.payload = configurations[0];
             next();
-        }, ErrorHandler.FowardErrorToBrowser(res, next));
+        }, ErrorHandler.error(res, next));
 
     });
 
     app.get('/configurations', function(req, res, next) {
-        var ret = []
-        ConfigurationController.getConfiguration(req.query.ids).then(function(data) {
-            for (var key in data) {
-                ret.push(data[key]);
-            }
-            res.status = 200;
-            res.returnData = {
-                configuration: ret
-            }
+        controller.getConfiguration(req.query.ids).then(function(configurations) {
+            res.payload = configurations;
             next();
-        }, ErrorHandler.FowardErrorToBrowser(res, next));
+        }, ErrorHandler.error(res, next));
     });
 
     app.post('/configurations', function(req, res, next) {
-        var configuration = new model(req.body.configuration);
-        ConfigurationController.createCardConfiguartion(configuration).then(function(configuration) {
-            res.status = 200;
-            res.returnData = {
-                configuration: configuration.data
-            }
+        controller.createCardConfiguartion(req.model).then(function(configuration) {
+            res.payload = configuration;
             next();
-        }, ErrorHandler.FowardErrorToBrowser(res, next));
+        }, ErrorHandler.error(res, next));
     });
 
 
     app.put('/configurations/:id', function(req, res, next) {
-        var config = req.body.configuration;
-        delete config.for;
-        delete config.configures
-        ConfigurationController.updateConfiguration(req.params.id, config).then(function(data) {
-            res.status = 200;
-            //  res.returnData = {configuration:data}
+        req.model.set('id',req.params.id);
+        controller.updateConfiguration(req.model).then(function(configuration) {
+            res.payload = configuration;
             next();
-        }, ErrorHandler.FowardErrorToBrowser(res, next));
+        }, ErrorHandler.error(res, next));
     });
 };

@@ -1,19 +1,9 @@
-var model = require('./model')();
-module.exports = function() {
+'use strict';
+var DS = require('./../lib/ds');
 
-    function Configuration(node) {
-        this.data = {};
-        this.relationships = []
-        this.belongsTo('configures','card');
-        this.belongsTo('for','card');
-        if (node) {
-            this.data.id = node.id;
-            this.data.position = node.position;
-            this.data.embedded = node.embedded;
-        }
-    }
-
-    Configuration.prototype = new model();
-
-    return Configuration;
-}
+module.exports = DS.Model.extend({
+  position: DS.attr('number'),
+  embedded: DS.attr('boolean'),
+  for: DS.belongsTo('card'),
+  configures:DS.belongsTo('card'),
+});

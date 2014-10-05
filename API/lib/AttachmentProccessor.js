@@ -1,3 +1,4 @@
+'use strict';
 var cheerio = require('cheerio')
 var request = require('request')
 var url = require('url');
@@ -7,105 +8,84 @@ var uuid = require('node-uuid');
 var googleDrive = require('google-drive');
 var Google = require('./../controllers/Google')();
 var mime = require('mime');
-var controller = require('./../controllers/Controller.js');
+var Controller = require('./../controllers/controller.js');
 var googleapis = require('googleapis');
-var CardController = require('./../controllers/CardController')();
+var CardController = require('./../controllers/CardController');
+var cardController = new CardController();
 var rsvp = require('rsvp')
 var error = require('./Errors.js').reject;
 var Promise = require('./promise')
-  //var AttachmentController = require('google-drive');
-module.exports = function() {
-  'use strict';
-  var CardController = require('./../controllers/CardController')();
-  /* ========================================================================================================
-   *
-   * Class Setup - Keep in alphabetical order
-   *
-   * ===================================================================================================== */
-  function AttachmentProcessor() {
-
-  }
-
-  AttachmentProcessor.prototype = new controller();
-
-  AttachmentProcessor.prototype.ProccessAttatchment = function(attachment, action, user) {
-    var context = this;
-    return Promise.call(this, function(resolve, reject) {
-      console.log(attachment.type)
-      var methodName = ('Process' + action + attachment.type);
-      console.log(methodName);
-      if (context[methodName]) {
-        console.log('exists')
-        context[methodName](attachment, user)
-          .then(function(results) {
-            resolve(results);
-          }, function(error) {
-            reject({
-              'function': 'ProcessAttachment' + methodName,
-              type: 'attachmentProccessError',
-              innerException: error
-            })
-          })
-      } else {
-        resolve(attachment.data);
-      }
-    });
-  }
-
-
-  /* ========================================================================================================
-   *
-   * Generated Methods
-   *
-   * ===================================================================================================== */
-  AttachmentProcessor.prototype.ProcessCreateList = function(attachment, user) {
-    var context = this;
-    return Promise.call(this, function(resolve, reject) {
-      var href = attachment.data.link;
-      //if not a link try get card id
-      if (typeof href == 'undefined') {
-        //try find target card for link
-        if (typeof attachment.data.card !== 'undefined') {
-          var cardid = attachment.data.card.substring(5);
-          CardController.GetCard(cardid).on('data', function(results) {
-            if (results === null) {
-              //no card found with specified id
+//var AttachmentController = require('google-drive');
+module.exports = Controller.extend({
+    proccessAttatchment: function(attachment, type, action, user) {
+        var context = this;
+        return Promise.call(this, function(resolve, reject) {
+            console.log(attachment.type)
+            var methodName = ('process' + action + type);
+            if (context[methodName]) {
+                context[methodName](attachment, user)
+                    .then(function(results) {
+                        resolve(results);
+                    }, function(error) {
+                        reject({
+                            'function': 'ProcessAttachment' + methodName,
+                            type: 'attachmentProccessError',
+                            innerException: error
+                        })
+                    })
             } else {
-              var data = {
-                title: results.card.data.title,
-                card: results.card.id
-              }
-              console.log('linked Card');
-              resolve(data);
+                resolve(attachment);
             }
-          })
-          //get card
-          //if no card Break
-          //get title
-
-        } else {
-          console.log('plain text resolving');
-          //no processing required just return data
-          resolve(attachment.data)
-        }
-        //if is a link do some stuff
-      } else {
-        request(href, function(err, resp, html) {
-          if (err) {
-            reject(err.code);
-          }
-          var $ = cheerio.load(html);
-          var data = {
-            title: $('TITLE').text() ? $('TITLE').text() : 'no title found',
-            href: href
-          }
-          console.log('URL');
-          resolve(data);
         });
-      }
-    });
-  }
+    },
+    processCreateList: function(attachment, user) {
+        var context = this;
+        return Promise.call(this, function(resolve, reject) {
+            var href = attachment.link;
+            //if not a link try get card id
+            if (typeof href == 'undefined') {
+                //try find target card for link
+                if (typeof attachment.card !== 'undefined') {
+                    var cardid = attachment.card.substring(5);
+                    cardController.getCard(cardid).then(function(card) {
+                        if (results === null) {
+                            //no card found with specified id
+                        } else {
+                            var data = {
+                                title: card.get('title'),
+                                card: card.get('id')
+                            }
+                            resolve(data);
+                        }
+                    }, error(reject))
+                    //get card
+                    //if no card Break
+                    //get title
+                } else {
+                    //no processing required just return data
+                    resolve(attachment)
+                }
+                //if is a link do some stuff
+            } else {
+                request(href, function(err, resp, html) {
+                    if (err) {
+                        reject(err.code);
+                    }
+                    var $ = cheerio.load(html);
+                    var data = {
+                        title: $('TITLE').text() ? $('TITLE').text() : 'no title found',
+                        href: href
+                    }
+                    console.log('URL');
+                    resolve(data);
+                });
+            }
+        });
+    }
+});
 
+
+/*
 
   AttachmentProcessor.prototype.ProcessCreateImage = function(attachment, user) {
     var context = this;
@@ -253,7 +233,6 @@ module.exports = function() {
       title: title
     };
     return this.executeQueryRSVP(query.join('\n'), variableHash);
-
   }
 
   AttachmentProcessor.prototype.FindRoot = function(accessToken) {
@@ -326,6 +305,4 @@ module.exports = function() {
   AttachmentProcessor.prototype.SaveDocument = function(accessToken) {
 
   }
-
-  return new AttachmentProcessor();
-}
+*/

@@ -3,6 +3,6 @@
 
 module.exports = function IndexModel() {
     return {
-        name: 'apiv2'
+        name: 'apiv201'
     };
 };

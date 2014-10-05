@@ -2,14 +2,18 @@
 var passport = require('passport');
 var OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
 var nconf = require('nconf');
-var facebook = require('./../Facebook')();
-var github = require('./../Github')();
-var google = require('./../Google')();
+var Facebook = require('./../Facebook');
+var Github = require('./../Github');
+var Google = require('./../Google');
+
+var facebook = new Facebook();
+var github = new Github();
+var google = new Google();
+
 var OauthVars = require('./secrets')
 var os = require("os");
 var ErrorHandler = require('./../../lib/Errors.js');
 
-console.log(os.hostname());
 module.exports = function (app) {
   'use strict';
   /* ========================================================================================================
@@ -103,5 +107,3 @@ module.exports = function (app) {
                           })(req, res, next);
   });
 };
-
-

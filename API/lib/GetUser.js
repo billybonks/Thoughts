@@ -1,18 +1,16 @@
 'use strict';
-var UserController = require('./../controllers/UserController')();
+var UserController = require('./../controllers/UserController');
+var controller = new UserController();
 module.exports = function () {
 
   return  function(req, res, next) {
     var auth = req.headers.authorization;
-    console.log('getting user')
-    console.log(auth)
-    UserController.GetUser(auth).then(function(user){
-      console.log('USER FOUND')
+    console.log(controller.GetUser)
+    controller.GetUser(auth).then(function(user){
       req.user = user
       next();
     },function(error){
-      console.log('error user');
-      console.log(error);
+      console.log(error)
       if(error.statusCode === 404){
         if(req.method === 'POST' || req.method === 'PUT' || req.method === 'DELETE'){
           //TODO: return forbidden
