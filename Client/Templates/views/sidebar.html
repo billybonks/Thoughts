@@ -1,0 +1,32 @@
+{{#if displaySide}}
+<div class="sidebar">
+  <div class="col-md-2" style="height: 100%;text-align:center;width:50px" {{action 'toggle'}}>
+    <div style="height:48%">
+    </div>
+    <span style="vertical-align:middle;display:inline-block;">
+    <<
+    </span>
+  </div>
+  <div class="col-md-10" style="height: 100%;width:200px">
+      <div class="row sidebarButton sidebarObject" {{action 'NewCard'}}>
+        <span class="glyphicon glyphicon-plus"></span> Card
+      </div>
+      <div class="row sidebarObject">
+        {{view Ember.Select content=views selectionBinding=selectedView class="form-control"}}
+      </div>
+      <div class="row sidebarObject">
+        {{view App.DropCube store=store}}
+      </div>
+    </div>
+  </div>
+  {{else}}
+  <div class="sidebar" style="width:50px;">
+    <div class="col-md-12" style="height: 100%;text-align:center;width:50px" {{action 'toggle'}}>
+      <div style="height:48%">
+      </div>
+      <span style="vertical-align:middle;display:inline-block;">
+      <<
+      </span>
+    </div>
+  </div>
+{{/if}}

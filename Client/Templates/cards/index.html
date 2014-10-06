@@ -1,34 +1,26 @@
-<div class="row" style="margin-top:30px">
-  <div class="col-md-1">
-    <button type="button" class="btn btn-default btn-sm"  style="width:100px" {{action  'NewCard'}}>
-      <span class="glyphicon glyphicon-plus"></span> Card
-    </button>
-  </div>
-  <div class="col-md-2">
-    View:{{view Ember.Select content=views selectionBinding=selectedView}}
-  </div>
-  <div class="col-md-1">
-    {{view App.DropCube store=store}}
-  </div>
-</div>
-<div >
-  {{#each item in model itemController="card"}}
-    {{#if display}}
-      {{#if item.onMainDisplay}}
-        {{#if templates}}
-          {{#if item.isTemplate}}
-            <div class='col-md-4'>
+{{view App.SideBar store=store}}
+<div class="row" style="position: absolute;top: 0;width: 100%;">
+  <div class="col-md-12">
+    {{view App.Masonry}}
+      {{#each item in model itemController="card"}}
+        {{#if display}}
+          {{#if item.onMainDisplay}}
+            {{#if templates}}
+              {{#if item.isTemplate}}
+              <div class=''>
                 {{title-card model=item CreateNotification='CreateNotification' openModal='openModal' templateArr=templateArr store=store isOnMain='true'}}
-            </div>
+              </div>
+              {{/if}}
+            {{else}}
+              {{#unless item.isTemplate}}
+              <div class=''>
+                {{title-card model=item CreateNotification='CreateNotification' openModal='openModal' templateArr=templateArr store=store isOnMain='true'}}
+              </div>
+              {{/unless}}
+            {{/if}}
           {{/if}}
-        {{else}}
-          {{#unless item.isTemplate}}
-            <div class='col-md-4'>
-                {{title-card model=item CreateNotification='CreateNotification' openModal='openModal' templateArr=templateArr store=store isOnMain='true'}}
-            </div>
-          {{/unless}}
         {{/if}}
-      {{/if}}
-    {{/if}}
-  {{/each}}
+      {{/each}}
+    {{view App.Masonry}}
+  </div>
 </div>

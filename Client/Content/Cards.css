@@ -1,5 +1,12 @@
-body {
+HTML {
+  height:100%
+}
+BODY {
   background-color: #E5E5E5;
+  height:100%
+}
+.container-fluid{
+  height:100%;
 }
 .card {
   width: 600px;
@@ -89,8 +96,29 @@ body {
   z-index: 10000;
 }
 .sidebar {
+  background: white;
   position: fixed;
-  top: 60px;
-  left: 5px;
-  width:200px;
+  right: 0px;
+  top: 51px;
+  width:250px;
+  z-index:150;
+  height: 100%;
+}
+
+.sidebarButton{
+  cursor:pointer;
+  border-top:1px grey solid;
+  border-bottom:1px grey solid;
+  margin-bottom:10px;
+  text-align:center
+}
+
+.sidebarObject{
+  margin-left:0px;
+  margin-right:0px;
+  margin-bottom:10px
+}
+
+.ember-view{
+  height:100%
 }

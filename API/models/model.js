@@ -41,39 +41,39 @@ module.exports = CoreObject.extend({
     parseArray: function(arr) {
         for (var i = 0; i < arr.length; i++) {
             if (i === 0) {
-              this.update(this.flatten(arr[0].node));
+                this.update(this.flatten(arr[0].node));
             }
             for (var j = 0; j < this.relationshipIndex.length; j++) {
                 relatedVector = arr[i][this.relationshipIndex[j]];
                 if (relatedVector) {
-                  this.parseRelatedVector(this.relationshipIndex[j],relatedVector)
+                    this.parseRelatedVector(this.relationshipIndex[j], relatedVector)
                 }
             }
         }
     },
-    parseRelatedVector: function(relationship,relatedVector) {
+    parseRelatedVector: function(relationship, relatedVector) {
         var definition = this[relationship]
         if (definition.amount === 'single') {
-            this.set(relationship, this.parseRelatedModel(relationship,relatedVector))
+            this.set(relationship, this.parseRelatedModel(relationship, relatedVector))
         } else {
             if (!this.get(relationship))
                 this.set(relationship, []);
-            this.get(relationship).push(this.parseRelatedModel(relationship,relatedVector));
+            this.get(relationship).push(this.parseRelatedModel(relationship, relatedVector));
         }
     },
     //FIXME:some of this code is duplicated with parseArray
-    parse: function(data,parseRel) {
+    parse: function(data, parseRel) {
         var vector = data.node;
         this.update(this.flatten(vector));
         for (var i = 0; i < this.relationshipIndex.length; i++) {
             relatedVector = data[this.relationshipIndex[i]];
             if (relatedVector) {
-              this.parseRelatedVector(this.relationshipIndex[i],relatedVector)
+                this.parseRelatedVector(this.relationshipIndex[i], relatedVector)
             }
         }
 
     },
-    parseRelatedModel: function(relationship,relatedVector) {
+    parseRelatedModel: function(relationship, relatedVector) {
         var model = this.getRelationshipModel(this[relationship].type);
         model = new model();
         relatedVector = this.flatten(relatedVector)
@@ -143,5 +143,20 @@ module.exports = CoreObject.extend({
             }
         }
         return data;
+    },
+    sideLoadAbleData: function() {
+        var ret = {};
+        for (var i = 0; i < this.relationshipIndex.length; i++) {
+            var relationship = relationshipIndex[i];
+            var definition = this[relationship]
+            if (data.get(relationship)) {
+                if (definition.amount === 'single') {
+                    ret[type] = data.get(relationship).getVectorData();
+                } else {
+                    ret[utils.toPlural(type)] = utils.arrayToJSON(data.get(relationship));
+                }
+            }
+        }
+        return ret;
     }
 });
