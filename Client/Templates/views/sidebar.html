@@ -1,10 +1,10 @@
 {{#if displaySide}}
 <div class="sidebar">
-  <div class="col-md-2" style="height: 100%;text-align:center;width:50px" {{action 'toggle'}}>
+  <div class="col-md-2" style="cursor:pointer;height: 100%;text-align:center;width:50px" {{action 'toggle'}}>
     <div style="height:48%">
     </div>
     <span style="vertical-align:middle;display:inline-block;">
-    <<
+    <b><h2>>><h2/></b>
     </span>
   </div>
   <div class="col-md-10" style="height: 100%;width:200px">
@@ -12,7 +12,8 @@
         <span class="glyphicon glyphicon-plus"></span> Card
       </div>
       <div class="row sidebarObject">
-        {{view Ember.Select content=views selectionBinding=selectedView class="form-control"}}
+        {{log content}}
+        {{view Ember.Select content=content selectionBinding=currentView optionLabelPath="content.name"class="form-control"}}
       </div>
       <div class="row sidebarObject">
         {{view App.DropCube store=store}}
@@ -21,11 +22,11 @@
   </div>
   {{else}}
   <div class="sidebar" style="width:50px;">
-    <div class="col-md-12" style="height: 100%;text-align:center;width:50px" {{action 'toggle'}}>
+    <div class="col-md-12" style="cursor:pointer;height: 100%;text-align:center;width:50px" {{action 'toggle'}}>
       <div style="height:48%">
       </div>
       <span style="vertical-align:middle;display:inline-block;">
-      <<
+      <b><h2><<<h2/></b>
       </span>
     </div>
   </div>

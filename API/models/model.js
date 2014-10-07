@@ -93,22 +93,24 @@ module.exports = CoreObject.extend({
     getJSON: function(node) {
         var ret = {};
         for (var key in this.data) {
-            if (this.data[key]) {
-                if (this.data[key].getJSON) {
-                    ret[key] = this.data[key].get('id');
-                } else if (this.data[key] instanceof Array) {
-                    var tempArr = []
-                    for (var i = 0; i < this.data[key].length; i++) {
-                        if (this.data[key][i].getJSON)
-                            tempArr.push(this.data[key][i].get('id'))
-                        else
-                            tempArr.push(this.data[key][i])
-                    }
-                    ret[key] = tempArr;
-                } else
-                    ret[key] = this.data[key];
-            } else {
-                ret[key] = null;
+            if (this.data[key] !== null) {
+                if (typeof this.data[key] !== "undefined") {
+                    if (this.data[key].getJSON) {
+                        ret[key] = this.data[key].get('id');
+                    } else if (this.data[key] instanceof Array) {
+                        var tempArr = []
+                        for (var i = 0; i < this.data[key].length; i++) {
+                            if (this.data[key][i].getJSON)
+                                tempArr.push(this.data[key][i].get('id'))
+                            else
+                                tempArr.push(this.data[key][i])
+                        }
+                        ret[key] = tempArr;
+                    } else
+                        ret[key] = this.data[key];
+                } else {
+                    ret[key] = null;
+                }
             }
         }
         return ret;

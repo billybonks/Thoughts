@@ -1,6 +1,6 @@
-<div class='qq' style="padding-left:0px;width:400px;height:400px;float:left;position:relative;margin:15px">
+<div class='qq' style="padding-left:0px;float:left;position:relative;margin:15px">
 <!--div class='col-md-11' style="padding-left:0px"-->
-  <div class="panel panel-default" style="padding:20px">
+  <div class="panel panel-default" style="padding:20px;width:400px;">
     {{#if isLoading}}
     <div class="cardOverlay">
       <img  style="margin-left: 45%;margin-top: 20%;" src="Content/ajax-loader.gif">
@@ -43,7 +43,7 @@
         <h4 style="float:right;">{{model.user.name}}</h4>
       </div>
     </div>
-    <div class='row'>
+    <div class='row' style="height:400px;">
       <div class="panel-body">
         {{render-plugin model=model store=store}}
         {{#unless isMain}}

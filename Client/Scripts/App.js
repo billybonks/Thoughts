@@ -10,6 +10,7 @@ App = Ember.Application.create({
     if (!token) {
       $.cookie(AppSettings.CookieName, 'Guest');
     }
+    AppSettings.token = token
     App.ApplicationAdapter = DS.RESTAdapter.extend({
       //  namespace: 'api',
       host: AppSettings.WebserviceURL,

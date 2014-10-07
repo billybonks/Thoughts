@@ -25,6 +25,16 @@ exports.merge = function(original, updates) {
   return original;
 }
 
+exports.filter = function(array,property,value) {
+  for(var i =0;i<array.length;i++){
+    for (var prop in array[i].data) {
+      if(prop === property){
+        if(array[i].data[prop] === value)
+          return array[i]
+      }
+    }
+  }
+}
 
 exports.arrayToJSON = function(modelArray) {
     var ret = [];

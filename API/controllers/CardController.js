@@ -17,24 +17,32 @@ module.exports = Controller.extend({
     config: new ConfigurationController(),
     tagController: new TagsController(),
     attachmentController: new AttachmentController(),
-    //FIXME:unauthenticated error must be in preroute
-    getAllCards: function(user) {
+    getViewsCards: function(view, page, user) {
         return Promise.call(this, function(resolve, reject) {
             var query = [
                 'START user=node(0)',
-                'MATCH (user:Person)-[Created]->(card:Card)',
-                'WHERE not(has(card.isDeleted))',
-                'AND not(card-[:Is]->())',
-                'AND card.onMainDisplay = true',
-                'RETURN card',
-                'ORDER BY card.date_created'
+                'MATCH (user:Person)-[Created]->(card:Card)'
             ];
+            if (view.get('deleted')) {
+                query.push('WHERE has(card.isDeleted)');
+            } else {
+                query.push('WHERE not(has(card.isDeleted))');
+            }
+            if (view.get('templates')) {
+                query.push('AND card.isTemplate = true');
+            } else {
+                query.push('AND card.isTemplate = false');
+            }
+            query.push('RETURN card'); //
+            query.push('ORDER BY card.date_modified DESC');
+            query.push('SKIP ' + (page * 10));
+            query.push('LIMIT 10');
             var context = this;
             if (user != null) {
-              var variablehash = {
-                  id: user.get('id')
-              };
-                var queryStream = this.executeQuery(query.join('\n'), {}).then(function(results) {
+                var variablehash = {
+                    id: user.get('id')
+                };
+                this.executeQuery(query.join('\n'), {}).then(function(results) {
                     if (results.length === 0) {
                         resolve([])
                     } //
@@ -48,8 +56,47 @@ module.exports = Controller.extend({
                     })
                 }, error(reject));
             } else {
-              resolve([])
-              /*fixme: error breaks site so resolving
+                resolve([])
+                /*fixme: error breaks site so resolving
+              reject({
+                  statusCode: 500,
+                  message: 'unauthenticated'
+              })*/
+            }
+        });
+    },
+    //FIXME:unauthenticated error must be in preroute
+    getAllCards: function(user) {
+        return Promise.call(this, function(resolve, reject) {
+            var query = [
+                'START user=node(0)',
+                'MATCH (user:Person)-[Created]->(card:Card)',
+                'WHERE not(has(card.isDeleted))',
+                'AND card.onMainDisplay = true',
+                'RETURN card',
+                'ORDER BY card.date_created'
+            ];
+            var context = this;
+            if (user != null) {
+                var variablehash = {
+                    id: user.get('id')
+                };
+                this.executeQuery(query.join('\n'), {}).then(function(results) {
+                    if (results.length === 0) {
+                        resolve([])
+                    } //
+                    var promises = []
+                    for (var c = 0; c < results.length; c++) {
+                        var id = results[c].card.id;
+                        promises.push(context.getCard.call(context, id));
+                    }
+                    RSVP.Promise.all(promises).then(function(cards) {
+                        resolve(cards);
+                    })
+                }, error(reject));
+            } else {
+                resolve([])
+                /*fixme: error breaks site so resolving
                 reject({
                     statusCode: 500,
                     message: 'unauthenticated'
@@ -111,7 +158,7 @@ module.exports = Controller.extend({
             }, error(reject))
         })
     },
-    createCard : function(user, model) {
+    createCard: function(user, model) {
         var context = this;
         return Promise.call(this, function(resolve, reject) {
             model.set('date_created', Date.now());
@@ -136,7 +183,7 @@ module.exports = Controller.extend({
     deleteCard: function(id) {
         return this.deleteEntity(id);
     },
-    updateCard : function(data, id) {
+    updateCard: function(data, id) {
         return Promise.call(this, function(resolve, reject) {
             var query = ['START card=node(' + id + ')',
                 'SET card.title = {title},',
