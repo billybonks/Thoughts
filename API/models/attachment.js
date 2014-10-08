@@ -9,9 +9,9 @@ module.exports = DS.Model.extend({
   //FIXME:Need to use super
   getVectorData:function(){
     var data = this._clone(this.data);
-    data = this.clearRelationships(data);
+    data = this._clearRelationships(data);
     delete data.id;
-    return this.cleanNulls(data).data
+    return this._cleanNulls(data).data
   },
   parse:function(attachmentRaw){
     attachmentRaw = attachmentRaw.node;

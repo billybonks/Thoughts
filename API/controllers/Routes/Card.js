@@ -71,7 +71,8 @@ module.exports = function(app) {
     });
 
     app.put('/cards/:id', function(req, res, next) {
-        controller.updateCard(req.body.card, req.params.id).then(function(results) {
+        req.model.set('id',req.params.id);
+        controller.updateCard(req.model).then(function(results) {
             res.status = 200;
             res.returnData = {}
             next();

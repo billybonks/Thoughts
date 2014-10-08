@@ -183,21 +183,12 @@ module.exports = Controller.extend({
     deleteCard: function(id) {
         return this.deleteEntity(id);
     },
-    updateCard: function(data, id) {
+    updateCard: function(model) {
         return Promise.call(this, function(resolve, reject) {
-            var query = ['START card=node(' + id + ')',
-                'SET card.title = {title},',
-                'card.top = {top},',
-                'card.left = {left},',
-                'card.date_modified = {date_modified}',
-                'RETURN card'
-            ];
-            data.date_modified = Date.now();
-            var variableHash = data;
-            delete variableHash.user;
-            this.executeQuery(query.join('\n'), variableHash).then(function(results) {
+            model.set('date_modified', Date.now())
+            model.save().then(function(results) {
                 resolve(results);
-            })
+            }, error(reject));
         });
     }
 });

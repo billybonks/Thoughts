@@ -19,6 +19,8 @@ App.Card = DS.Model.extend({
   }),
   configurations: DS.hasMany('configuration',{async:true}),
   type: DS.attr('string'),
+  date_modified: DS.attr('number'),
+  date_created: DS.attr('number')
 });
 
 /*
