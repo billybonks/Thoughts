@@ -1,0 +1,59 @@
+<div class="row" style="position: absolute;top: 0;width: 100%;">
+    <div class="row">
+      <div class="col-md-11">
+          <div class="row" style="margin:0px">
+            <div class="col-md-12">
+              <div class="input-group">
+                  {{input type="text" class="form-control" placeholder="Enter search query here" value=search}}
+                  <div class="input-group-addon btn-info btn" style="color:black" {{action "addUrl" target=view}}>Search</div>
+                  <div class="input-group-addon btn-info btn" style="color:black" {{action "addUrl" target=view}}>Advanced Search</div>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin:0px">
+          <div class="col-md-12">
+            {{#if model.root}}
+              <div class=''>
+                {{title-card model=model.root Notify='Notify' openModal='openModal' templateArr=templateArr store=store isMain='true' Notify='Notify'}}
+              </div>
+            {{/if}}
+            {{#each item in model.cards itemController="card"}}
+              <div class=''>
+                {{title-card model=item Notify='Notify' openModal='openModal' templateArr=templateArr store=store Notify='Notify'}}
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    <div class="col-md-1" style="background:white;height:100%;position:fixed;right:0px;padding:0px">
+        <div class="row sidebarButton sidebarObject" {{action 'NewCard'}}>
+          <span class="glyphicon glyphicon-plus"></span> Card
+        </div>
+        <div class="row sidebarObject">
+          {{view App.DropCube store=store}}
+        </div>
+        {{#each view in views}}
+          {{#unless view.root}}
+          {{#link-to 'perspective' view.id}}<div {{bind-attr class="viewClass"}} style="padding:10px" {{action "viewSelected" view on='click'}}>
+                <b >{{view.name}}</b>
+            </div>{{/link-to}}
+          {{/unless}}
+        {{/each}}
+        <div style="text-align:center;margin-top:10px">
+          <b >Recently Viewed</b>
+        </div>
+        {{#each view in views}}
+          {{#if view.root}}
+          {{#link-to 'card' view.root.id}}<div {{bind-attr class="viewClass"}} style="padding:10px">
+                <b >{{view.name}}</b>
+            </div>{{/link-to}}
+          {{/if}}
+        {{/each}}
+    </div>
+  </div>
+  <div class="row" style="margin-left:0px;margin-bottom:40px">
+    {{#unless model.loaded}}
+      <div style="margin-left:45%" class="btn btn-info" {{action loadMore}}>Load More</div>
+    {{/unless}}
+  </div>
+</div>

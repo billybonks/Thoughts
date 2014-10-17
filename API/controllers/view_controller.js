@@ -13,35 +13,38 @@ module.exports = Controller.extend({
             var recentlyAdded = new Model()
             recentlyAdded.update({
                 name:'Recently Used',
-                id: 0,
+                id: 1111111,
                 deleted: false,
                 templates: false,
                 lastPage: -1,
                 cards: [],
                 default: true,
-                root: null
+                root: null,
+                loaded:false,
             })
             var deleted = new Model()
             deleted.update({
                 name:'Deleted',
-                id: 1,
+                id: 22222222,
                 deleted: true,
                 templates: false,
                 lastPage: -1,
                 cards: [],
                 default: false,
-                root: null
+                root: null,
+                loaded:false,
             })
             var templates = new Model()
             templates.update({
                 name:'Templates',
-                id: 2,
+                id: 33333333,
                 deleted: false,
                 templates: true,
                 lastPage: -1,
                 cards: [],
                 default: false,
-                root: null
+                root: null,
+                loaded:false,
             })
             var views = [recentlyAdded, deleted, templates];
             resolve(views)

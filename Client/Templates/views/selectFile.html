@@ -1,0 +1,8 @@
+<div class="input-group">
+    {{input type="text" class="form-control" placeholder="Enter url and submit" value=content.url}}
+    <div class="input-group-addon btn-info btn" style="color:black" {{action "addUrl" target=view}}>Submit</div>
+</div>
+<br />
+{{view App.DocumentsDropView controller=this callback=view.loadFile files=view.files}}
+<br />
+{{input id="UploadFiles"type="file" class="form-control" placeholder="Enter url and submit" value=content.file files=content.files multiple="true"}}

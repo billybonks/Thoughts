@@ -1,4 +1,5 @@
 {{view App.PhotoDropView controller=this}}
+<button class="btn btn-default" {{action 'SelectFile'}}>Upload document</button>
 {{#each item in data}}
   {{#unless item.isSaving}}
     {{#unless item.isDeleted}}

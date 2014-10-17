@@ -1,12 +1,12 @@
 HTML {
-  height:100%
+  height: 100%
 }
 BODY {
   background-color: #E5E5E5;
-  height:100%
+  height: 100%
 }
-.container-fluid{
-  height:100%;
+.container-fluid {
+  height: 100%;
 }
 .card {
   width: 600px;
@@ -100,25 +100,40 @@ BODY {
   position: fixed;
   right: 0px;
   top: 51px;
-  width:250px;
-  z-index:150;
+  width: 250px;
+  z-index: 150;
   height: 100%;
+  padding: 0px;
+  overflow: scroll
 }
-
-.sidebarButton{
-  cursor:pointer;
-  border-top:1px grey solid;
-  border-bottom:1px grey solid;
-  margin-bottom:10px;
-  text-align:center
+.sidebarButton {
+  cursor: pointer;
+  border-top: 1px grey solid;
+  border-bottom: 1px grey solid;
+  margin-bottom: 10px;
+  text-align: center
 }
-
-.sidebarObject{
-  margin-left:0px;
-  margin-right:0px;
-  margin-bottom:10px
+.sidebarObject:hover {
+  color: #ffffff;
+  background-color: #3276b1;
+  border-color: #285e8e;
 }
-
-.ember-view{
-  height:100%
+.selected{
+  color: #ffffff;
+  background-color: #3276b1;
+  border-color: #285e8e;
+}
+.sidebarObject {
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px
+}
+.fileDrop {
+  border-color: #66afe9;
+  outline: 0;
+  webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  background: white;
+  height: 300px;
+  position: relative;
 }

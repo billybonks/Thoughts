@@ -27,9 +27,7 @@
             <li><a href="#" {{action "ToggleEdit"}}>Edit</a></li>
             <li><a href="#" {{action "Share"}}>Share</a></li>
             {{#unless isMain}}
-              {{#unless isOnMain}}
                 <li><a href="#" {{action 'EditCardSetting'}}>Settings</a></li>
-              {{/unless}}
             {{/unless}}
             <li class="divider"></li>
             <li><a href="#" {{action 'NewCard'}}>New Subcard</a></li>
@@ -55,11 +53,15 @@
     </div>
     <div class='row'>
       <div class="panel-footer" style="background-color: white;">
-        {{#each model.tags}}
-        <span class="label label-success">{{title}}</span>
-        {{/each}}
         {{#if isEditing}}
+        <br />
+        {{view App.TaggerView viewName="tagger" contentBinding=updatedTags instanceBinding=tagger initTags=tags}}
+        <br />
         <button class="btn btn-default" {{action 'Save'}}>save </button>
+        {{else}}
+          {{#each model.tags}}
+          <span class="label label-success">{{title}}</span>
+          {{/each}}
         {{/if}}
       </div>
     </div>

@@ -1,10 +1,12 @@
 'use strict';
 App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin, {
   //currentRouteName: Em.computed.alias('controllers.application.currentRouteName'),
+  views:null,
+  perspective:null,
   currentPath: Em.computed.alias('controllers.application.currentPath'),
   needs: 'application',
   actions: {
-    CreateNotification: function(message, level) {
+    Notify: function(message, level) {
       this.send('notification', message, level);
     },
     Delete: function() {

@@ -10,15 +10,10 @@ App.ApplicationController = Ember.Controller.extend(App.PopupOpenerMixin, {
       });
       window.location = 'http://' + AppSettings.domain;
     },
-    OpenLoginModal: function() {
-      Ember.Widgets.ModalComponent.popup({
-        targetObject: this,
-        confirm: "LoginConf",
-        // cancel: "BaseModalCancel",
-        // content: content,
-        contentViewClass: App.LoginModalView,
-        headerText: 'Login'
-      });
+    defaultPerspective: function() {
+      var views =this.store.all('view');
+      var view = views.findBy('default', true)
+      this.transitionTo('perspective',view)
     },
     LoginFacebook: function() {
       this.send('Login', 'facebook')

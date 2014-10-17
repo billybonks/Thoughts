@@ -12,7 +12,7 @@
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         {{#if model.token}}
-        <li>{{#link-to 'cards'}} Cards{{/link-to}}</li>
+        <li style="cursor:pointer"{{action defaultPerspective}}><a>Cards</a></li>
         <li>{{#link-to 'emails'}} Emails{{/link-to}}</li>
         <li>{{#link-to 'settings'}} Settings{{/link-to}}</li>
         <li>{{#link-to 'card' 295}} Bugs{{/link-to}}</li>

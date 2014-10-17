@@ -53,6 +53,9 @@ App.NewCardMixin = Ember.Mixin.create({
       card.set('title',title);
       card.set('type',content.selectedType);
       context.SetParent(card,content.parent,content.embedded).then(function(card){
+        context.get('currentView.cards').then(function(cards){
+          cards.pushObject(card);
+        })
       });
     });
   },
@@ -92,10 +95,12 @@ App.NewCardMixin = Ember.Mixin.create({
     var context = this;
     promise.then(
       function(card){
-        context.Notify('Card saved','success')
+        context.sendAction('Notify','Card saved','success')
+      //  context.Notify('Card saved','success')
       },
       function(error){
-        context.Notify('Card couldnt be saved','danger')
+        context.sendAction('Notify','Card couldnt be saved','danger')
+        //context.Notify('Card couldnt be saved','danger')
       }
     );
   },
@@ -119,7 +124,7 @@ App.NewCardMixin = Ember.Mixin.create({
                 configuration.save().then(function(configuration){
                   card.get('configurations').then(function(configurations){
                     configurations.pushObject(configuration);
-                     context.Notify('Card saved','success')
+                    context.sendAction('Notify','Card saved','success')
                     resolve(card);
                   });
                 });
@@ -145,7 +150,8 @@ App.NewCardMixin = Ember.Mixin.create({
     });
   },
   OnError:function(error){
-    this.Notify('Card couldnt be saved','danger')
+    context.sendAction('Notify','Card couldnt be saved','danger')
+  //  this.Notify('Card couldnt be saved','danger')
     this.CleanUp();
   },
   GetNewCard:function(onMainDisplay,parent,qTags){

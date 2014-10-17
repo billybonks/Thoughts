@@ -12,13 +12,8 @@ module.exports = function(app) {
     //FIXME:TEST ME
     app.get('/views', function(req, res, next) {
         controller.getViews(req.user).then(function(views) {
-            var defaultView = utils.filter(views, 'default', true);
-            controller.loadPage(defaultView, defaultView.get('lastPage') + 1, req.user).then(function(cards) {
-                defaultView.set('cards', cards);
-                defaultView.set('lastPage', defaultView.get('lastPage') + 1);
                 res.payload = views;
                 next();
-            }, ErrorHandler.error(res, next));
         }, ErrorHandler.error(res, next));
     });
 

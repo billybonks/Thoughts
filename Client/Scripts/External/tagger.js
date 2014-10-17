@@ -16,7 +16,12 @@
     options.updater = options.updater || $.proxy(this.updater, this);
     //this.$element.typeahead(options);
     this.property = options.property || "";
+    this.initialTags = options.initialTags || [];
     this.cache = [];
+    for(var i = 0; i<   this.initialTags.length; i++){
+      this.updater(this.initialTags[i])
+    }
+
   }
 
 
@@ -53,7 +58,8 @@
         e.data.$element.focus();
         $(this).parent().remove();
       });
-      $tag.insertBefore(this.$element)
+      $tag.insertBefore(this.$element);
+      this.tagAdded.call(this.context, item);
       return itemObj;
     }
 
@@ -70,7 +76,6 @@
           var item = this.updater(value);
           this.$element.val('');
           e.stopImmediatePropagation();
-          this.tagAdded.call(this.context, item);
           break;
         case 8: //Backspace
           var data = this.$element.siblings().last().data().itemObj;

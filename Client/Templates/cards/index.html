@@ -1,18 +1,6 @@
-{{view App.SideBar store=store}}
-<div class="row" style="position: absolute;top: 0;width: 100%;">
-  <div class="row">
-    <div class="col-md-12">
-        {{log currentView}}
-        {{#each item in currentView.cards itemController="card"}}
-          <div class=''>
-            {{title-card model=item CreateNotification='CreateNotification' openModal='openModal' templateArr=templateArr store=store isOnMain='true'}}
-          </div>
-        {{/each}}
-    </div>
-  </div>
-  <div class="row" style="margin-left:0px;margin-bottom:40px">
-    {{#unless currentView.loaded}}
-      <div style="margin-left:45%" class="btn btn-info" {{action loadMore}}>Load More</div>
-    {{/unless}}
-  </div>
+{{card-wall store=store views=content model=currentView Notify='Notify'}}
+<div class="row" style="margin-left:0px;margin-bottom:40px">
+  {{#unless currentView.loaded}}
+    <div style="margin-left:45%" class="btn btn-info" {{action loadMore}}>Load More</div>
+  {{/unless}}
 </div>

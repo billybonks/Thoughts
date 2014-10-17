@@ -8,10 +8,8 @@ App.Router.map(function() {
   this.resource('card', {
     path: '/card/:card_id'
   });
-  this.resource('cards', {
-    path: '/cards'
-  }, function() {
-    this.route('index');
+  this.resource('perspective', {
+    path: '/perspective/:perspective_id'
   });
   this.resource('emails', {
     path: '/emails'
@@ -59,6 +57,7 @@ App.ApplicationRoute = Ember.Route.extend({
     return removeNotif;
   },
   model: function() {
+    this.store.pushMany('view',window.preload.views);
     var sessionToken = $.cookie(AppSettings.CookieName);
     var m = this.store.find('application', sessionToken)
     return m;
@@ -80,18 +79,6 @@ App.IndexRoute = Ember.Route.extend({
 App.ViewsRoute = Ember.Route.extend({
   model: function() {
     return this.store.find('car');
-  },
-  setupController: function(controller, model) {
-    var view = model.findBy('default', true)
-    controller.set('content', model);
-    controller.set('currentView', view);
-    controller.set('loaded', true);
-  }
-});
-
-App.CardsIndexRoute = Ember.Route.extend({
-  model: function() {
-    return this.store.find('view');
   },
   setupController: function(controller, model) {
     var view = model.findBy('default', true)
@@ -141,45 +128,52 @@ App.SettingsIndexRoute = Ember.Route.extend({
 });
 
 App.CardRoute = Ember.Route.extend({
-  actions: {
-    openModal: function(modalName, model) {
-      return true
-    },
-
-    closeModal: function() {
-      return this.disconnectOutlet({
-        outlet: 'modal',
-        parentView: 'application'
-      });
-    },
-  },
   setupController: function(controller, model) {
-    var ret = this.store.all('template').map(function(item, index, enumerable) {
-      return {
-        id: item.get('id'),
-        title: item.get('title')
+    var views = this.store.all('view');
+    var view =views.filter(function(item, index, enumerable){
+      if(item.get('id') === model.get('id')){
+        return true
       }
-    });
-    ret.push({
-      title: 'None',
-      id: -1
+      return false;
     })
-    ret.sort(function compare(a, b) {
-      if (a.id < b.id) {
-        return -1;
-      }
-      if (a.id > b.id) {
-        return 1;
-      }
-      // a must be equal to b
-      return 0;
-    })
-    $(document).attr('title', model.get('title'));
-    controller.set('content', model);
-    controller.set('templateArr', ret);
+    if(view[0]){
+      view = view[0]
+    }else{
+      view =this.store.createRecord('view',{
+        id:model.get('id'),
+        name:model.get('title'),
+        deleted:false,
+        templates:false,
+        lastPage:0,
+        root:model,
+        loaded:true
+      })
+      view.get('cards').then(function(cards){
+        model.get('children').then(function(children){
+          cards.pushObjects(children);
+        })
+      })
+    }
+    controller.set('perspective',view);
+    controller.set('views',views);
+
+    //$(document).attr('title', model.get('title'));
   }
 });
 
+App.PerspectiveRoute = Ember.Route.extend({
+  model:function(params){
+    return this.store.getById('view',params.perspective_id)
+  },
+  setupController: function(controller, model) {
+    var views = this.store.all('view');
+    controller.set('views',views);
+    controller.set('prespective',model);
+
+    //$(document).attr('title', model.get('title'));
+  }
+});
+//
 Ember.Route.reopen({
   activate: function(router) {
     this._super(router)
