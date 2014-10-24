@@ -9,6 +9,8 @@ App.Card = DS.Model.extend({
   onMainDisplay:DS.attr('boolean'),
   template: DS.attr(),
   isTemplate:DS.attr('boolean'),
+  restore:DS.attr('boolean'),
+  isTrashed:DS.attr('boolean'),
   parents:DS.hasMany('card', {
     inverse: 'children',
     async:true

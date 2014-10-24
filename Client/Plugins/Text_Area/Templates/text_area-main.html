@@ -1,6 +1,7 @@
 {{#if hasText}}
   {{#each item in model.attachments}}
     {{#if isEditing}}
+      <button class="btn btn-default" {{action 'help'}}>help</button>
       {{textarea class="form-control" value=item.data.value style="width: 100%;height: 100%;"}}
       <button class="btn btn-default" {{action 'Update'}}>submit</button>
     {{else}}

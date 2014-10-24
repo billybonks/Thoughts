@@ -34,6 +34,9 @@ module.exports = CoreObject.extend({
     },
     update: function(node) {
         for (var key in node) {
+            if(key ==='isDeleted'){
+              this.data['isTrashed'] = node[key];
+            }
             this.data[key] = node[key];
         }
     },
@@ -42,6 +45,21 @@ module.exports = CoreObject.extend({
         ret.id = node.id;
         return ret;
     },
+    //PARSES A ARAY OF MULTIPLE CORE OBJECTS RETURNS GROUP, SHOULD BE STATIC (REOPEN CLASS NEEDED)
+    parseMutliArray:function(results,type){
+      var dict ={};
+      for (var i = 0; i < results.length; i++) {
+          var model
+          if(dict[results[i].node.id]){
+            model = dict[results[i].node.id]
+          }
+          model = new type();
+          model.parse(results[i]);
+          dict[model.get('id')] =model;
+      }
+      return utils.dictionaryToArray(dict);
+    },
+    //PARSES A SINGLE ARRAY ONLY ONE CORE OBJECT
     parseArray: function(arr) {
         for (var i = 0; i < arr.length; i++) {
             if (i === 0) {

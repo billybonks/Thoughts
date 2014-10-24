@@ -52,6 +52,14 @@ exports.dictionaryToJSON = function(modelDictionary) {
     return ret;
 }
 
+exports.dictionaryToArray = function(modelDictionary) {
+    var ret = []
+    for (var key in modelDictionary) {
+        ret.push(modelDictionary[key]);
+    }
+    return ret;
+}
+
 exports.modelFor = function(type) {
     return require('./../models/' + type);
 }

@@ -23,15 +23,12 @@ module.exports = function(app) {
     app.put('/attachments/:id', function(req, res, next) {
         //proccsss Attachment
         processor.proccessAttatchment(req.body.attachment,req.body.type, 'Update', req.user)
-            .then(function(results) {
-                var attachment = req.body.attachment;
-                attachment.data = results;
-                var resultStream = controller.updateAttachment(attachment, req.params.id)
-                resultStream.on('data', function(attachment) {
+            .then(function(attachment) {
+                controller.updateAttachment(attachment, req.params.id).then(function(attachment) {
                     res.status = 200;
                     res.returnData = attachment;
                     next();
-                }).on('error', ErrorHandler.error(res, next));
+                },ErrorHandler.error(res, next))
             });
     });
 
@@ -47,7 +44,7 @@ module.exports = function(app) {
     });
 
     app.delete('/attachments/:id', function(req, res, next) {
-        var resultStream = controller.deleteEntity(req.params.id).then(function(results) {
+        var resultStream = controller.deleteAttachment(req.params.id).then(function(results) {
             res.status = 200;
             res.returnData = {}
             next();

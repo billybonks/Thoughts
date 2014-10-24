@@ -14,14 +14,14 @@ module.exports = Controller.extend({
      */
     getAttachments: function(ids) {
         return Promise.call(this, function(resolve, reject) {
-            this.getNodes(ids).then(function(results) {
-                var ret = []
-                for (var i = 0; i < results.length; i++) {
-                    var attachment = new Model();
-                    attachment.parse(results[i]);
-                    ret.push(attachment);
-                }
-                resolve(ret);
+          var query = [this.buildStartStatement(ids)
+                      ,'MATCH  (node)-[a:Attached]->(card)'
+                      ,'Return node,card']
+          query = query.join('\n')
+            this.executeQuery(query, {}).then(function(results) {
+              var attachment = new Model();
+              var ret = attachment.parseMutliArray(results,Model);
+              resolve(ret);
             });
         });
     },
@@ -123,5 +123,16 @@ module.exports = Controller.extend({
                 resolve(results[0]);
             }, error(reject))
         });
+    },
+    deleteAttachment:function(id){
+      return Promise.call(this, function(resolve, reject) {
+        var query = ['START node=node(' + id + ')',
+                     'MATCH  (node)-[a:Attached]->(card)',
+                     'MATCH  (node)<-[c:Created]-(user)',
+                     'DELETE a,c,node'];
+        this.executeQuery(query.join('\n'),{}).then(function(results) {
+            resolve();
+        }, error(reject))
+      });
     }
 });

@@ -6,9 +6,6 @@ App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin, {
   currentPath: Em.computed.alias('controllers.application.currentPath'),
   needs: 'application',
   actions: {
-    Notify: function(message, level) {
-      this.send('notification', message, level);
-    },
     Delete: function() {
       this.get('store').find('card', this.get('model').get('id')).then(function(rec) {
         rec.deleteRecord();
@@ -19,8 +16,12 @@ App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin, {
       console.log('editing')
       this.get('isEditing') ? this.set('isEditing', false) : this.set('isEditing', true);
     },
+    transition:function(view){
+      this.transitionTo('perspective',view)
+    },
     Share: function() {}
   },
+
   display: function() {
     if (this.get('parentController.templates')) {
       if (this.get('model.isTemplate')) {

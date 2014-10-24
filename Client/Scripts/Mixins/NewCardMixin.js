@@ -53,9 +53,14 @@ App.NewCardMixin = Ember.Mixin.create({
       card.set('title',title);
       card.set('type',content.selectedType);
       context.SetParent(card,content.parent,content.embedded).then(function(card){
-        context.get('currentView.cards').then(function(cards){
-          cards.pushObject(card);
-        })
+        Bootstrap.NM.push('New card created', 'success');
+        if(context.onCardAdded){
+          context.onCardAdded(card);
+        }else{
+          context.sendAction('newCard',card)
+        }
+      },function(error){
+        Bootstrap.NM.push('Error creating new card', 'danger');
       });
     });
   },
@@ -63,46 +68,28 @@ App.NewCardMixin = Ember.Mixin.create({
     var f = function(templates){
       var types =typesRaw.concat(templates);
       var content= {types:types};//parent embedded
-      var parent =null;
-      if(context.GetParent){
-        parent = context.GetParent();
-      }
-      if(parent){
-        content.onMainDisplay = false;
-        content.parent = parent;
-        content.embedded = context.get('isMain') ? false : true;
-      }else{
-        content.onMainDisplay = true;
-        content.parent = null;
-      }
-      content.tags =[];
-      context.set('modal',Ember.Widgets.ModalComponent.popup({
-        targetObject: context,
-        confirm: "NewCardConfirm",
-        // cancel: "BaseModalCancel",
-        content: content,
-        contentViewClass:Ember.View.extend({
-          templateName:'popups/cardForm',
-        }),
-        headerText:'New Card'
-      }));
+      context.GetParent().then(function(parent){
+        if(parent){
+          content.parent = parent;
+          content.embedded = context.embedded();
+        }else{
+          content.parent = null;
+        }
+        content.tags =[];
+        context.set('modal',Ember.Widgets.ModalComponent.popup({
+          targetObject: context,
+          confirm: "NewCardConfirm",
+          // cancel: "BaseModalCancel",
+          content: content,
+          contentViewClass:Ember.View.extend({
+            templateName:'popups/cardForm',
+          }),
+          headerText:'New Card'
+        }));
+      })
     }
     f.typesRaw = typesRaw;
     return f
-  },
-  Save:function(card){
-    var promise = card.save();
-    var context = this;
-    promise.then(
-      function(card){
-        context.sendAction('Notify','Card saved','success')
-      //  context.Notify('Card saved','success')
-      },
-      function(error){
-        context.sendAction('Notify','Card couldnt be saved','danger')
-        //context.Notify('Card couldnt be saved','danger')
-      }
-    );
   },
   SetParent:function(card,parentCard,embedded){
     var context = this;
@@ -133,8 +120,9 @@ App.NewCardMixin = Ember.Mixin.create({
           });
         })
       }else{
-        context.Save.call(context,card);
-        resolve(card);
+        card.save().then(function(card){
+          resolve(card);
+        });
       }
     });
   },

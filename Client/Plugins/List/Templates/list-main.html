@@ -5,7 +5,7 @@
 
 {{#each item in data}}
       {{#unless item.content.isDeleted}}
-        {{list-item model=item}}
+        {{list-item model=item store=store}}
       {{/unless}}
 {{/each}}
 </ul>

@@ -27,6 +27,18 @@ module.exports = CoreObject.extend({
             }
         });
     },
+    buildStartStatement:function(ids){
+      var query = 'START node=node(';
+      for (var c = 0; c < ids.length; c++) {
+          if (c + 1 == ids.length) {
+              query += ids[c];
+          } else {
+              query += ids[c] + ',';
+          }
+      }
+      query += ')';
+      return query
+    },
     createNode: function(data, label) {
         var context = this;
         return new rsvp.Promise(function(resolve, reject) {

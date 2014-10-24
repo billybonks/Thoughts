@@ -1,0 +1,13 @@
+
+<div class="form-group">
+    {{view Ember.Select content=content.objects value=view.content.selectedObject class="form-control"}}
+</div>
+<div class="form-group">
+    {{view Ember.Select content=content.actions value=view.content.selectedAction class="form-control"}}
+</div>
+<div class="form-group">
+    {{input type="text" value=view.content.value  placeholder="Value" class="form-control"}}
+</div>
+<div class="form-group">
+    <!--div class="btn-danger btn" {{action "deleteQ" view.query target=view}}><span class="glyphicon glyphicon-remove"></span></div-->
+</div>

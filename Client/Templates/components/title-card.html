@@ -11,7 +11,11 @@
         {{#if isEditing}}
         {{input type="text" class="form-control" value=model.title action="Save"}}
         {{else}}
-        <h4>{{#link-to 'card' model.id}}{{model.title}}{{/link-to}}</h4>
+        {{#unless isRoot}}
+          <h4>{{#link-to 'card' model.id}}{{model.title}}{{/link-to}}</h4>
+        {{else}}
+          <h4>{{model.title}}</h4>
+        {{/unless}}
         {{/if}}
       </div>
       <div class="col-sm-1 col-lg-1 col-md-1 pull-right" style="position: absolute;top: -10px;right: 15px;">
@@ -23,15 +27,20 @@
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#" {{action "Delete"}}>Delete</a></li>
-            <li><a href="#" {{action "ToggleEdit"}}>Edit</a></li>
-            <li><a href="#" {{action "Share"}}>Share</a></li>
-            {{#unless isMain}}
-                <li><a href="#" {{action 'EditCardSetting'}}>Settings</a></li>
+            {{#unless model.isTrashed}}
+              <li><a href="#" {{action "Delete"}}>Trash</a></li>
+              <li><a href="#" {{action "ToggleEdit"}}>Edit</a></li>
+              <li><a href="#" {{action "Share"}}>Share</a></li>
+              {{#unless isRoot}}
+                  <li><a href="#" {{action 'EditCardSetting'}}>Settings</a></li>
+              {{/unless}}
+              <li class="divider"></li>
+              <li><a href="#" {{action 'NewCard'}}>New Subcard</a></li>
+              <li><a href="#" {{action SaveAsTemplate}}>Save as template</a></li>
+            {{else}}
+              <li><a href="#" {{action "restore"}}>Restore</a></li>
+              <li><a href="#" {{action "Delete"}}>Delete</a></li>
             {{/unless}}
-            <li class="divider"></li>
-            <li><a href="#" {{action 'NewCard'}}>New Subcard</a></li>
-            <li><a href="#" {{action SaveAsTemplate}}>Save as template</a></li>
           </ul>
         </div>
         {{!/unless}}
@@ -44,7 +53,7 @@
     <div class='row' style="height:400px;">
       <div class="panel-body">
         {{render-plugin model=model store=store}}
-        {{#unless isMain}}
+        {{#unless isRoot}}
           {{#each child in model.children}}
             {{render-plugin model=child parent=model store=store}}
           {{/each}}

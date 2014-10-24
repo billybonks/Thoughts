@@ -1,0 +1,23 @@
+<form role="form">
+  <div class="form-group">
+    <label for="embedd">Trashed</label>
+    {{input type="checkbox" checkedBinding=content.trashed}}
+  </div>
+  <div class="form-group">
+    <label for="isOnMain">Templates</label>
+    {{input type="checkbox" checkedBinding=content.templates}}
+  </div>
+  <div class="form-group">
+    <label for="isOnMain">From this view</label>
+    {{input type="checkbox" checkedBinding=content.fview}}
+  </div>
+</form>
+<form class="form-inline" role="form">
+  {{#each query in content.queries}}
+    {{view App.Query content=query deleteQuery='deleteQuery'}}
+    <div class="form-group">
+        <div class="btn-danger btn" {{action "deleteQuery" query target=view}}><span class="glyphicon glyphicon-remove"></span></div>
+    </div>
+  {{/each}}
+</form>
+<button class="btn-info btn" {{action "addQuery" target=view}}>Add query</button>

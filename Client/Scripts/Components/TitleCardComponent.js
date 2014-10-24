@@ -9,13 +9,28 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin, {
       this.get('store').find('card', this.get('model').get('id')).then(function(rec) {
         rec.deleteRecord();
         rec.save().then(function() {
-            context.transitionTo('cards.index');
-            context.sendAction('CreateNotification', 'Card deleted', 'success');
+            context.sendAction('cardDeleted',rec);
+            Bootstrap.NM.push('Card successfully deleted', 'success');
           },
           function() {
-            context.sendAction('CreateNotification', 'Error deleting card', 'danger');
+            Bootstrap.NM.push('Error deleting card', 'danger');
           });
       })
+    },
+    restore:function(){
+      var context = this;
+      this.get('model').set('restore',true);
+      this.get('store').find('card', this.get('model').get('id')).then(function(rec) {
+          rec.save().then(function() {
+            context.set('model.restore',false);
+            context.set('model.isTrashed',false);
+            context.sendAction('cardDeleted',rec);
+            Bootstrap.NM.push('Card successfully restored', 'success');
+          },
+          function() {
+            Bootstrap.NM.push('Error restoring card', 'danger');
+          });
+      });
     },
     ToggleEdit: function() {
       var context = this;
@@ -40,36 +55,50 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin, {
       this.get('store').find('Card', this.get('model.id')).then(function(card) {
         card.get('tags').then(function(tags){
           card.save().then(function() {
-          /*  var usedIndexs = [];
-            var found =[];
-            var updatedTags = context.get('updatedTags');
-            var remaining = context.get('tagger').getCurrentVal();
-            if(remaining){
-              updatedTags.push(remaining);
-            }
-            tags.filter(function(tag,index){
-              for(var i =0;i<updatedTags.length;i++){
-                if(updatedTags[i] === tag.get('title')){
-                  found.push(index);
-                  usedIndexs.push(i);
-                }
-              }
-            })
-            var removedTags = [];
-            var newtags = [];
-            var f = 0;
-            for(var i = 0; i< found.length;i++){
-              if(found[i]-i > 0){
-                for(f;f < found;f++){
-                  removedTags.push(tags.objectAt(f).get('title'))
-                }
-              }
-              f=found[i]+1;
-            }
-            for(f;f < tags.get('length');f++){
-              removedTags.push(tags.objectAt(f).get('title'))
-            }*/
             context.get('isEditing') ? context.set('isEditing', false) : context.set('isEditing', true);
+            var origTags = tags.getEach('id');
+            context.store.find('tag',{names:context.get('updatedTags')}).then(function(result){
+                 var updatedTags=result.getEach('id');
+                 var intersection = _.intersection(origTags,updatedTags);
+                 var add = _.difference(updatedTags,origTags);
+                 var remove = _.difference(origTags,intersection);
+                 if(add.length>0){
+                  $.ajax({
+                    url: window.AppSettings.WebserviceURL+'/addTags',
+                    type: 'PUT',
+                    success: function(){
+                      var toAdd = Em.A([]);
+                      _.each(add,function(id){
+                        toAdd.pushObject(context.get('store').getById('tag',id));
+                      })
+                      tags.pushObjects(toAdd);
+                    },
+                    data: {tags:add,entity:context.get('model.id')},
+                    dataType: 'JSON'
+                  });
+                 }
+                if(remove.length > 0){
+                  $.ajax({
+                    url: window.AppSettings.WebserviceURL+'/removeTags',
+                    type: 'PUT',
+                    success: function(){
+                      var toRemove = Em.A([]);
+                      _.each(remove,function(id){
+                        toRemove.pushObject(context.get('store').getById('tag',id));
+                      })
+                      tags.removeObjects(toRemove);
+                    },
+                    data: {tags:remove,entity:context.get('model.id')},
+                    dataType:'JSON'
+                  });
+                }
+              },function(error){
+                Bootstrap.NM.push('Error saving tags', 'danger');
+              });
+
+          },
+          function(error){
+            Bootstrap.NM.push('Error saving changes', 'danger');
           });
         })
       });
@@ -122,6 +151,13 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin, {
       })
     }
   },
+  embedded:function(){
+      if(this.get('isRoot')){
+        return false;
+      }else{
+        return true;
+      }
+  },
   GetConfiguration: function() {
     var parentId = parseInt(this.get('parent.id'));
     var configs = this.get('model.configurations');
@@ -131,12 +167,6 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin, {
         return true;
       }
     }, configs)
-  },
-  Notify: function(message, level) {
-    this.FowardNotification(message, level);
-  },
-  FowardNotification: function(message, level) {
-    this.sendAction('CreateNotification', message, level)
   },
   openPluginModal: function(modalName, model, secondaryModel) {
     return this.sendAction('openModal', modalName, model, secondaryModel);
@@ -151,12 +181,14 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin, {
     this.set('showControlls', true)
   },
   GetParent: function() {
-    if (this.get('model.content')) {
-      return this.get('model.content');
+    var context = this;
+  return new Promise(function(resolve, reject) {
+    if (context.get('model.content')) {
+      resolve(context.get('model.content'))
     } else {
-      return this.get('model');
+      resolve(context.get('model'))
     }
-
+  });
   },
   configuration: function() {
     var parentId = parseInt(this.get('model.id'));

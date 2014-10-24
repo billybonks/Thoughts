@@ -1,4 +1,4 @@
-App = Ember.Application.create({
+App = Ember.Application.createWithMixins(Bootstrap,{
 
   ready: function() {
     App.ApplicationAdapter = DS.RESTAdapter.extend({
@@ -19,7 +19,7 @@ App.initializer({
   name: "loadToken",
   initialize: function() {
       var token ;
-      var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+      var results = new RegExp('[\\?&]token=([^&#]*)').exec(window.location.href);
       if (results) {
         token= results[1]
       } else {
@@ -42,9 +42,11 @@ App.initializer({
   initialize: function() {
     App.deferReadiness();
     window.loader.getViews().then(function(views){
-      preload = {views:views};
-      App.preload =preload;
-      App.advanceReadiness();
+      window.loader.getTemplates().then(function(templates){
+        preload = {views:views,templates:templates};
+        App.preload =preload;
+        App.advanceReadiness();
+      });
     })
   }
 });

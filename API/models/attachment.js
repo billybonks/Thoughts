@@ -13,8 +13,9 @@ module.exports = DS.Model.extend({
     delete data.id;
     return this._cleanNulls(data).data
   },
-  parse:function(attachmentRaw){
-    attachmentRaw = attachmentRaw.node;
+  //FIXME:Should override the update method
+  parse:function(result){
+    var attachmentRaw = result.node;
     var data = {};
     for (var key in attachmentRaw.data) {
         if (key === 'date_created' || key === 'date_modified') {
@@ -27,5 +28,11 @@ module.exports = DS.Model.extend({
     this.set('id',attachmentRaw.id)
     this.set('date_created', attachmentRaw.data.date_created);
     this.set('date_created', attachmentRaw.data.date_modified);
+    for (var i = 0; i < this.relationshipIndex.length; i++) {
+        relatedVector = result[this.relationshipIndex[i]];
+        if (relatedVector) {
+            this.parseRelatedVector(this.relationshipIndex[i], relatedVector)
+        }
+    }
   }
 })

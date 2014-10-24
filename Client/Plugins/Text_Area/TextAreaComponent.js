@@ -19,6 +19,16 @@ App.TextAreaMainComponent = App.BaseSectionComponent.extend({
     Update: function() {
       this.SaveAttachment(this.get('data').objectAt(0));
       this.get('isEditing') ? this.set('isEditing', false) : this.set('isEditing', true);
+    },
+    help:function(){
+      Ember.Widgets.ModalComponent.popup({
+        targetObject: this,
+        content: {},
+        contentViewClass:Ember.View.extend({
+          templateName:'markdownHelp',
+        }),
+        headerText:'Markdown Help'
+      })
     }
   },
   willInsertElement: function(event) {

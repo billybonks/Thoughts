@@ -13,11 +13,20 @@ module.exports = function(app) {
      * ===================================================================================================== */
 
     app.delete('/cards/:id', function(req, res, next) {
-        controller.deleteCard(req.params.id).then(function(results) {
-            res.status = 200;
-            res.returnData = {}
-            next();
-        }, ErrorHandler.error(res, next));
+        controller.getCard(req.params.id).then(function(card){
+          var promise;
+          if(card.get('isDeleted')){
+            promise = controller.permenentlyDelete(card.get('id'));
+          }else{
+            promise = controller.deleteCard(card.get('id'));
+          }
+          promise.then(function(results) {
+              res.status = 200;
+              res.returnData = {}
+              next();
+          }, ErrorHandler.error(res, next));
+        })
+
     });
 
     app.get('/cards', function(req, res, next) {
@@ -72,7 +81,13 @@ module.exports = function(app) {
 
     app.put('/cards/:id', function(req, res, next) {
         req.model.set('id',req.params.id);
-        controller.updateCard(req.model).then(function(results) {
+        var promise;
+        if(req.model.get('restore') && req.model.get('isTrashed')){
+          promise=controller.restore(req.params.id);
+        }else{
+            promise= controller.updateCard(req.model);
+        }
+        promise.then(function(results) {
             res.status = 200;
             res.returnData = {}
             next();

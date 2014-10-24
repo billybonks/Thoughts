@@ -23,7 +23,7 @@ module.exports = Controller.extend({
           var query = ['Match (node:Tag)']
           var variableHash = {}
           for (var i = 0; i < names.length; i++) {
-              nameDictionary[names[i]] = null;
+              nameDictionary[names[i].toLowerCase()] = null;
               var varname = 'tag' + i;
               variableHash[varname] = names[i];
               var where
@@ -32,17 +32,17 @@ module.exports = Controller.extend({
               } else {
                   where = 'Or ';
               }
-              where += 'node.title = {' + varname + '}';
+              where += 'node.title =~ "(?i)' + names[i] + '"';
               query.push(where);
           }
           query.push('return node');
 
-          this.executeQuery(query.join('\n'), variableHash).then(function(results) {
+          this.executeQuery(query.join('\n'), {}).then(function(results) {
 
               for (var i = 0; i < results.length; i++) {
                   var tag = new model();
                   tag.parse(results[i]);
-                  nameDictionary[tag.get('title')] = tag;
+                  nameDictionary[tag.get('title').toLowerCase()] = tag;
               }
               resolve(nameDictionary);
           }, error(reject));
@@ -55,13 +55,13 @@ module.exports = Controller.extend({
           this._findByNames(names).then(function(nameDictionary) {
               console.log(nameDictionary);
               for (var key in nameDictionary) {
-                  if (!nameDictionary[key]) {
+                  if (!nameDictionary[key.toLowerCase()]) {
                       promises.push(context._createTag.call(context, key, 'Add Description'));
                   }
               }
               RSVP.Promise.all(promises).then(function(tags) {
                   for (var i = 0; i < tags.length; i++) {
-                      nameDictionary[tags[i].get('title')] = tags[i];
+                      nameDictionary[tags[i].get('title').toLowerCase()] = tags[i];
                   }
                   console.log(nameDictionary.length)
                   console.log(nameDictionary.getJSON)
@@ -70,6 +70,18 @@ module.exports = Controller.extend({
           }, error(reject));
       });
   },
+  removeTags:function(tags,entity){
+    return Promise.call(this, function(resolve, reject) {
+      var query = [this.buildStartStatement(tags),
+                   'MATCH node-[r:Tagged]->entity',
+                   'DELETE r',
+                   'return node']
+      this.executeQuery(query.join('\n'), {}).then(function(results){
+        resolve(results)
+      }, error(reject))
+    })
+  },
+  //FIXME: Use createStartStatement
   tagEntity:function(tags, entityId) {
       return Promise.call(this, function(resolve, reject) {
           if (tags.length >= 1) {

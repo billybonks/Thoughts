@@ -7,5 +7,6 @@ App.View = DS.Model.extend({
 //  tags: DS.attr('tag'),
   root: DS.belongsTo('card',{ async: true }),
   lastPage: DS.attr('number'),
-  default: DS.attr('boolean')
+  default: DS.attr('boolean'),
+  query: DS.attr('string')
 });

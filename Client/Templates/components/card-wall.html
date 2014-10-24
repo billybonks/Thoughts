@@ -6,7 +6,7 @@
               <div class="input-group">
                   {{input type="text" class="form-control" placeholder="Enter search query here" value=search}}
                   <div class="input-group-addon btn-info btn" style="color:black" {{action "addUrl" target=view}}>Search</div>
-                  <div class="input-group-addon btn-info btn" style="color:black" {{action "addUrl" target=view}}>Advanced Search</div>
+                  <div class="input-group-addon btn-info btn" style="color:black" {{action "advancedSearch"}}>Advanced Search</div>
               </div>
             </div>
           </div>
@@ -14,12 +14,12 @@
           <div class="col-md-12">
             {{#if model.root}}
               <div class=''>
-                {{title-card model=model.root Notify='Notify' openModal='openModal' templateArr=templateArr store=store isMain='true' Notify='Notify'}}
+                {{title-card model=model.root Notify='Notify' store=store  cardDeleted='onCardDeleted' isRoot=true newCard='onCardAdded'}}
               </div>
             {{/if}}
             {{#each item in model.cards itemController="card"}}
               <div class=''>
-                {{title-card model=item Notify='Notify' openModal='openModal' templateArr=templateArr store=store Notify='Notify'}}
+                {{title-card model=item Notify='Notify'  store=store newCard='onCardAdded' cardDeleted='onCardDeleted' isRoot=false}}
               </div>
             {{/each}}
           </div>

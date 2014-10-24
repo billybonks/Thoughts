@@ -30,7 +30,22 @@ module.exports = function(app) {
             }, ErrorHandler.error(res, next))
         }
     });
+    app.put('/addTags',function(req,res, next){
+      var promises = []
+      controller.tagEntity(req.body.tags,req.body.entity).then(function(tags){
+        res.status = 200;
+        res.returnData = {}
+        next();
+      })
+    })
 
+    app.put('/removeTags',function(req,res, next){
+      controller.removeTags(req.body.tags,req.body.entity).then(function(tags){
+        res.status = 200;
+        res.returnData = {}
+        next();
+      })
+    })
     //never used
     app.post('/tags', function(req, res) {
         res.json(req.body);

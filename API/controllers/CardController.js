@@ -19,6 +19,9 @@ module.exports = Controller.extend({
     attachmentController: new AttachmentController(),
     getViewsCards: function(view, page, user) {
         return Promise.call(this, function(resolve, reject) {
+            var searchQuery = null
+            if(view.get('query'))
+              searchQuery = parse(view.get('query'))
             var query = [
                 'START user=node(0)',
                 'MATCH (user:Person)-[Created]->(card:Card)'
@@ -64,6 +67,78 @@ module.exports = Controller.extend({
               })*/
             }
         });
+    },
+    getViewsCards2: function(view, page, user) {
+        return Promise.call(this, function(resolve, reject) {
+            var searchQuery = null
+            if(view.get('query'))
+              searchQuery = this._parse(view.get('query'))
+            var query = [
+                'START user=node(0)',
+                'MATCH (user:Person)-[Created]->(card:Card)'
+            ];
+            if (view.get('deleted')) {
+                query.push('WHERE has(card.isDeleted)');
+            } else {
+                query.push('WHERE not(has(card.isDeleted))');
+            }
+            if (view.get('templates')) {
+                query.push('AND card.isTemplate = true');
+            } else {
+                query.push('AND card.isTemplate = false');
+            }
+            for(var i = 0;i<searchQuery.length;i++){
+              if(searQuery[i].action === 0){
+                query.push('AND '+searchQuery[i].object+' =~ ".*'+searchQuery[i].value+'.*"');
+              }else if(searQuery[i].action === 1){
+                query.push('AND '+searchQuery[i].object+' = '+searchQuery[i].value);
+              }
+            }
+            query.push('RETURN card,tag'); //
+            query.push('ORDER BY card.date_modified DESC');
+            query.push('SKIP ' + (page * 10));
+            query.push('LIMIT 10');
+            var context = this;
+            if (user != null) {
+                var variablehash = {
+                    id: user.get('id')
+                };
+                this.executeQuery(query.join('\n'), {}).then(function(results) {
+                    if (results.length === 0) {
+                        resolve([])
+                    } //
+                    var promises = []
+                    for (var c = 0; c < results.length; c++) {
+                        var id = results[c].card.id;
+                        promises.push(context.getCard.call(context, id));
+                    }
+                    RSVP.Promise.all(promises).then(function(cards) {
+                        resolve(cards);
+                    })
+                }, error(reject));
+            } else {
+                resolve([])
+                /*fixme: error breaks site so resolving
+              reject({
+                  statusCode: 500,
+                  message: 'unauthenticated'
+              })*/
+            }
+        });
+    },
+    //FIXME:Should this be here ?
+    _parseQuery:function(query){
+      var ret = [];
+      var query = query.split(';')
+      for(var i = 0;i<query.length;i++){
+        if(query[i].contains('~')){
+          var splitQ = query.split('~');
+          ret.push({object:splitQ[0],value:splitQ[2],action:0})
+        }else if(query[i].contains('=')){
+          var splitQ = query.split('=');
+          ret.push({object:splitQ[0],value:splitQ[2],action:1})
+        }
+      }
     },
     //FIXME:unauthenticated error must be in preroute
     getAllCards: function(user) {
@@ -183,6 +258,35 @@ module.exports = Controller.extend({
     deleteCard: function(id) {
         return this.deleteEntity(id);
     },
+    permenentlyDelete:function(id){
+      return Promise.call(this, function(resolve, reject) {
+        var query = ['Start node=node(' + id + ')',
+          'OPTIONAL MATCH (node)<-[c:Created]-()',
+          'OPTIONAL MATCH (node)-[t:Tagged]-()',
+          'OPTIONAL MATCH (node)-[h:Has]-()',
+          'OPTIONAL MATCH (node)-[configs]-(config:Configuration)',
+          'OPTIONAL MATCH (config)-[r]-()',
+          'DELETE t,c,h,config,r,node'
+        ];
+        this.executeQuery(query.join('\n'), {}).then(function(results) {
+          resolve();
+        }, error(reject));
+      });
+    },
+    restore:function(id){
+      return Promise.call(this, function(resolve, reject) {
+          var context = this;
+          var query = [
+              'Start node=node(' + id + ')',
+              'REMOVE node.isDeleted',
+              'SET node.date_modified = {date}',
+              'RETURN node' //user,card,attachment'
+          ];
+          this.executeQuery(query.join('\n'), {date:Date.now()}).then(function(results) {
+            resolve(results);
+          }, error(reject));
+    });
+  },
     updateCard: function(model) {
         return Promise.call(this, function(resolve, reject) {
             model.set('date_modified', Date.now())

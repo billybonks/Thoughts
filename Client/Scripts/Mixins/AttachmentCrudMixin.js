@@ -21,11 +21,7 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
             }
             var attachments = card.get('attachments').then(function(attachments) {
               attachments.pushObject(attachment);
-              if (context.get('targetObject')) {
-                context.get('targetObject').FowardNotification('Attachment saved', 'success')
-              } else {
-                context.send('notification', 'Attachment saved', 'success')
-              }
+              Bootstrap.NM.push('Attachment created', 'success');
             });
           });
         },
@@ -34,44 +30,24 @@ App.SubmitAttachmentMixin = Ember.Mixin.create({
             context.get('targetObject').StopLoading();
           }
           attachment.rollback();
-          if (context.get('targetObject')) {
-            context.get('targetObject').FowardNotification('Attachment couldnt be saved', 'danger')
-          } else {
-            context.send('notification', 'Attachment couldnt be saved', 'danger')
-          }
-
-        });; //.then(context.sendAction('modelSateChange',attachment.currentState));
+          Bootstrap.NM.push('Error creating attachment', 'danger');
+        });;
     });
   },
+  //FIXME: Somehow card isnt being registered dont understand the magic, added dirty fix
   SaveAttachment: function(model) {
     var context = this;
-    // context.get('targetObject').StartLoading();
+    if(!this.get('card')){
+      this.set('card',model._data.card);
+    }
     model.save().then(function(att) {
-        model.get('card').then(function(card) {
-          card.set('date_modified', Date.now());
-          card.save().then(function(card) {
-            if (context.get('targetObject')) {
-              // context.get('targetObject').StopLoading();
-              context.get('targetObject').FowardNotification('Attachment updated', 'success');
-            } else if (context.parentController) {
-              context.parentController.Notify('Attachment updated', 'success')
-            } else {
-              context.send('notification', 'Attachment updated', 'success')
-            }
-          });
-        })
+        context.get('card').set('date_modified', Date.now());
+        context.get('card').save().then(function(card) {
+          Bootstrap.NM.push('Attachment changes successfully changed', 'success');
+        });
       },
       function(error) {
-        if (context.get('targetObject')) {
-          // context.get('targetObject').StopLoading();
-          context.get('targetObject').FowardNotification('Attachment couldnt be saved', 'danger')
-          context.get('targetObject').FowardNotification('Attachment updated', 'success');
-        } else if (context.parentController) {
-          context.parentController.Notify('Attachment couldnt be saved', 'danger');
-        } else {
-          context.send('notification', 'Attachment couldnt be saved', 'danger')
-        }
-
+        Bootstrap.NM.push('Error saving attachment changes', 'success');
       })
   }
 })

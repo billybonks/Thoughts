@@ -57,9 +57,17 @@ module.exports = Controller.extend({
             })
         });
     },
+
     loadPage: function(view, page,user) {
         return Promise.call(this, function(resolve, reject) {
             this.cardController.getViewsCards(view,page, user).then(function(cards) {
+                resolve(cards)
+            })
+        });
+    },
+    loadPage2: function(view, page,user) {
+        return Promise.call(this, function(resolve, reject) {
+            this.cardController.getViewsCards2(view,page, user).then(function(cards) {
                 resolve(cards)
             })
         });
