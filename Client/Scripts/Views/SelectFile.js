@@ -9,14 +9,13 @@ App.SelectFile = Ember.View.extend({
   valueChanged:function(){
     var files = $('#UploadFiles')[0].files;
     for(var i = 0;i<files.length;i++){
-        this.loadFile(files[i])
+        this.loadFile(files[i],context.get('files'))
     }
   }.observes('content.file'),
-  loadFile:function(file){
-    var context = this;
+  loadFile:function(file,files){
     var reader = new FileReader();
     reader.addEventListener('load',function(data){
-      context.get('files').pushObject({title:file.name,type:file.type,url:data.target.result,size:file.size})
+      files.pushObject({title:file.name,type:file.type,url:data.target.result,size:file.size})
     });
     reader.readAsDataURL(file);
   }

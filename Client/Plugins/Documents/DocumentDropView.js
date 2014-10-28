@@ -2,7 +2,10 @@
 App.DocumentsDropView = Ember.View.extend({
   templateName:'documentDrop',
   drop: function(event) {
-    this.set(this.get('contentBinding._to'),event.originalEvent.dataTransfer.files);
+    var droppedFiles = event.originalEvent.dataTransfer.files;
+    for(var i = 0; i<droppedFiles.length;i++){
+      this.get('callback')(droppedFiles[i],this.get('files'))
+    }
     event.preventDefault();
   },
   dragEnter: DragNDrop.cancel,
