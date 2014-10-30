@@ -12,7 +12,7 @@ module.exports = Controller.extend({
         return Promise.call(this, function(resolve, reject) {
             var recentlyAdded = new Model()
             recentlyAdded.update({
-                name:'Recently Used',
+                name:'Recent',
                 id: 1111111,
                 deleted: false,
                 templates: false,
@@ -36,7 +36,7 @@ module.exports = Controller.extend({
             })
             var templates = new Model()
             templates.update({
-                name:'Templates',
+                name:'My Types',
                 id: 33333333,
                 deleted: false,
                 templates: true,

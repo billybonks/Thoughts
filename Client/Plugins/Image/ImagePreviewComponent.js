@@ -7,7 +7,7 @@ App.ImagePreviewComponent = Ember.Component.extend(DragNDrop.DragAndDroppable,Ap
       var view = Ember.View.extend({
         templateName:'imagePopup',
       });
-      return this.OpenModal(null,null,data,view,'Image');
+      return this.OpenModal(null,null,this.get('item'),view,'Image');
     }
   },
   dragStart: function(event) {

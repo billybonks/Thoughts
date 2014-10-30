@@ -22,7 +22,7 @@ window.loader = {
     return new Promise(function(resolve, reject) {
       $.ajax({
         type: "GET",
-        url: window.AppSettings.WebserviceURL + '/views',
+        url: window.AppSettings.WebserviceURL + '/views', 
         headers: {
           Authorization: window.AppSettings.token
         },

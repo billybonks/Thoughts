@@ -1,7 +1,33 @@
-<div class="col-md-12" style="border:#66afe9 solid 1px;border-radius: 4px;text-align:center;background:white;height:300px">
-  {{log view.files}}
-  {{#each file in view.files}}
-    <p>{{file.title}}</p>
-  {{/each}}
-  <h3 style="margin-top:25%;color:grey;opacity:0.6">Drop file here</h3>
+<div class="col-md-12" style="border:#66afe9 solid 1px;border-radius: 4px;text-align:center;background:white;height:300px;overflow:scroll">
+
+  <table class="table table-hover" style="text-align:left">
+    {{#unless isUploading}}
+      <tr>
+        <th>Name</th>
+        <th>Size</th>
+      </tr>
+      {{#each file in view.files}}
+        <tr>
+          <td>{{file.name}}</td>
+          <td>{{file.size}}</td>
+          <td><button class="btn btn-danger btn-sm" {{action removeFile file}}><span class="glyphicon glyphicon-remove"></span></button></td>
+        </tr>
+      {{/each}}
+    {{else}}
+      <tr>
+        <th>Name</th>
+        <th>Status</th>
+      </tr>
+      {{#each file in uploadStatus}}
+        <tr>
+          <td>{{file.name}}</td>
+          <td>{{file.status}}</td>
+        </tr>
+      {{/each}}
+    {{/unless}}
+  </table>
+
+
+
+  <h3 style="color:grey;opacity:0.3;position: absolute;top: 40%;left: 35%;">Drop file here</h3>
 </div>

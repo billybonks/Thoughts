@@ -11,7 +11,8 @@ module.exports = Controller.extend({
               application.update({
                   id: user.get('session_token'),
                   name: user.get('first_name'),
-                  token: user.get('session_token')
+                  token: user.get('session_token'),
+                  userId:user.get('id')
               })
               resolve(application);
           } else {
