@@ -87,8 +87,8 @@ BODY {
   text-align: center;
 }
 .cardOverlay {
-  height: 93%;
-  width: 97%;
+  height: 100%;
+  width: 100%;
   position: absolute;
   top: 0;
   left: 0;
