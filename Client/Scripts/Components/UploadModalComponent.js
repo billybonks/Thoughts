@@ -99,7 +99,7 @@ App.UploadModalComponent =Ember.Widgets.ModalComponent.extend({
   uploadDirect:function(file){
     var context = this;
     return new Promise(function(resolve, reject) {
-      
+      AWS.config.credentials = new AWS.Credentials(window.AppSettings.awsCreds);
       AWS.config.region = 'eu-west-1';
       var applications = context.get('content.store').all('application');
       var application = applications.objectAt(0);

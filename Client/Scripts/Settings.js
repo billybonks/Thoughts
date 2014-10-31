@@ -16,6 +16,7 @@ window.AppSettings = {
       dataType: 'json',
       type: 'GET'
     });
-  }
+  },
+  awsCreds:{accessKeyId:'AKIAJPZTGY334OGQSFGQ',secretAccessKey:'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'}
 
 }
