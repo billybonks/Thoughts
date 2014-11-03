@@ -1,4 +1,16 @@
 <form role="form">
+  {{#if content.parent}}
+  <div class="form-group">
+    <label for="type">Parent</label>
+    {{view Ember.Select content=content.parentSelection optionValuePath="content.value" optionLabelPath="content.name"  value=content.includeParent class="form-control"}}
+  </div>
+    {{#if content.includeParent}}
+    <div class="form-group">
+      <label for="type">Embedd in parent</label>
+      {{flip-switch checked=content.embedded}}
+    </div>
+    {{/if}}
+  {{/if}}
   <div class="form-group">
     <label for="title">Title</label>
     {{input type="text" value=content.title class="form-control"  id="title" placeholder="Enter title"}}

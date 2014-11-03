@@ -2,7 +2,10 @@ App.SelectFile = Ember.View.extend({
   templateName:'selectFile',
   actions:{
     addUrl:function(){
-      this.get('content.files').pushObject({title:this.get('content.url'),url:this.get('content.url'),type:'url',size:'N/A'})
+      var url = this.get('content.url');
+      var urlParts = url.split('/');
+      var name = urlParts[urlParts.length-1];
+      this.get('content.files').pushObject({name:name,url:this.get('content.url'),type:'url',size:'N/A'})
     }
   },
   valueChanged:function(){

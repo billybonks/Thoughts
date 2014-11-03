@@ -21,31 +21,23 @@ App.UploadModalComponent =Ember.Widgets.ModalComponent.extend({
               this.get('content.files').forEach(function(file){
                 var status = context.get('uploadStatus').findBy('name',file.name);
                 status.set('status','uploading')
-                context.getUrl(file.name).then(function(url){
-                  context.uploadDirect(file).then(function(file){
-                    counter++;
-                    var status = context.get('uploadStatus').findBy('name',file.name);
-                    status.set('status','done')
-                    ret.push({file:file,url:url});
-                    if(counter == length){
-                      context.set('isDone',true)
-                      context.set('confirmText','Done')
-                    }
-                  },function(error){
-                    var status = context.get('uploadStatus').findBy('name',file.name);
-                    status.set('status','error')
-                    if(counter == length){
-                      context.set('isDone',true)
-                      context.set('confirmText','Done')
-                    }
-                  });
+                context.proccessFile(file).then(function(url){
+                  counter++;
+                  var status = context.get('uploadStatus').findBy('name',file.name);
+                  status.set('status','done')
+                  ret.push({file:file,url:url});
+                  if(counter == length){
+                    context.set('isDone',true)
+                    context.set('confirmText','Done')
+                  }
+                },function(error){
+                  var status = context.get('uploadStatus').findBy('name',file.name);
+                  status.set('status','error')
+                  if(counter == length){
+                    context.set('isDone',true)
+                    context.set('confirmText','Done')
+                  }
                 });
-              /*  context.getUrl(file.name).then(function(url){
-                  context.uploadFile(url,file).then(function(file){
-                    console.log('')
-                  })
-              })*/
-              //return this.hide();
             })
           }
         }
@@ -53,6 +45,22 @@ App.UploadModalComponent =Ember.Widgets.ModalComponent.extend({
       removeFile:function(file){
         this.get('content.files').removeObject(file);
       }
+  },
+  proccessFile:function(file){
+    var context = this;
+    return new Promise(function(resolve, reject) {
+      if(file.url){
+        resolve(file.url)
+      }else{
+        context.getUrl(file.name).then(function(url){
+          context.uploadDirect(file).then(function(file){
+            resolve(url)
+          },function(error){
+            reject(error)
+          });
+        });
+      }
+    });
   },
   getUrl:function(name){
     var context =this;

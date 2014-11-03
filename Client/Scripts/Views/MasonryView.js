@@ -5,6 +5,7 @@ App.Masonry = Ember.View.extend({
 
   }.observes('controller.reload'),
   didInsertElement: function() {
+
     //  this.get('controller').set('mason',this);
   /*  var $container = $('#mason');
     // initialize

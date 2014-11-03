@@ -1,5 +1,4 @@
 App.CardWallComponent = Ember.Component.extend(App.PopupMixin,App.NewCardMixin,{
-  views:null,
   isRoot:false,
   actions: {
     loadMore: function() {
@@ -118,6 +117,15 @@ App.CardWallComponent = Ember.Component.extend(App.PopupMixin,App.NewCardMixin,{
   viewClass:function(){
     return 'row sidebarObject sidebarButton';
   }.property('views'),
+  onCards:function(){
+  /*  var $container = $('#mason');
+    var $Qarrd = $('.title-card');
+    // initialize
+    $container.masonry({
+      columnWidth: 100,
+      itemSelector: '.title-card'
+    });*/
+  },
   GetParent:function(){
     var context = this;
     return new Promise(function(resolve, reject) {
@@ -136,5 +144,8 @@ App.CardWallComponent = Ember.Component.extend(App.PopupMixin,App.NewCardMixin,{
     if(!this.get('model.loaded')){
         this.loadMoreCards();
     }
+  },
+  didInsertElement:function(){
+    console.log('Q')
   }
 });

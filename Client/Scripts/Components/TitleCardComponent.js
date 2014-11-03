@@ -2,6 +2,7 @@
 App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin, {
   showControlls: false,
   isLoading: false,
+  classNames:['title-card'],
   tags: [],
   actions: {
     Delete: function() {
@@ -201,7 +202,6 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin, {
     }, configs)
   }.property('model.configurations.@each.for'),
   didInsertElement: function() {
-    var context = this;
-    console.log('did Insert for ' + this.get('model.id'))
+    this.get('parentView').onCards();
   }
 });

@@ -12,16 +12,14 @@
           </div>
           <div class="row" style="margin:0px">
           <div class="col-md-12">
-            {{#if model.root}}
-              <div class=''>
-                {{title-card model=model.root Notify='Notify' store=store  cardDeleted='onCardDeleted' isRoot=true newCard='onCardAdded'}}
-              </div>
-            {{/if}}
-            {{#each item in model.cards itemController="card"}}
-              <div class=''>
-                {{title-card model=item Notify='Notify'  store=store newCard='onCardAdded' cardDeleted='onCardDeleted' isRoot=false}}
-              </div>
-            {{/each}}
+            <div id="mason">
+              {{#if model.root}}
+                  {{title-card model=model.root Notify='Notify' store=store  cardDeleted='onCardDeleted' isRoot=true newCard='onCardAdded'}}
+              {{/if}}
+              {{#each item in model.cards}}
+                  {{title-card model=item Notify='Notify'  store=store newCard='onCardAdded' cardDeleted='onCardDeleted' isRoot=false}}
+              {{/each}}
+            </div>
           </div>
         </div>
       </div>
@@ -32,7 +30,7 @@
         <div class="row sidebarObject">
           {{view App.DropCube store=store}}
         </div>
-        {{#each view in views}}
+        {{#each view in perspectives}}
           {{#unless view.root}}
           {{#link-to 'perspective' view.id}}<div {{bind-attr class="viewClass"}} style="padding:10px" {{action "viewSelected" view on='click'}}>
                 <b >{{view.name}}</b>
@@ -42,7 +40,7 @@
         <div style="text-align:center;margin-top:10px">
           <b >Recently Viewed</b>
         </div>
-        {{#each view in views}}
+        {{#each view in perspectives}}
           {{#if view.root}}
           {{#link-to 'card' view.root.id}}<div {{bind-attr class="viewClass"}} style="padding:10px">
                 <b >{{view.name}}</b>

@@ -5,23 +5,31 @@ App.NewCardMixin = Ember.Mixin.create({
     NewCard:function(){
       var typesRaw = this.get('typesRaw');
       var context = this;
-      new Promise(function(resolve, reject){
-        var xhr = new XMLHttpRequest();
+      var templates = this.store.all('template')
+      var types =typesRaw.concat(templates);
+      var content= {types:types};
+      context.GetParent().then(function(parent){
+        if(parent){
+          content.parent = parent;
+          content.embedded = context.embedded();
+          var parentSelect = {id:1,name:parent.get('title'),value:true}
+          content.parentSelection = [parentSelect,{id:0,name:'none',value:false}]
 
-        xhr.open('GET',  window.AppSettings.WebserviceURL+'/templates');
-        xhr.onreadystatechange = handler;
-        xhr.responseType = 'json';
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.send();
-        function handler() {
-          if (this.readyState === this.DONE) {
-            if (this.status === 200) {
-              resolve(Ember.A(this.response.templates));
-            }
-          }
+        }else{
+          content.parent = null;
         }
-      }).then(this.OnTemplates(typesRaw,null,context));
-      return false;
+        content.tags =[];
+        context.set('modal',Ember.Widgets.ModalComponent.popup({
+          targetObject: context,
+          confirm: "NewCardConfirm",
+          // cancel: "BaseModalCancel",
+          content: content,
+          contentViewClass:Ember.View.extend({
+            templateName:'popups/cardForm'
+          }),
+          headerText:'New Card'
+        }));
+      })
     },
     NewCardConfirm:function(){
       var model = this.get('modal.content')
@@ -52,7 +60,13 @@ App.NewCardMixin = Ember.Mixin.create({
       var position = cardPackage.position;
       card.set('title',title);
       card.set('type',content.selectedType);
-      context.SetParent(card,content.parent,content.embedded).then(function(card){
+      var promise;
+      if(content.includeParent){
+        promise = context.SetParent(card,content.parent,content.embedded);
+      }else{
+        promise = card.save();
+      }
+      promise.then(function(card){
         Bootstrap.NM.push('New card created', 'success');
         if(context.onCardAdded){
           context.onCardAdded(card);
@@ -64,37 +78,9 @@ App.NewCardMixin = Ember.Mixin.create({
       });
     });
   },
-  OnTemplates:function(typesRaw,parentCard,context){
-    var f = function(templates){
-      var types =typesRaw.concat(templates);
-      var content= {types:types};//parent embedded
-      context.GetParent().then(function(parent){
-        if(parent){
-          content.parent = parent;
-          content.embedded = context.embedded();
-        }else{
-          content.parent = null;
-        }
-        content.tags =[];
-        context.set('modal',Ember.Widgets.ModalComponent.popup({
-          targetObject: context,
-          confirm: "NewCardConfirm",
-          // cancel: "BaseModalCancel",
-          content: content,
-          contentViewClass:Ember.View.extend({
-            templateName:'popups/cardForm',
-          }),
-          headerText:'New Card'
-        }));
-      })
-    }
-    f.typesRaw = typesRaw;
-    return f
-  },
   SetParent:function(card,parentCard,embedded){
     var context = this;
     return new Promise(function(resolve, reject) {
-      if(parentCard){
         parentCard.get('children').then(function(children){
           var position = (children.get('length')+1);
           card.get('parents').then(function(parents){
@@ -119,11 +105,6 @@ App.NewCardMixin = Ember.Mixin.create({
             });
           });
         })
-      }else{
-        card.save().then(function(card){
-          resolve(card);
-        });
-      }
     });
   },
   SetTags:function(card,qTags){
