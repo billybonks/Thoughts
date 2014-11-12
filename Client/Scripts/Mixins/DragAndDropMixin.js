@@ -26,31 +26,3 @@ DragNDrop.DropTarget = Ember.Mixin.create({
   dragStart: DragNDrop.blank,
   drop:DragNDrop.blank
 });
-
-App.PopupOpenerMixin = Ember.Mixin.create({
-  actions:{
-    openModal:function(modalName,model,secondaryModel){
-      return true;
-    },
-    openModalSource:function(modalName,model,secondaryModel){
-      if(this.sendAction){
-        return this.sendAction('openModal',modalName,model,secondaryModel);
-      }
-      else this.send('openModal',modalName,model,secondaryModel);
-    }
-  },
-  openModalFunction:function(modalName,model,secondaryModel){
-    if(this.sendAction){
-      return this.sendAction('openModalSource',modalName,model,secondaryModel);
-    }
-    else this.send('openModalSource',modalName,model,secondaryModel);
-  }
-});
-
-App.PluginPopupOpenerMixin = Ember.Mixin.create({
-  actions:{
-    openModalPlugin:function(modalName,model,secondaryModel){
-      this.get('targetObject').openModalFunction.call(this.get('targetObject'),modalName,model,secondaryModel)
-    }
-  }
-});

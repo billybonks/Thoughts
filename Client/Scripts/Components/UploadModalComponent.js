@@ -53,11 +53,11 @@ App.UploadModalComponent =Ember.Widgets.ModalComponent.extend({
         resolve(file.url)
       }else{
         context.getUrl(file.name).then(function(url){
-          context.uploadDirect(file).then(function(file){
-            resolve(url)
-          },function(error){
-            reject(error)
-          });
+          context.uploadDirect(file).then(function(x){
+            context.uploadFile(url,file).then(function(data){
+              resolve(data)
+            })
+          })
         });
       }
     });
@@ -65,13 +65,7 @@ App.UploadModalComponent =Ember.Widgets.ModalComponent.extend({
   getUrl:function(name){
     var context =this;
     return new Promise(function(resolve, reject) {
-      var bucket = 'thoughts-billybonks';
-      var region = 'eu-west-1'
-      var applications = context.get('content.store').all('application');
-      var application = applications.objectAt(0);
-      var id = application.get('userId');
-      resolve('https://'+bucket+'.s3-'+region+'.amazonaws.com/'+id+'/'+name);
-  /*    $.ajax({
+      $.ajax({
         type: "GET",
         url: window.AppSettings.WebserviceURL + '/awsurl?key='+name,
         headers: {
@@ -83,25 +77,30 @@ App.UploadModalComponent =Ember.Widgets.ModalComponent.extend({
         error: function(jqXHR, satus, error) {
           reject(error);
         }
-      });*/
+      });
     });
   },
   uploadFile:function(url,file){
+
     return new Promise(function(resolve, reject) {
-      $.ajax({
-        type: "PUT",
-        url: url,
-        data:file.data,
-        headers: {
-          //Content-Type: window.AppSettings.token
-        },
-        success: function(data, status, jqXHR) {
-          resolve(file);
-        },
-        error: function(jqXHR, satus, error) {
-          reject(error);
-        }
+      var reader = new FileReader();
+      reader.addEventListener('load',function(data){
+        $.ajax({
+          type: "PUT",
+          url: url,
+          data:file,
+          headers: {
+            'Content-Type': file.type
+          },
+          success: function(data, status, jqXHR) {
+            resolve(file);
+          },
+          error: function(jqXHR, satus, error) {
+            reject(error);
+          }
+        });
       });
+      reader.readAsArrayBuffer(file);
     });
   },
   uploadDirect:function(file){

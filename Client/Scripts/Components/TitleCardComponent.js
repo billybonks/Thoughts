@@ -5,6 +5,9 @@ App.TitleCardComponent = Ember.Component.extend(App.NewCardMixin, {
   classNames:['title-card'],
   tags: [],
   actions: {
+    toggleTagView:function(tag){
+      console.log(tag)
+    },
     Delete: function() {
       var context = this;
       this.get('store').find('card', this.get('model').get('id')).then(function(rec) {

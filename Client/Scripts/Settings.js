@@ -17,6 +17,6 @@ window.AppSettings = {
       type: 'GET'
     });
   },
-  awsCreds:{accessKeyId:'AKIAJPZTGY334OGQSFGQ',secretAccessKey:'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'}
+  awsCreds:{accessKeyId:'AKIAJLTYPYYPOBONPKXA',secretAccessKey:'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'}
 
 }

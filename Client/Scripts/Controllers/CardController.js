@@ -1,27 +1,11 @@
 'use strict';
-App.CardController = Ember.ObjectController.extend(App.PopupOpenerMixin, {
-  //currentRouteName: Em.computed.alias('controllers.application.currentRouteName'),
+App.CardController = Ember.ObjectController.extend({
+  needs:['application'],
+  application: Em.computed.alias('controllers.application'),//currentRouteName: Em.computed.alias('controllers.application'),
   views:null,
   perspective:null,
-  currentPath: Em.computed.alias('controllers.application.currentPath'),
-  needs: 'application',
   actions: {
-    Delete: function() {
-      this.get('store').find('card', this.get('model').get('id')).then(function(rec) {
-        rec.deleteRecord();
-        rec.save();
-      });
-    },
-    ToggleEdit: function() {
-      console.log('editing')
-      this.get('isEditing') ? this.set('isEditing', false) : this.set('isEditing', true);
-    },
-    transition:function(view){
-      this.transitionTo('perspective',view)
-    },
-    Share: function() {}
   },
-
   display: function() {
     if (this.get('parentController.templates')) {
       if (this.get('model.isTemplate')) {

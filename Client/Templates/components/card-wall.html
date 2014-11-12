@@ -1,13 +1,22 @@
 <div class="row" style="position: absolute;top: 0;width: 100%;">
     <div class="row">
       <div class="col-md-11">
-          <div class="row" style="margin:0px">
+          <!--div class="row" style="margin:0px">
             <div class="col-md-12">
               <div class="input-group">
                   {{input type="text" class="form-control" placeholder="Enter search query here" value=search}}
                   <div class="input-group-addon btn-info btn" style="color:black" {{action "addUrl" target=view}}>Search</div>
                   <div class="input-group-addon btn-info btn" style="color:black" {{action "advancedSearch"}}>Advanced Search</div>
               </div>
+            </div>
+          </div-->
+          <div class="row" style="margin:0px">
+            <div class="col-md-12">
+              <ol class="breadcrumb">
+                {{#each breadcrumb in breadcrumbs}}
+                  <li><a href="#">{{breadcrumb.name}}</a></li>
+                {{/each}}
+              </ol>
             </div>
           </div>
           <div class="row" style="margin:0px">

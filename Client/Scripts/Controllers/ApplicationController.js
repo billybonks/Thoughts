@@ -1,8 +1,9 @@
 'use strict';
-App.ApplicationController = Ember.Controller.extend(App.PopupOpenerMixin, {
+App.ApplicationController = Ember.Controller.extend({
   currentDrag: null,
   menuOpen: false,
   notifications: Ember.A([]),
+  route: Ember.A([]),
   actions: {
     Logout: function() {
       $.cookie(AppSettings.CookieName, '', {
@@ -30,6 +31,12 @@ App.ApplicationController = Ember.Controller.extend(App.PopupOpenerMixin, {
     Login: function(provider) {
       window.location = 'https://' + window.location.host + ':4730/auth/' + provider;
     }
+
+  },
+  resetPath:function(root){
+
+  },
+  appendPath:function(perspective){
 
   },
   MouseMove: function(application) {

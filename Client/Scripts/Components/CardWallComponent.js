@@ -22,6 +22,32 @@ App.CardWallComponent = Ember.Component.extend(App.PopupMixin,App.NewCardMixin,{
   embedded:function(){
     return false;
   },
+  breadcrumbs:function(key, value){
+    if (arguments.length > 1) {
+      // > 1 args = this is a `set`
+      return value;
+    } else {
+      // otherwise this is a `get`
+      var context = this;
+      value = null;
+      var parents = [];
+      if(!this.get('currentPath')){
+        this.set('currentPath',Ember.A([]))
+      }
+      if(this.get('model.root') && this.get('currentPath.length')<=1){
+          this.get('model.root').then(function(root){
+            context.buildCrumb(root)
+          })
+
+      }else{
+        return this.get('currentPath');
+      }
+      return this.get('currentPath');
+    }
+  }.property('model'),
+  buildCrumb:function(card){
+    this.get('currentPath').push({name:card.get('title'),type:'card',id:card.get('id')})
+  },
   onAdvanced:function(content){
     //FIXME: Can be improved
     var query =this.get('advancedSearch')._childViews[1].getQuery();
@@ -64,12 +90,69 @@ App.CardWallComponent = Ember.Component.extend(App.PopupMixin,App.NewCardMixin,{
     function handler() {
       if (this.readyState === this.DONE) {
         if (this.status === 200) {
+          context.set('model.lastPage',context.get('model.lastPage') + 1)
           var response = context.store.pushMany('card', this.response.cards);
-          context.get('model.cards').pushObjects(response);
+          //
           if (response.length < 10) {
             context.set('model.loaded', true)
           }
+          context.get('model.cards').then(function(cards){
+            Promise.all(cards.getEach('children')).then(function(cardsChildren){
+              Promise.all(response.getEach('children')).then(function(newCardsChildren){
+                var cardsIds = cards.getEach('id');
+                var newCardsIds = response.getEach('id');
+                var duplicates =  _.intersection(cardsIds,newCardsIds);
+                //remove Duplicates
+
+                //find children in new card set
+                context.findAllEmbeddedChildren(newCardsIds,newCardsChildren).then(function(embeddedChildren){
+                  context.removeChildren(response,embeddedChildren);
+                   context.findAllEmbeddedChildren(cardsIds,newCardsChildren).then(function(embeddedChildren){
+                     context.removeChildren(response,embeddedChildren);
+                     context.get('model.cards').pushObjects(response);
+                   });
+                });
+              });
+            });
+          });
         }
+      }
+    }
+  },
+  findAllEmbeddedChildren:function(cardIds,children){
+    var context = this;
+    return new Promise(function(resolve,reject){
+      ret = Ember.A();
+      var promises = [];
+      for(var i = 0;i<children.length;i++){
+        var ids = children[i].getEach('id');
+        var found =  _.intersection(ids,cardIds);
+        for(f = 0; f<found.length;f++){
+          child = children[i].findBy('id',found[f]);
+          promises.push(context.isEmbedded(child));
+        }
+      }
+      Promise.all(promises).then(function(embeddedChildren){
+        resolve(embeddedChildren);
+      })
+    });
+  },
+  isEmbedded:function(child){
+    return new Promise(function(resolve,reject){
+      child.get('configurations').then(function(childConfigs){
+        if(childConfigs.objectAt(0).get('embedded')){
+          resolve(child);
+        }else{
+          resolve();
+        }
+
+      });
+    });
+  },
+  removeChildren:function(response,children){
+    for(var i = 0;i<children.length;i++){
+      if(children[i]){
+        response.removeObject(children[i])
       }
     }
   },

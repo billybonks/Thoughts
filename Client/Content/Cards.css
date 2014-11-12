@@ -5,6 +5,9 @@ BODY {
   background-color: #E5E5E5;
   height: 100%
 }
+.pointer{
+  cursor:pointer;
+}
 .container-fluid {
   height: 100%;
 }

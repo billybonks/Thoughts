@@ -35,27 +35,6 @@ App.Router.map(function() {
 });
 
 App.ApplicationRoute = Ember.Route.extend({
-  actions: {
-    error: function(reason) {
-      this.notification(reason, 'error');
-    },
-    notification: function(message, level) {
-      var notification = {
-        message: message,
-        level: "mainAlert alert alert-" + level
-      }
-      this.get('controller').get('notifications').pushObject(notification)
-      setTimeout(this.removeNotification(this.get('controller')), 3000);
-    }
-  },
-  removeNotification: function(controller) {
-    var controller = controller;
-
-    function removeNotif() {
-      controller.set('notifications', Ember.A([]))
-    }
-    return removeNotif;
-  },
   model: function() {
     this.store.pushMany('view',window.preload.views);
     var sessionToken = $.cookie(AppSettings.CookieName);
@@ -166,9 +145,11 @@ App.PerspectiveRoute = Ember.Route.extend({
     return this.store.getById('view',params.perspective_id)
   },
   setupController: function(controller, model) {
+    var application = this.controllerFor("application");
+    application.set('route', Ember.A([{name:model.get('name'),type:'perspective',id:model.get('id'),}]))
     var views = this.store.all('view');
     controller.set('views',views);
-    controller.set('prespective',model);
+    controller.set('perspective',model);
 
     //$(document).attr('title', model.get('title'));
   }

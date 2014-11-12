@@ -69,7 +69,7 @@
         <button class="btn btn-default" {{action 'Save'}}>save </button>
         {{else}}
           {{#each model.tags}}
-          <span class="label label-success">{{title}}</span>
+          <span {{action toggleTagView this}}class="pointer label label-success">{{title}}</span>
           {{/each}}
         {{/if}}
       </div>
