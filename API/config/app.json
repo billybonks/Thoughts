@@ -51,8 +51,8 @@
           "database":"http://localhost:7474/db/data/",
           "s3":{
             "creds":{
-              "accessKeyId": "AKIAJPZTGY334OGQSFGQ",
-              "secretAccessKey": "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",
+              "accessKeyId": "AKIAJLTYPYYPOBONPKXA",
+              "secretAccessKey": "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",
               "region": "eu-west-1"
             },
             "bucket":"thoughts-billybonks"

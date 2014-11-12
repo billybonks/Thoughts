@@ -84,7 +84,7 @@ module.exports = CoreObject.extend({
     },
     deleteEntity: function(id) {
         var query = ['START n=node(' + id + ')',
-            'SET n.isDeleted = true',
+            'SET n.isTrashed = true',
             'RETURN n'
         ];
         return this.executeQuery(query.join('\n'), {});

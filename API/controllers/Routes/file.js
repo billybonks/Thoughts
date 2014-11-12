@@ -38,13 +38,13 @@ module.exports = function(app) {
     app.get('/awsurl',function(req,res,next){
       var s3Conf = nconf.get('s3');
       AWS.config.update(s3Conf.creds);
-      var s3 = new AWS.S3();
-            var params = {Bucket: s3Conf.bucket, Key: req.user.get('id')+'/'+req.query.key,  Expires: 3600,'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'};
-            s3.getSignedUrl('putObject', params, function (err, url) {
-              res.returnData = url;
-              res.status=200;
-              next();
-            });
+      var s3 = new AWS.S3({computeChecksums: false});//
+      var params = {Bucket: s3Conf.bucket, Key: req.user.get('id')+'/'+req.query.key,  Expires: 3600, ContentType:'image/jpeg'};
+      s3.getSignedUrl('putObject', params, function (err, url) {
+        res.returnData = url;
+        res.status=200;
+        next();
+      });
     });
 
 };

@@ -27,9 +27,9 @@ module.exports = Controller.extend({
                 'MATCH (user:Person)-[Created]->(card:Card)'
             ];
             if (view.get('deleted')) {
-                query.push('WHERE has(card.isDeleted)');
+                query.push('WHERE card.isTrashed = true');
             } else {
-                query.push('WHERE not(has(card.isDeleted))');
+                query.push('WHERE card.isTrashed = false');
             }
             if (view.get('templates')) {
                 query.push('AND card.isTemplate = true');

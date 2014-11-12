@@ -10,6 +10,7 @@ module.exports = DS.Model.extend({
   tags:DS.hasMany('tag',{async:true}),
   onMainDisplay:DS.attr('boolean'),
   template: DS.attr(),
+  isTrashed:DS.attr('boolean'),
   isTemplate:DS.attr('boolean'),
   parents:DS.hasMany('card', {
     inverse: 'children',
